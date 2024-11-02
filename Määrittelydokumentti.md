@@ -23,7 +23,7 @@ Suoritan kurssia erillisten opintojen suoritusoikeudella. En kuulu mihinkään o
 
 ### Dijkstra
 
-Dijkstra-algoritmista toteutetaan yksisuuntainen, prioriteettijonolla varustettu optimoitu versio.
+Dijkstra-algoritmista toteutetaan yksisuuntainen, prioriteettijonolla varustettu versio.
 
 Alkuperäisen Dijkstran (1959) tieteellisen artikkelin esittelemän version aikavaativuus oli O(V\^2). Toteutettavan prioriteettijonollisen version aikavaativuus on O((E+V) log(V)). Tästä ole ei löydettävissä selkeää alkuperäisviitettä, mutta periaate on esitetty lukuisissa artikkeleissa ja Wikipediassa. Algoritmin tilavaativuus riippuu toteutustavasta, mutta se on lineaarinen O(V) tai O(V+E). Tilavaatimus lienee tässä tapauksessa vähemmän oleellinen kuin aikavaativuus eikä siitä ei ole löydettävissä selkeää tieteellistä viitettä.
 
