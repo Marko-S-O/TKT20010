@@ -39,11 +39,19 @@ Fringe searchin aikavaativuus on O((V+E) log(V)) ja tilavaativuus O(V), joten se
 
 Toteutuksen lähtökohtana toimii Bjönrsson et al. (2005) artikkelin luvusta 2.3 löytyvä pseudokoodi.
 
-Tässä vaiheessa ei ollut mahdollista ajankäytön vuoksi perehtyä tarkemmin fringe searhin yksityiskohtiin, joten toteutettavan kokonaisuuden mahdollinen tarkentaminen jätetään tehtäväksi myöhemmillä harjoitusviikoilla.
+Tässä vaiheessa ei ollut mahdollista ajankäytön vuoksi perehtyä tarkemmin fringe searchin yksityiskohtiin, joten toteutettavan kokonaisuuden mahdollinen tarkentaminen jätetään tehtäväksi myöhemmillä harjoitusviikoilla.
+
+## Kartta
+
+Kartan kuvaamiseen on ainakin kaksi peruslähestymistapaa: kaksiulotteinen ruudukko, jossa ruutu on joko vapaa tai liikkumisen estävä, tai solmujen ja kaarten kuvaaminen niin, että kaareen liittyvä paino liitetään kaaren yhteyteen. Alustavasti tässä työssä valitaan jälkimmäinen tapa, jolloin kaarten painojen arvojoukko ei ole rajoitettu eikä sidottu sijaintiin karttamatriisissa. Solmut ja kaaret kuvataan jollain tehokkaalla tavalla taulukoiksi tai matriiseiksi.
+
+Tällaisen vapaamuotoisen kartan voi esittää ainakin kuvaamalla verkon kaaret taulukoiksi tai kuvaamalla kartan VxV-kokoisena matriisina, jossa solu (x, y) sisältää solmujen x ja y välisen etäisyyden tai nollan, jos yhteyttä ei ole. Jälkimmäinen tapa luonnollisesti nostaa algoritmin tilavaatimuksen luokkaan O(v\^2). Tässä työssä valitaan lähtökohtaisesti ensin mainittu eli kuvataan verkon kaaret sopivalla koodauksella. Tämä on tilavaativuudelta universaalisti toimivampi tapa mutta tehnee verkon visualisoinnista haastavamaa. Tarkka koodaustapa suunnitellaan myöhemmin projektin edetessä.
+
+Kartan esittämistapa pyritään validoimaan ohjaajan kanssa 2. kurssiviikolla sen varmistamiseksi, että työ lähtee toteutettavuuden ja tehokkuuden kannalta järkevään suuntaan.
 
 ## Toiminnallisuudet
 
-Alustavat toiminnallisuudet on listattu Epiceinä ja Featureina. Toiminnallisuudet on määritelty harjoitustyön toteuttamisen näkökulmasta sisältäen kaikki tuotettavat lopputuotokset, ei normaalista ohjelmiston toiminnallisen määrittelyn näkökulmasta.
+Alustavat toiminnallisuudet on listattu alla Epiceinä ja Featureina. Toiminnallisuudet on määritelty harjoitustyön toteuttamisen näkökulmasta sisältäen kaikki tuotettavat lopputuotokset, ei normaalista ohjelmiston toiminnallisen määrittelyn näkökulmasta.
 
 -   **Epic 1. Validointi ja ohjeet**
     -   *Feature 1.1 Testimateriaalien hankkiminen*
@@ -52,10 +60,10 @@ Alustavat toiminnallisuudet on listattu Epiceinä ja Featureina. Toiminnallisuud
         -   Tuotos: testausdokumentin suunnitelmaosuus
     -   *Feature 1.3 Validoinnin toteutus ja dokumentointi*
         -   Tuotos: testausdokumentin testitulosten osuus
-    -   *Feature 1.3 Käyttöohjeen tuottaminen*
+    -   *Feature 1.4 Käyttöohjeen tuottaminen*
         -   Tuotos: käyttöohje
 -   **Epic 2. Käyttöliittymä**
-    -   *Feature 2.1 Lataa kartta käyttöliittymästä*
+    -   *Feature 2.1 Lataa kartta*
         -   Toiminnot: lataa kartan käyttöliittymästä, muuntaa sen sisäiseen esitysmuotoon ja visualisoi sen käyttäjälle
         -   Tuotos: käyttöliittymä, joka pystyy lataamaan ja visualisoimaan kartan
     -   *Feature 2.2 Laske reitti*
