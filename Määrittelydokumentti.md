@@ -29,11 +29,11 @@ Alkuperäisen Dijkstran (1959) tieteellisen artikkelin esittelemän version aika
 
 Toteutuksen lähtökohtana on Wikipedian viitteen luvusta *Pseudocode* löytyvä pseudokoodi.
 
-Ajan mahdollistaessa on mahdollista lisäksi tutkia optimointeja kuten kaksisuuntaisuus, fibonazzi-perustainen ja kaksisuuntaisen jonon laskennan rinnakkaistaminen eri prosesseihin. Lähtöoletus kuitenkin on, että näitä ei toteuteta.
+Ajan mahdollistaessa on mahdollista lisäksi tutkia optimointeja kuten kaksisuuntaisuus ja kaksisuuntaisen jonon laskennan rinnakkaistaminen eri prosesseihin. Lähtöoletus kuitenkin on, että näitä ei toteuteta.
 
 ### Fringe search
 
-Fringe search (*Björnsson et al., 2005*) on hyvin määritelty algoritmi, jossa käytännön muuntelua voi tapahtua lähinnä heuristiikkafunktion valinnassa. Alustava oletus on, että heuristisena funktiona käytetään euklidista etäisyyttä pisteiden välillä.
+Fringe search (*Björnsson et al., 2005*) on selkeästi rajattu algoritmi, jossa käytännön muuntelua voi tapahtua lähinnä heuristiikkafunktion valinnassa. Alustava oletus on, että heuristisena funktiona käytetään euklidista etäisyyttä pisteiden välillä.
 
 Fringe searchin aikavaativuus on O((V+E) log(V)) ja tilavaativuus O(V), joten se on tehokkuusluokaltaan tasoa Dijkstran kanssa.
 
@@ -45,13 +45,15 @@ Tässä vaiheessa ei ollut mahdollista ajankäytön vuoksi perehtyä tarkemmin f
 
 Alustavat toiminnallisuudet on listattu Epiceinä ja Featureina. Toiminnallisuudet on määritelty harjoitustyön toteuttamisen näkökulmasta sisältäen kaikki tuotettavat lopputuotokset, ei normaalista ohjelmiston toiminnallisen määrittelyn näkökulmasta.
 
--   **Epic 1. Validointi**
+-   **Epic 1. Validointi ja ohjeet**
     -   *Feature 1.1 Testimateriaalien hankkiminen*
         -   Tuotos: testeissä käytettävät kartat
     -   *Feature 1.2 Testisuunnitelman tuottaminen*
         -   Tuotos: testausdokumentin suunnitelmaosuus
     -   *Feature 1.3 Validoinnin toteutus ja dokumentointi*
         -   Tuotos: testausdokumentin testitulosten osuus
+    -   *Feature 1.3 Käyttöohjeen tuottaminen*
+        -   Tuotos: käyttöohje
 -   **Epic 2. Käyttöliittymä**
     -   *Feature 2.1 Lataa kartta käyttöliittymästä*
         -   Toiminnot: lataa kartan käyttöliittymästä, muuntaa sen sisäiseen esitysmuotoon ja visualisoi sen käyttäjälle
