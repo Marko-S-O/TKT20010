@@ -4,7 +4,7 @@
 
 Tämä dokumentti on määrittelydokumentti kurssia TKT20010 Tekoäly ja algoritmit varten. Kyseessä syksyn 2024 2. implementaatio (28.10.-20.12.2024). Dokumentissa kuvataan toteutuksen tärkeimmät ominaisuudet, toiminnallisuudet ja toteutusvälineet kurssin vaatimusten mukaisessa laajuudessa.
 
-Tämä on dokumentin toinen iteraatio, jossa on ohjaajan kanssa 1. kurssiviikolla käydyn keskustelun perusteella päivitetty toteutettavat algoritmit, kartan esitystapa sekä jälkimmäisen muutoksen myötä käyttöliittymän toteutukseen käytettävät välineet.
+Tämä on dokumentin toinen iteraatio, jossa on ohjaajan kanssa 2. kurssiviikolla käydyn keskustelun perusteella päivitetty toteutettavat algoritmit, kartan esitystapa sekä jälkimmäisen muutoksen myötä käyttöliittymän toteutukseen käytettävät välineet.
 
 ## Projektin yleiskuvaus
 
@@ -27,9 +27,9 @@ Suoritan kurssia erillisten opintojen suoritusoikeudella. En kuulu mihinkään o
 
 ### A-star
 
-Alkuperäinen A\* -algoritmin idea kuvattiin Hart et al. (1968) artikkelissa. A\* voidaan pitää Dijkstran edelleen kehitettynä versiona, jossa hyödynnetään heuristista funktiota. Tämän vuoksi lienee hyödyllistä toteuttaa alkuun yksinkertainen Dijkstran funktio.
+Alkuperäinen A\* -algoritmin idea kuvattiin Hart et al. (1968) artikkelissa. A\* voidaan pitää Dijkstran edelleen kehitettynä versiona, jossa hyödynnetään heuristista funktiota.
 
-A\*:n tehokkuus riippuu kriittisellä tavalla heuristisesta funktiosta. Jotta algoritmi toimisi järkevästi, heuristinen funktio ei koskaan saa yliarvioida jäljellä olevaa matkaa. Oletuksena on, että heuristisena funktiona käytetään lyhintä kulkuetäisyyttä 2D-ruudukossa (joka ei ole sama kuin euklidinen etäisyys). Paras heuristinen funktio riippuu kuitenkin kartasta ja voi olla erilainen labyrintille kuin kaupunkikartalle. Red Blog Gamesin sivulla (2015) on yksi mahdollisesti hyödynnettävissä oleva esitys heuristisista funktioista.
+A\*:n tehokkuus riippuu kriittisellä tavalla heuristisesta funktiosta. Jotta algoritmi toimisi järkevästi, heuristinen funktio ei koskaan saa yliarvioida jäljellä olevaa matkaa. Oletuksena on, että heuristisena funktiona käytetään lyhintä kulkuetäisyyttä 2D-ruudukossa (joka ei ole sama kuin euklidinen etäisyys). Paras heuristinen funktio riippuu kuitenkin kartasta ja voi olla erilainen labyrintille kuin kaupunkikartalle. Red Blob Gamesin sivulla (2015) on yksi mahdollisesti hyödynnettävissä oleva esitys heuristisista funktioista.
 
 Pahimman tapauksen aikavaativuus A\*:lle on O(E+V logV), mikäli voidaan olettaa, että heuristinen funktio täyttää edellä mainitun ehdon.
 
