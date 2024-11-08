@@ -53,6 +53,7 @@ class DijkstraPathfinder implements Pathfinder {
                     Node nextNode = nodeList[edge.x][edge.y];
                     if(nextNode == null) {
                         nextNode = new Node(edge.x, edge.y);
+                        nodeList[edge.x][edge.y] = nextNode;
                     }
                     double newDistance = currentNode.distance + edge.weight;
                     if(newDistance < nextNode.distance) {
