@@ -16,8 +16,9 @@
 -   Tilavaativuus ei ole merkityksetön. Olen ajatellut, että algoritmin tehokkuus yleensä on kriittinen asia ja nykyisissä koneissa riittää muistia. Suurissa verkoissa keskusmuistin rajat tulevat kuitenkin nopeasti vastaan, ellei algoritmeja optimoida myös muistin käytön suhteen.
 -   Ensin ajattelin toteuttavani Dijkstran tehokkaasti primitiivityypeillä ja taulukoilla. Jouduin kuitenkin nöyrtymään ja tekemään luokat Node ja Edge ja laskemaan vieruslistat etukäteen, että homma pysyi näpeissä. Toteutus tuskin on kovin optimoitu.
 
-# Haasteet
+# Haasteet ja avoimet kysymykset
 
+-   Toteutin Dijkstran käyttämällä Javan valmista luokkaa PriorityQueue. Pitääkö järjestetty keko kirjoittaa itse?
 -   On yllättävän vaikea hahmottaa eri tekijöiden välisiä priorisointeja toteutusta suunnitellessa: tila- vs. aikavaativuus, toteutuksen kompleksisuus vs. tehokkuus.
 -   En löytänyt toimivaa tapaa piirtää renderöintikomponenttiin (JPanel) yksittäisiä pikseleitä virkistämättä koko komponenttia, joten ainakin toistaiseksi etsinnän etenemisen reaaliaikainen visualisointi jäi tekemättä.
 
