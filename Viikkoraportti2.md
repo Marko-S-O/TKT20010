@@ -7,7 +7,7 @@
 
 # Ohjelman edistyminen
 
--   Käyttöliittymä toteutettu ja viety GitHubiin. Käyttöliittymä näyttää kartan ja visualisoi reitin (kuva lopussa).
+-   Käyttöliittymä toteutettu ja viety GitHubiin. Käyttöliittymä näyttää kartan ja visualisoi reitin.
 -   Dijkstrasta tehty nopea versio ja viety GitHubiin. Vaikka se ei ollut toteutettavissa algoritmeissa, päädyin tekemään sen ensin sisään pääsemiseksi aiheeseen ja vertailukohdaksi muille. Testaaminen jäi vielä vähiin, mutta piirtämällä algoritmi käyttöliittymälle se silmämääräisesti näyttäisi toimivan.
 
 # Oppimisreflektio
@@ -38,5 +38,3 @@ Käytetty seuraaviin tarkoituksiin:
 # Käytetty työaika
 
 Reilu 20 h
-
-![](media/4f61807dce9bb28dd7ea81c4974395a6.png)
