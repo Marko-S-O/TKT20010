@@ -2,13 +2,13 @@
 
 -   Keskustelu ohjaajan kanssa 5.11. Tällöin vaihdettiin algoritmit (nyt A\* ja JPS).
 -   Määrittelydokumentti päivitetty vastaamaan muutoksia projektin sisällössä.
--   Kartan ja käyttöliittymän toteutus: tehty sovelluskäyttöliittymä, joka valitsee karttatiedoston levyltä ja renderöi sen. Käyttöliittymän kuva dokumentin lopussa.
--   Toteutettu yksinkertainen Dijkstra-algoritmi Tirakirjan pseudokoodin mukaisesti. Vaikka se ei ollut toteutettavissa algoritmeissa, päädyin tekemään sen ensin sisään pääsemiseksi aiheeseen ja vertailukohdaksi muille. Testaaminen jäi vielä vähiin, mutta piirtämällä algoritmi käyttöliittymälle se silmämääräisesti näyttäisi toimivan.
+-   Toteutettu käyttöliittymä, joka renderöi kartan ja reitin.
+-   Toteutettu yksinkertainen Dijkstra-algoritmi Tirakirjan pseudokoodin mukaisesti.
 
 # Ohjelman edistyminen
 
 -   Käyttöliittymä toteutettu ja viety GitHubiin. Käyttöliittymä näyttää kartan ja visualisoi reitin (kuva lopussa).
--   Dijkstrasta tehty nopea versio ja viety GitHubiin.
+-   Dijkstrasta tehty nopea versio ja viety GitHubiin. Vaikka se ei ollut toteutettavissa algoritmeissa, päädyin tekemään sen ensin sisään pääsemiseksi aiheeseen ja vertailukohdaksi muille. Testaaminen jäi vielä vähiin, mutta piirtämällä algoritmi käyttöliittymälle se silmämääräisesti näyttäisi toimivan.
 
 # Oppimisreflektio
 
@@ -38,3 +38,5 @@ Käytetty seuraaviin tarkoituksiin:
 # Käytetty työaika
 
 Reilu 20 h
+
+![](media/4f61807dce9bb28dd7ea81c4974395a6.png)
