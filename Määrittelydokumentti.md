@@ -4,14 +4,18 @@
 
 Tämä dokumentti on määrittelydokumentti kurssia TKT20010 Tekoäly ja algoritmit varten. Kyseessä syksyn 2024 2. implementaatio (28.10.-20.12.2024). Dokumentissa kuvataan toteutuksen tärkeimmät ominaisuudet, toiminnallisuudet ja toteutusvälineet kurssin vaatimusten mukaisessa laajuudessa.
 
+Tämä on dokumentin toinen iteraatio, jossa on ohjaajan kanssa 1. kurssiviikolla käydyn keskustelun perusteella päivitetty toteutettavat algoritmit, kartan esitystapa sekä jälkimmäisen muutoksen myötä käyttöliittymän toteutukseen käytettävät välineet.
+
 ## Projektin yleiskuvaus
 
-Projektin aihe on ”Verkot ja polunetsintä”. Projektissa toteutetaan algoritmit
+Projektin aihe on ”Verkot ja polunetsintä”. Projektissa toteutetaan algoritmit:
 
-1.  Dijkstra
-2.  Fringe search
+1.  A-star (A\*)
+2.  Jump point search (JPS)
 
-Algoritmeja sovelletaan painotettuihin verkkoihin, joissa kaarilla on ei-negatiiviset, rajoittamattomat painot. Mikäli mahdollista, testaamisessa pyritään fokusoimaan reaalimaailman kartta-aineistojen tyyppiseen materiaaliin. Toteutuksessa tuotetaan ensin käyttöliittymän perustoiminnallisuudet karttojen ja algoritmien suorittamisen hallintaan, sen jälkeen Dijkstra-algoritmi riittävälle tasolle testausta varten ja lopuksi Fringe Search.
+Algoritmeja sovelletaan 2D-ruudukoina kuvattaviin verkkoihin. Mikäli mahdollista, testaamisessa pyritään fokusoimaan reaalimaailman kartta-aineistojen tyyppiseen materiaaliin.
+
+Toteutuksessa tuotetaan ensin käyttöliittymän perustoiminnallisuudet karttojen ja algoritmien suorittamisen hallintaan, sen jälkeen A\*-algoritmi riittävälle tasolle testausta varten ja lopuksi JPS. Mahdollisesti ennen varsinaisten algoritmien toteutusta toteutetaan asioiden omaksumisen tukemiseksi ja vertailukohdaksi Djikstran algoritmi.
 
 ## Opinto-ohjelma
 
@@ -21,33 +25,27 @@ Suoritan kurssia erillisten opintojen suoritusoikeudella. En kuulu mihinkään o
 
 ## Toteutettavat algoritmit
 
-### Dijkstra
+### A-star
 
-Dijkstra-algoritmista toteutetaan yksisuuntainen, prioriteettijonolla varustettu versio.
+Alkuperäinen A\* -algoritmin idea kuvattiin Hart et al. (1968) artikkelissa. A\* voidaan pitää Dijkstran edelleen kehitettynä versiona, jossa hyödynnetään heuristista funktiota. Tämän vuoksi lienee hyödyllistä toteuttaa alkuun yksinkertainen Dijkstran funktio.
 
-Alkuperäisen Dijkstran (1959) tieteellisen artikkelin esittelemän version aikavaativuus oli O(V\^2). Toteutettavan prioriteettijonollisen version aikavaativuus on O((E+V) log(V)). Tästä ole ei löydettävissä selkeää alkuperäisviitettä, mutta periaate on esitetty lukuisissa artikkeleissa ja Wikipediassa. Algoritmin tilavaativuus riippuu toteutustavasta, mutta se on lineaarinen O(V) tai O(V+E). Tilavaatimus lienee tässä tapauksessa vähemmän oleellinen kuin aikavaativuus eikä siitä ei ole löydettävissä selkeää tieteellistä viitettä.
+A\*:n tehokkuus riippuu kriittisellä tavalla heuristisesta funktiosta. Jotta algoritmi toimisi järkevästi, heuristinen funktio ei koskaan saa yliarvioida jäljellä olevaa matkaa. Oletuksena on, että heuristisena funktiona käytetään lyhintä kulkuetäisyyttä 2D-ruudukossa (joka ei ole sama kuin euklidinen etäisyys). Paras heuristinen funktio riippuu kuitenkin kartasta ja voi olla erilainen labyrintille kuin kaupunkikartalle. Red Blog Gamesin sivulla (2015) on yksi mahdollisesti hyödynnettävissä oleva esitys heuristisista funktioista.
 
-Toteutuksen lähtökohtana on Wikipedian viitteen luvusta *Pseudocode* löytyvä pseudokoodi.
+Pahimman tapauksen aikavaativuus A\*:lle on O(E+V logV), mikäli voidaan olettaa, että heuristinen funktio täyttää edellä mainitun ehdon.
 
-Ajan mahdollistaessa on mahdollista lisäksi tutkia optimointeja kuten kaksisuuntaisuus ja kaksisuuntaisen jonon laskennan rinnakkaistaminen eri prosesseihin. Lähtöoletus kuitenkin on, että näitä ei toteuteta.
+Algoritmien ymmärtämiseen löytyy verkosta lukuisia esityksiä, mm. Red Blob Gamesin (2014-2023) ja Wikipedian selitykset.
 
-### Fringe search
+### Jump point search
 
-Fringe search (*Björnsson et al., 2005*) on selkeästi rajattu algoritmi, jossa käytännön muuntelua voi tapahtua lähinnä heuristiikkafunktion valinnassa. Alustava oletus on, että heuristisena funktiona käytetään euklidista etäisyyttä pisteiden välillä.
+JPS alkuperäiskuvaus on Harabor & Gastrienin artikkelissa (2011). JPS:ää voidaan pitää A:n optimointina nimenomaan ruudukoissa tapahtuvaan reitinhakuun, joten oletus on, että tässä tapauksessa suurimmalla osalla kartoista JPS:n pitäisi toimia tehokkaammin kuin A\*.
 
-Fringe searchin aikavaativuus on O((V+E) log(V)) ja tilavaativuus O(V), joten se on tehokkuusluokaltaan tasoa Dijkstran kanssa.
+JPS on myös riippuvainen tehokkaasta heuristisesta funktiosta. Pätevällä heuristisella funktiolla JPS on myös teoreettisesti tehokkaampi kuin A\*: sen pahimman tapauksen aikavaativuus on O(E+V).
 
-Toteutuksen lähtökohtana toimii Bjönrsson et al. (2005) artikkelin luvusta 2.3 löytyvä pseudokoodi.
-
-Tässä vaiheessa ei ollut mahdollista ajankäytön vuoksi perehtyä tarkemmin fringe searchin yksityiskohtiin, joten toteutettavan kokonaisuuden mahdollinen tarkentaminen jätetään tehtäväksi myöhemmillä harjoitusviikoilla.
+Koska JPS on nimenomaan 2D-ruudukoihin optimoitu algoritmi, siitä löytyy lukuisia selittäviä sivustoja verkosta. Yksi tällainen on esimerkiksi Zerowidthin sivustolla oleva (2014).
 
 ## Kartta
 
-Kartan kuvaamiseen on ainakin kaksi peruslähestymistapaa: kaksiulotteinen ruudukko, jossa ruutu on joko vapaa tai liikkumisen estävä, tai solmujen ja kaarten kuvaaminen niin, että kaareen liittyvä paino liitetään kaaren yhteyteen. Alustavasti tässä työssä valitaan jälkimmäinen tapa, jolloin kaarten painojen arvojoukko ei ole rajoitettu eikä sidottu sijaintiin karttamatriisissa. Solmut ja kaaret kuvataan jollain tehokkaalla tavalla taulukoiksi tai matriiseiksi.
-
-Tällaisen vapaamuotoisen kartan voi esittää ainakin kuvaamalla verkon kaaret taulukoiksi tai kuvaamalla kartan VxV-kokoisena matriisina, jossa solu (x, y) sisältää solmujen x ja y välisen etäisyyden tai nollan, jos yhteyttä ei ole. Jälkimmäinen tapa luonnollisesti nostaa algoritmin tilavaatimuksen luokkaan O(v\^2). Tässä työssä valitaan lähtökohtaisesti ensin mainittu eli kuvataan verkon kaaret sopivalla koodauksella. Tämä on tilavaativuudelta universaalisti toimivampi tapa mutta tehnee verkon visualisoinnista haastavamaa. Tarkka koodaustapa suunnitellaan myöhemmin projektin edetessä.
-
-Kartan esittämistapa pyritään validoimaan ohjaajan kanssa 2. kurssiviikolla sen varmistamiseksi, että työ lähtee toteutettavuuden ja tehokkuuden kannalta järkevään suuntaan.
+Kartan kuvaamiseen on ainakin kaksi peruslähestymistapaa: kaksiulotteinen ruudukko, jossa ruutu on joko vapaa tai liikkumisen estävä, tai solmujen ja kaarten kuvaaminen niin, että kaareen liittyvä paino liitetään kaaren yhteyteen. Tämän työn kartta toteutetaan kaksiulotteisena ruudukkona kuvattuna karttana, jossa ruudukon solut ovat aina samankokoisia ja neliön muotoisia. Näinollen yksi ruutu muodosta aina solun, josta on mahdollinen kaari kahdeksaan suuntaan. Kaaren paino suorassa vertikaalisessa tai horisontaalisesta on yksi ja vinottain siirtyessä √2.
 
 ## Toiminnallisuudet
 
@@ -64,8 +62,8 @@ Alustavat toiminnallisuudet on listattu alla Epiceinä ja Featureina. Toiminnall
         -   Tuotos: käyttöohje
 -   **Epic 2. Käyttöliittymä**
     -   *Feature 2.1 Lataa kartta*
-        -   Toiminnot: lataa kartan käyttöliittymästä, muuntaa sen sisäiseen esitysmuotoon ja visualisoi sen käyttäjälle
-        -   Tuotos: käyttöliittymä, joka pystyy lataamaan ja visualisoimaan kartan
+        -   Toiminnot: Valitsee tiedoston valintadialogin kautta, lataa kartan ja visualisoi sen. Mikäli kartta on suurempi kuin käytettävissä oleva tila näytöllä, käytetään skrollattavaa komponenttia.
+        -   Tuotos: käyttöliittymä, joka pystyy lataamaan kartan tiedostosta ja visualisoimaan kartan
     -   *Feature 2.2 Laske reitti*
         -   Toiminnot: laskee reitin valitusta alkupisteestä valittuun loppupisteeseen valitulla kartalla ja algoritmilla
         -   Tuotos: käyttöliittymä, joka pystyy suorittamaan reitin laskemisen halutuilla parametreilla
@@ -74,32 +72,31 @@ Alustavat toiminnallisuudet on listattu alla Epiceinä ja Featureina. Toiminnall
         -   Tuotos: käyttöliittymä, joka pystyy visualisoimaan reitin
     -   *Feature* 2.3 Tallenna tulokset
         -   Tuotos: käyttöliittymä, joka pystyy tallentamaan laskennan tulokset niin, että ne ovat jatkohyödynnettävissä
--   **Epic 3. Dijkstra**
-    -   *Feature 3.1 Dijkstran algoritmin perustoteutus*
+-   **Epic 3. A-star**
+    -   *Feature 3.1 A-star algoritmin perustoteutus*
         -   Toiminnot: algoritmi saa parametrina kartan sekä alku- ja loppupisteen ja laskee jollain tavoin reitin niiden välillä
         -   Tuotos: toimiva mutta ei lopullinen versio algoritmista
-    -   *Feature 3.2 Prioriteettijono ja optimointi*
+    -   *Feature 3.2 Optimointi*
         -   Toiminnot: algoritmi saa parametrina kartan sekä alku- ja loppupisteen ja laskee reitin niiden välillä
-        -   Tuotos: lopullinen versio algoritmista
--   **Epic 4. Fringe Search**
-    -   *Feature* 4.1 Fringe search perustoteutus
+        -   Tuotos: lopullinen versio algoritmista, jossa heuristinen funktio sekä ajan- ja tilankäyttö on optimoitu
+-   **Epic 4. Jump point search**
+    -   *Feature* 4.1 Algoritmin perustoteutus
         -   Tuotos: ajettavissa oleva versio algoritmista
     -   *Feature* 4.2 Fringe search viimeistely
-        -   Tuotos: lopullinen versio algoritmista
+        -   Tuotos: lopullinen versio algoritmista, jossa heuristinen funktio sekä ajan- ja tilankäyttö on optimoitu
 
 # Toteutusvälineet
 
 Toteuskieli on Java
 
 -   Java, versio 23
--   JavaFX käyttöliittymän toteutukseen
--   JUnit testaamiseen
+-   Käyttöliittymä toteutetaan Java AWT-, Java2D- ja Swing-kirjastoilla. Testaaminen tapahtuu JUnitilla..
 
 Toteutusympäristö
 
 -   Windows 11 desktop PC
--   OpenJDK 23.0 + JavaFX 23.0
--   VSCode 1.94 IDE + VSCode Extension Pack for Java (Microsoft)
+-   OpenJDK 23.0
+-   VSCode 1.94 IDE + VSCode Extension Pack for Java (Microsoft) + Maven 3.9.9
 
 Muita kieliä mahdollista harjoitustyön vertaisarviointia varten
 
@@ -109,8 +106,14 @@ Muita kieliä mahdollista harjoitustyön vertaisarviointia varten
 
 # Viitteet
 
-Dijkstra, E.W (1959). A note on two problems in connexion with graphs. *Numer. Math.* **1**, 269–271 (1959). <https://doi.org/10.1007/BF01386390>
+Peter E. Hart, Nils J. Nilsson, Bertram Raphael (1968). *A Formal Basis for the Heuristic Determination of Minimum Cost Paths*. IEEE Transactions on Systems Science and Cybernetics, Volume 4, Issue 2, pages 100-107. DOI: 10.1109/TSSC.1968.300136. Noudettu 8.11.2024 osoitteesta [https://users.cecs.anu.edu.au/\~dharabor/data/papers/harabor-grastien-aaai11.pdf](https://users.cecs.anu.edu.au/~dharabor/data/papers/harabor-grastien-aaai11.pdf)
 
-Wikipedian sisällöntuottajat (n.d.), Dijkstra's algorithm. *Wikipedia, avoin tietosanakirja.* Haettu 2.11.2024 osoitteesta <https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm>
+Harabor, D., & Grastien, A. (2011). Online Graph Pruning for Pathfinding On Grid Maps. *Proceedings of the AAAI Conference on Artificial Intelligence*, *25*(1), 1114-1119. <https://doi.org/10.1609/aaai.v25i1.7994>
 
-Björnsson, Y., Enzenberger, R., Holte, R., Shaeffer, J. (2005). Fringe Search: Beating A\* at Pathfinding on Game Maps. *Epäformaali tieteellinen artikkeli.* Noudettu osoitteesta [https://webdocs.cs.ualberta.ca/\~holte/Publications/fringe.pdf](https://webdocs.cs.ualberta.ca/~holte/Publications/fringe.pdf)
+Red Blog Games sisällöntuottajat (2014-2023), *Introduction to the A\* Algorithm.* Haettu 8.11.2024 osoitteesta <https://www.redblobgames.com/pathfinding/a-star/introduction.html>
+
+Wikipedian sisällöntuottajat (n.d.), *A\* search algorithm*. Wikipedia, avoin tietosanakirja. Haettu 8.11.2024 osoitteesta [https://en.wikipedia.org/wiki/A\*_search_algorithm](https://en.wikipedia.org/wiki/A*_search_algorithm)
+
+Red Blog Games (2015), *Improving Heuristics.* Haettu 8.11.2024 osoitteesta <https://www.redblobgames.com/pathfinding/heuristics/differential.html>
+
+Zerowidth (2015), *A Visual Explanation of Jump Point Search.* Haettu 8.11.2024 osoitteesta <https://zerowidth.com/2013/a-visual-explanation-of-jump-point-search/>
