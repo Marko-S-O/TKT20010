@@ -22,6 +22,7 @@ class DijkstraPathfinder implements Pathfinder {
             Edge[][][] edges = map.getAdjancencyList();            
             byte[][] grid = map.getGrid();
             boolean[][] handledList = new boolean[grid.length][grid[0].length];
+            Node[][] nodeList = new Node[grid.length][grid[0].length];
 
             // Init iteration
             Node currentNode = new Node(start.x, start.y);
@@ -49,7 +50,10 @@ class DijkstraPathfinder implements Pathfinder {
                 for(int i=0; i<currentNodeEdges.length; i++) {
                     Edge edge = currentNodeEdges[i];
 
-                    Node nextNode = new Node(edge.x, edge.y);
+                    Node nextNode = nodeList[edge.x][edge.y];
+                    if(nextNode == null) {
+                        nextNode = new Node(edge.x, edge.y);
+                    }
                     double newDistance = currentNode.distance + edge.weight;
                     if(newDistance < nextNode.distance) {
                         nextNode.distance = newDistance;
