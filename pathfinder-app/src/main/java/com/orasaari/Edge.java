@@ -6,11 +6,11 @@ package com.orasaari;
 class Edge {
     int x;  // x cordinate of a connecting node
     int y;  // y coordinate of a connecting node
-    double distance; // distance to a connecting node
+    double weight; // distance to a connecting node
 
-    Edge(int x, int y, double distance) {
+    Edge(int x, int y, double weight) {
         this.x = x;
         this.y = y;
-        this.distance = distance;
+        this.weight = weight;
     }
 }

@@ -3,6 +3,8 @@ package com.orasaari;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.util.List;
+import java.util.ArrayList;
 
 /** Static util class to handle map file operations */
 class MapUtil {
@@ -59,5 +61,21 @@ class MapUtil {
         return map;
         
     }
-    
+
+    /**
+     * Collect the navigation route from the nodes that 
+     * were linked in iteration.
+     */
+    static List<Node> collectRoute(Node finishNode) {
+        List<Node> route = new ArrayList<Node>();
+        route.add(finishNode);
+        Node previous = finishNode.previous;
+        while(previous != null) {
+            route.add(previous);
+            previous = previous.previous;
+        }
+        route = route.reversed();
+        return route;
+    }
+     
 }

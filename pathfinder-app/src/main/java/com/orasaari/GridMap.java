@@ -4,14 +4,19 @@
 package com.orasaari;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
 
 public class GridMap {
+
+    static final byte PIXEL_STATUS_BLOCKED = 0;
+    static final byte PIXEL_STATUS_FREE = 1;
+    static final byte PIXEL_STATUS_TRIED = 2;
+    static final byte PIXEL_STATUS_ROUTE = 3;
+    static final byte PIXEL_STATUS_ENDPOINT = 4;
 
     private byte[][] grid;
     private int width;
     private int height;
+    private Edge[][][] adjacencyList = null;
 
     GridMap(int width, int height) {
         grid = new byte[width][height];
@@ -37,11 +42,24 @@ public class GridMap {
         return grid;
     }
 
+    int getWidth() {
+        return this.width;
+    }
+
+    int getHeight() {
+        return this.height;
+    }
+
     /* 
      * Create a pre-calculated, sorted adjancency list to be used by the pathfinding algorithms.
-     * In the returned table, the first index is x in grid, second y in grid and the third the edge of node (x, y)
+     * In the returned table, the first index is the own x-coordinate of the node, second y-coordinate the third the index in the edge list of node.
     */
     Edge[][][] getAdjancencyList() {
+
+        // Ensure that this is calculated only once
+        if(adjacencyList != null) {
+            return adjacencyList;
+        }
 
         long startTime = System.currentTimeMillis();
 
@@ -80,7 +98,10 @@ public class GridMap {
                 edges[i][j] = list.toArray(new Edge[0]);
             }
         }
+
         System.out.println("calculating edges took " + (System.currentTimeMillis() - startTime) + " ms" );
+
+        this.adjacencyList = edges;
         return edges;
 
     }
