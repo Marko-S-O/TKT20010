@@ -21,93 +21,9 @@ class DijkstraPathfinder implements Pathfinder {
     }
 
     /**
-     * Implement the interface method to find the shortest path from the point start to point end.
-     */
-    public Result navigate(GridMap map, Point start, Point finish, boolean usePrecalculculatedEdges) {
-        return usePrecalculculatedEdges ? navigatePrecalculatedEdges(map, start, finish) : navigateWithoutPrecalculatedEdges(map, start, finish);
-    }
-
-    /**
-     * Implement the pathfinder so that all the edges are calculated firts before iterating the route. This is slow and 
-     * not supposed to be used except for testing and benchmarking purposes.
+     * Implement the pathfinding algoritm.
     */
-
-    private Result navigatePrecalculatedEdges(GridMap map, Point start, Point finish) {
-            
-        System.out.println("DijstraPathfinder.navigate, start: " + start + ", finish: " + finish);
-
-        long startTime = System.currentTimeMillis();
-
-        // Init heap
-        PriorityQueue<Node> heap = new PriorityQueue<Node>(new NodeComparator());
-
-        Edge[][][] edges = map.getAdjancencyList();            
-        byte[][] grid = map.getGrid();
-        boolean[][] handledList = new boolean[grid.length][grid[0].length];
-        Node[][] nodeList = new Node[grid.length][grid[0].length];
-
-        // Init iteration
-        Node currentNode = new Node(start.x, start.y);
-        currentNode.distance = 0;
-        heap.add(currentNode);           
-        int numeOfEvaluatedNodes = 0;
-
-        // Execute iteration
-        while(!heap.isEmpty()) {
-
-            currentNode = heap.poll();
-
-            // We are only calculating the the route so we can finish when in the end node
-            if(currentNode.x == finish.x && currentNode.y == finish.y) {
-                break;
-            }
-
-            // check, if the current node is in the handled list
-            if(handledList[currentNode.x][currentNode.y]) {
-                continue;
-            }
-            handledList[currentNode.x][currentNode.y] = true;
-            numeOfEvaluatedNodes++;
-
-            // Iterate over edges of the current node
-            Edge[] currentNodeEdges = edges[currentNode.x][currentNode.y];
-            for(int i=0; i<currentNodeEdges.length; i++) {
-                Edge edge = currentNodeEdges[i];
-
-                Node nextNode = nodeList[edge.x][edge.y];
-                if(nextNode == null) {
-                    nextNode = new Node(edge.x, edge.y);
-                    nodeList[edge.x][edge.y] = nextNode;
-                }
-                double newDistance = currentNode.distance + edge.weight;
-                if(newDistance < nextNode.distance) {
-                    nextNode.distance = newDistance;
-                    heap.add(nextNode);
-                    nextNode.previous = currentNode;
-                }
-            }
-        }
-
-        long finishTime = System.currentTimeMillis();
-
-        // Finished with the search. See if we succeedede finding the route.
-        // If yes, reconstruct the route to be viewed in the UI.
-        if(currentNode.x == finish.x && currentNode.y == finish.y) {
-            System.out.println("Found the route: " + currentNode.distance);
-            Result result = MapUtil.collectResults(currentNode, startTime, finishTime, numeOfEvaluatedNodes, MapUtil.ALGORITHM_DIJKSTRA, true);
-            return result;
-        } else {
-            System.out.println("Did not find the route. Last searched node: (" + currentNode.x + ", " + currentNode.y + ")");
-            Result result = MapUtil.collectResults(currentNode, startTime, finishTime, numeOfEvaluatedNodes, MapUtil.ALGORITHM_DIJKSTRA, false);
-            return result;
-        }
-    }    
-
-    /**
-     * Implement the pathfinding alforitm without using pre-calculated edges. Edges to neighboring eight pixels
-     * are evaluated on the fly.
-    */
-    public Result navigateWithoutPrecalculatedEdges(GridMap map, Point start, Point finish) {
+    public Result navigate(GridMap map, Point start , Point finish) {
             
         System.out.println("DijstraPathfinder.navigate, start: " + start + ", finish: " + finish);
 
@@ -121,6 +37,7 @@ class DijkstraPathfinder implements Pathfinder {
         boolean[][] handledList = new boolean[grid.length][grid[0].length];
         Node[][] nodeList = new Node[grid.length][grid[0].length];
         Node currentNode = new Node(start.x, start.y);
+        nodeList[start.x][start.y] = currentNode;
         currentNode.distance = 0;
         heap.add(currentNode);           
         int numeOfEvaluatedNodes = 0;

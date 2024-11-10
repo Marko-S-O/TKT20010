@@ -4,6 +4,6 @@ import java.awt.Point;
 
 interface Pathfinder {
 
-    abstract Result navigate(GridMap map, Point start , Point finish, boolean usePrecalculculatedEdges);
+    abstract Result navigate(GridMap map, Point start , Point finish);
 
 }

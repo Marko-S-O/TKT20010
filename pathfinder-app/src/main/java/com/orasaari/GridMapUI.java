@@ -44,7 +44,6 @@ public class GridMapUI extends JFrame implements ActionListener, DocumentListene
     private JButton btnSelectFile, btnLoadMap, btnFindPath;
     private JTextField tfFilename, tfStartX, tfStartY, tfFinishX, tfFinishY;
     private JLabel lblResultHeader, lblStatus, lblAlgorithm, lblStartTime, lblFinishTime, lblDuration, lblPathLenght, lblNodesEvaluated;
-    private JCheckBox cbPrecalculateEdges;
 
     GridMapUI() {
         setLayout(new BorderLayout());
@@ -97,7 +96,6 @@ public class GridMapUI extends JFrame implements ActionListener, DocumentListene
         pnlRun.add(jbDijstra = new JRadioButton("Dijstra", false));
         pnlRun.add(jbAstra = new JRadioButton("A-Star", false));
         pnlRun.add(jbJps = new JRadioButton("JPS", false));
-        pnlRun.add(cbPrecalculateEdges = new JCheckBox("Precalculate Adjacency List    "));
         ButtonGroup bg = new ButtonGroup();
         bg.add(jbDijstra);
         bg.add(jbAstra);
@@ -201,8 +199,7 @@ public class GridMapUI extends JFrame implements ActionListener, DocumentListene
             int finishY = Integer.parseInt(tfFinishY.getText().trim());
             Point starPoint = new Point(startX, startY);
             Point finishPoint = new Point(finishX, finishY);            
-            boolean userPrecalucatedEdges = cbPrecalculateEdges.isSelected();
-            Result result = finder.navigate(this.map, starPoint, finishPoint, userPrecalucatedEdges);
+            Result result = finder.navigate(this.map, starPoint, finishPoint);
             view.paintPath(result.path);
             showResult(result);
         } catch(Exception ex) {
