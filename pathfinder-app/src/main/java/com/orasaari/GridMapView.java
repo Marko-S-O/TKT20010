@@ -12,7 +12,8 @@ import java.util.List;
 /** A class representing a graphical view to a grid map */
 class GridMapView extends JPanel {
 
-    private static final int PIXEL_SIZE = 3; // number of physical pixels on the screen used to represent a pixel in a map
+    private static final int PIXEL_SIZE = 2; // number of physical pixels on the screen used to represent a pixel in a map
+
     private static final Color COLOR_BLOCKED = Color.black;
     private static final Color COLOR_FREE = Color.white;
     private static final Color COLOR_TRIED = Color.gray;
@@ -65,8 +66,8 @@ class GridMapView extends JPanel {
         repaint();
     }
 
-    void paintRoute(List<Node> route) {
-        Iterator<Node> iter = route.iterator();
+    void paintPath(List<Node> path) {
+        Iterator<Node> iter = path.iterator();
         while(iter.hasNext()) {
             Node node = iter.next();
             grid[node.x][node.y] = GridMap.PIXEL_STATUS_ROUTE;
@@ -90,7 +91,7 @@ class GridMapView extends JPanel {
 
     @Override
     public Dimension getPreferredSize() {
-        return new Dimension(grid[0].length * PIXEL_SIZE, grid.length * PIXEL_SIZE);
+        return new Dimension(grid.length * PIXEL_SIZE, grid[0].length * PIXEL_SIZE);
     }
 
 }

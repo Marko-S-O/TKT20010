@@ -9,7 +9,10 @@ import java.util.ArrayList;
 /** Static util class to handle map file operations */
 class MapUtil {
 
-    static final double sqrt2 = Math.sqrt(2.0);
+    static final double SQRT2 = Math.sqrt(2.0);
+    static final int ALGORITHM_DIJKSTRA = 0;
+    static final String[] ALGORITHM_NAMES = {"Dijkstra"};
+    static final int GRID_BLOCKED = 0;
 
     /** 
      * Load a .map type file. 
@@ -63,19 +66,36 @@ class MapUtil {
     }
 
     /**
-     * Collect the navigation route from the nodes that 
-     * were linked in iteration.
+     * Collect the result of pathfinding, including navigation route from the nodes that were linked in iteration.
      */
-    static List<Node> collectRoute(Node finishNode) {
-        List<Node> route = new ArrayList<Node>();
-        route.add(finishNode);
+    static Result collectResults(Node finishNode, long startTime, long finishTime, int numeOfEvaluatedNodes, int algorithm, boolean success) {
+
+        Result result = new Result();
+
+        List<Node> path = new ArrayList<Node>();
+        path.add(finishNode);
+        int numOfPathNodes = 1;
+        double distance = finishNode.distance;
         Node previous = finishNode.previous;
+
         while(previous != null) {
-            route.add(previous);
+            numOfPathNodes += 1;
+            path.add(previous);
             previous = previous.previous;
         }
-        route = route.reversed();
-        return route;
+        path = path.reversed();
+        result.path = path;
+        result.numOfPathNodes = numOfPathNodes;
+
+        result.startTime = startTime;
+        result.finishTime = finishTime;
+        result.duration = finishTime - startTime;
+        result.numeOfEvaluatedNodes = numeOfEvaluatedNodes;
+        result.algorithm = algorithm;
+        result.distance = distance;
+        result.success = success;
+        
+        return result;
     }
      
 }

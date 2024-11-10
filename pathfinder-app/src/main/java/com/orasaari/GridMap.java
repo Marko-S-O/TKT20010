@@ -65,36 +65,51 @@ public class GridMap {
 
         Edge[][][] edges = new Edge[width][height][];
 
-        // This can be optimized a bit by handling edges of the grid separately and running
-        // loops from 1 to widht-1/height-1. However, this is left to be done if this is a part
-        // of the final solution.
+
         for(int i=0; i<this.width; i++) {
             for(int j=0; j<this.height; j++) {
                 ArrayList<Edge> list = new ArrayList<Edge>(8);
-                if(i>0 && grid[i-1][j] == 1) {
+
+                // edge straight to the left
+                if(i>0 && grid[i-1][j] != 0) {
                     list.add(new Edge(i-1, j, 1));
                 }
-                if(i<width-1 && grid[i+1][j] == 1) {
+
+                // edge to the right
+                if(i<width-1 && grid[i+1][j] != 0) {
                     list.add(new Edge(i+1, j, 1));
                 }
-                if(j>0 && grid[i][j-1] == 1) {
+
+                // upwards
+                if(j>0 && grid[i][j-1] != 0) {
                     list.add(new Edge(i, j-1, 1));
                 }
-                if(j<height-1 && grid[i][j+1] == 1) {
+
+                // downwards
+                if(j<height-1 && grid[i][j+1] != 0) {
                     list.add(new Edge(i, j+1, 1));
                 }
-                if(i>0 && j>0 && grid[i-1][j-1] == 1) {
-                    list.add(new Edge(i-1, j-1, MapUtil.sqrt2));
+
+                // left-up
+                if(i>0 && j>0 && grid[i-1][j-1] != 0) {
+                    list.add(new Edge(i-1, j-1, MapUtil.SQRT2));
                 }
-                if(i<width-1 && j>0 && grid[i+1][j-1] == 1) {
-                    list.add(new Edge(i+1, j-1, MapUtil.sqrt2));
+
+                // right-up
+                if(i<width-1 && j>0 && grid[i+1][j-1] != 0) {
+                    list.add(new Edge(i+1, j-1, MapUtil.SQRT2));
                 }
-                if(i>0 && j<height-1 && grid[i-1][j+1] == 1) {
-                    list.add(new Edge(i-1, j+1, MapUtil.sqrt2));
+
+                // left-down
+                if(i>0 && j<height-1 && grid[i-1][j+1] != 0) {
+                    list.add(new Edge(i-1, j+1, MapUtil.SQRT2));
                 }
-                if(i<width-1 && j<height-1 && grid[i+1][j+1] == 1) {
-                    list.add(new Edge(i+1, j+1, MapUtil.sqrt2));
+
+                // right-down
+                if(i<width-1 && j<height-1 && grid[i+1][j+1] != 0) {
+                    list.add(new Edge(i+1, j+1, MapUtil.SQRT2));
                 }
+
                 edges[i][j] = list.toArray(new Edge[0]);
             }
         }
