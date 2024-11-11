@@ -13,8 +13,6 @@ class DijkstraPathfinder implements Pathfinder {
     private static final int[][] MOVES = {{-1,0}, {1,0}, {0,-1}, {0,1}, {-1,-1}, {1,1}, {-1,1}, {1,-1}};
     private static final double[] WEIGHTS = {1, 1, 1, 1, MapUtil.SQRT2, MapUtil.SQRT2, MapUtil.SQRT2, MapUtil.SQRT2};
 
-    private boolean[][] grid;
-
     private class NodeComparator implements Comparator<Node> {
         @Override
         public int compare(Node n1, Node n2) {
@@ -35,8 +33,7 @@ class DijkstraPathfinder implements Pathfinder {
         PriorityQueue<Node> heap = new PriorityQueue<Node>(new NodeComparator());
 
         // Initialize iteration
-        this.grid = map.getGrid(); 
-        //boolean[][] handledList = new boolean[grid.length][grid[0].length];
+        boolean[][] grid = map.getGrid(); 
         Node[][] nodeList = new Node[grid.length][grid[0].length];
         Node currentNode = new Node(start.x, start.y);
         nodeList[start.x][start.y] = currentNode;
@@ -58,7 +55,7 @@ class DijkstraPathfinder implements Pathfinder {
             if(currentNode.handled) {
                 continue;
             }
-            
+
             currentNode.handled = true;
             numeOfEvaluatedNodes++;
 
