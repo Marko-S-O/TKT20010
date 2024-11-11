@@ -1,4 +1,5 @@
 package com.orasaari;
+
 public class Node {
 
     int x;

@@ -25,18 +25,14 @@ import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.WindowConstants;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 
 /** 
  * The main class to run pathfinding algorithms.
  * The entry point to the application.
 */
-public class GridMapUI extends JFrame implements ActionListener, DocumentListener {
+public class GridMapUI extends JFrame implements ActionListener {
   
     private static final Font HEADER_FONT = new Font("Verdana", Font.BOLD, 20);
-    private static final Font BOLD_FONT = new Font("Verdana", Font.BOLD, 16);
-    private static final Font NORMAL_FONT = new Font("Verdana", Font.PLAIN, 16);
     private static final SimpleDateFormat TIMESTAMP_FORMAT = new SimpleDateFormat("dd.MM.yyyy HH:mm");
 
     private GridMapView view;
@@ -50,7 +46,7 @@ public class GridMapUI extends JFrame implements ActionListener, DocumentListene
         view = new GridMapView(new GridMap(1024, 1024));
 
         JScrollPane scp = new JScrollPane(view);
-        Dimension d = new Dimension(1600, 1200);
+        Dimension d = new Dimension(2200, 1250);
         scp.setPreferredSize(d);
         scp.setMinimumSize(d);
         add(scp, BorderLayout.CENTER);        
@@ -60,7 +56,7 @@ public class GridMapUI extends JFrame implements ActionListener, DocumentListene
         setTitle("Pathfinder UI v. 0.1");
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         pack();
-        setLocation(250,10);
+        setLocation(50,5);
         setVisible(true);
     }
 
@@ -230,6 +226,7 @@ public class GridMapUI extends JFrame implements ActionListener, DocumentListene
         }
     }
 
+    /*
     private void checkCoordinates() {
         try {
             int startX = Integer.parseInt(tfStartX.getText().trim());
@@ -251,6 +248,7 @@ public class GridMapUI extends JFrame implements ActionListener, DocumentListene
         }        
     }
 
+
     @Override
     public void insertUpdate(DocumentEvent e) {
         checkCoordinates();        
@@ -265,13 +263,14 @@ public class GridMapUI extends JFrame implements ActionListener, DocumentListene
     public void changedUpdate(DocumentEvent e) {
         checkCoordinates();
     }
+    */
 
     public static void main(String[] args) {
-        GridMap map = new GridMap(1000,  600);
-        map.randomize(0.3);
+        //GridMap map = new GridMap(1000,  600);
+        //map.randomize(0.3);
         
         GridMapUI ui = new GridMapUI();
-        ui.setMap(map);
+        //ui.setMap(map);
         //Edge[][][] edges = map.getAdjancencyList();
         //System.out.println(edges[0]);
     }

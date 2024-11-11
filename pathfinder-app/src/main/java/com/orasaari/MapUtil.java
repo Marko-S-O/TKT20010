@@ -28,14 +28,12 @@ class MapUtil {
             int width = Integer.parseInt(line3.substring(line3.indexOf(' ')+1));
             reader.readLine(); // skip the map header ("map")
 
-            byte[][] grid = new byte[width][height];
+            boolean[][] grid = new boolean[width][height];
             String line;
             int j = 0;
             while((line = reader.readLine()) != null) {
                 for(int i=0; i<line.length(); i++) {
-                    if(line.charAt(i) == '.') {
-                        grid[i][j] = (byte)1;
-                    }
+                    grid[i][j] = line.charAt(i) == '.';
                 }
                 j++;
             }
