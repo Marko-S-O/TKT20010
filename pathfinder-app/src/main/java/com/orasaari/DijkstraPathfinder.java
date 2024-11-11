@@ -5,8 +5,7 @@ import java.util.Comparator;
 import java.util.PriorityQueue;
 
 /**
- * Implementation of Dijkstra algorith. There are two versions: the first one re-calculates the edges before iterating the route, 
- * the second one evaluates neighboring pixels on the fly. The second one seems to be performing significantly better with any tried map.
+ * Implementation of Dijkstra algorith. 
  */
 class DijkstraPathfinder implements Pathfinder {
 
