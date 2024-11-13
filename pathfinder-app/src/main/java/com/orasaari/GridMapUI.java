@@ -4,24 +4,23 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
-import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.swing.BoxLayout;
-import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.WindowConstants;
@@ -32,26 +31,91 @@ import javax.swing.WindowConstants;
 */
 public class GridMapUI extends JFrame implements ActionListener {
   
-    private static final Font HEADER_FONT = new Font("Verdana", Font.BOLD, 20);
+    private static final Font HEADER_FONT = new Font("Verdana", Font.BOLD, 17);
     private static final SimpleDateFormat TIMESTAMP_FORMAT = new SimpleDateFormat("dd.MM.yyyy HH:mm");
 
     private GridMapView view;
     private GridMap map;
     private JButton btnSelectFile, btnLoadMap, btnFindPath;
     private JTextField tfFilename, tfStartX, tfStartY, tfFinishX, tfFinishY;
-    private JLabel lblResultHeader, lblStatus, lblAlgorithm, lblStartTime, lblFinishTime, lblDuration, lblPathLenght, lblNodesEvaluated;
+    private JCheckBox cbDijkstra, cbAstar, cbJPS;
+    private ResultPanel pnlResultsDisjkstra, pnlResultsAstar, pnlResultsJPS;
+
+    /**
+     * A private class to show a single result. One of these is created for each of the algorithms and embedded in the right side of the UI.
+     */
+    private class ResultPanel extends JPanel {
+
+        private JLabel lblResultHeader, lblStatus, lblAlgorithm, lblStartTime, lblFinishTime, lblDuration, lblPathLenght, lblNodesEvaluated;
+
+        private ResultPanel(String algorith) {
+ 
+            setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+            add(new JLabel(" "));
+            add(new JLabel(" "));
+            JPanel pnl1 = new JPanel(new FlowLayout());
+            pnl1.add(lblResultHeader = new JLabel(algorith + " result  "));
+            lblResultHeader.setFont(HEADER_FONT);
+            JPanel pnl2 = new JPanel(new FlowLayout(FlowLayout.LEFT));
+            pnl2.add(new JLabel("Status: "));
+            pnl2.add(lblStatus = new JLabel("                                  "));
+
+            JPanel pnl3 = new JPanel(new FlowLayout(FlowLayout.LEFT));        
+            pnl3.add(new JLabel("Alogorithm: "));
+            pnl3.add(lblAlgorithm = new JLabel("                                  "));
+            JPanel pnl4 = new JPanel(new FlowLayout(FlowLayout.LEFT));
+            pnl4.add(new JLabel("Start time: "));
+            pnl4.add(lblStartTime = new JLabel("                             "));
+            JPanel pnl5 = new JPanel(new FlowLayout(FlowLayout.LEFT));
+            pnl5.add(new JLabel("Finish time: "));
+            pnl5.add(lblFinishTime = new JLabel("                             "));
+            JPanel pnl6 = new JPanel(new FlowLayout(FlowLayout.LEFT));
+            pnl6.add(new JLabel("Time used: "));
+            pnl6.add(lblDuration = new JLabel("                              "));        
+            JPanel pnl7 = new JPanel(new FlowLayout(FlowLayout.LEFT));        
+            pnl7.add(new JLabel("Path lenght: "));
+            pnl7.add(lblPathLenght = new JLabel("                              "));  
+            JPanel pnl8 = new JPanel(new FlowLayout(FlowLayout.LEFT));        
+            pnl8.add(new JLabel("Nodes visited: "));
+            pnl8.add(lblNodesEvaluated = new JLabel("                              "));        
+            add(pnl1);
+            add(pnl2);        
+            add(pnl3);
+            add(pnl4);
+            add(pnl5);
+            add(pnl6);
+            add(pnl7);
+            add(pnl8);
+            pack();
+        }
+
+        private void showResult(Result result) {
+            if(result != null) {
+                lblStatus.setText(result.success ? "Success" : "Failed");
+                lblAlgorithm.setText(MapUtil.ALGORITHM_NAMES[result.algorithm]);
+                lblStartTime.setText(TIMESTAMP_FORMAT.format(new Date(result.startTime)));
+                lblFinishTime.setText(TIMESTAMP_FORMAT.format(new Date(result.finishTime)));
+                lblDuration.setText(result.duration + " ms");        
+                lblPathLenght.setText(String.format("%,.2f", result.distance));
+                lblNodesEvaluated.setText("" + result.numeOfEvaluatedNodes);
+            } else {
+                System.out.println("showResult() can't view result: result is null");
+            }
+        }
+    }
+
 
     GridMapUI() {
         setLayout(new BorderLayout());
         view = new GridMapView(new GridMap(1024, 1024));
 
         JScrollPane scp = new JScrollPane(view);
-        Dimension d = new Dimension(2200, 1250);
+        Dimension d = new Dimension(1200, 800);
         scp.setPreferredSize(d);
         scp.setMinimumSize(d);
         add(scp, BorderLayout.CENTER);        
         add(getControlPanel(), BorderLayout.SOUTH);
-        add(getResultPanel(), BorderLayout.EAST);
+        add(getResultPanels(), BorderLayout.EAST);
 
         setTitle("Pathfinder UI v. 0.1");
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -88,14 +152,9 @@ public class GridMapUI extends JFrame implements ActionListener {
     */
     private JPanel getRunPanel() {
         JPanel pnlRun = new JPanel();
-        JRadioButton jbDijstra, jbAstra, jbJps;
-        pnlRun.add(jbDijstra = new JRadioButton("Dijstra", false));
-        pnlRun.add(jbAstra = new JRadioButton("A-Star", false));
-        pnlRun.add(jbJps = new JRadioButton("JPS", false));
-        ButtonGroup bg = new ButtonGroup();
-        bg.add(jbDijstra);
-        bg.add(jbAstra);
-        bg.add(jbJps);
+        pnlRun.add(cbDijkstra = new JCheckBox("Dijstra", false));
+        pnlRun.add(cbAstar = new JCheckBox("A-Star", false));
+        pnlRun.add(cbJPS = new JCheckBox("JPS", false));
         pnlRun.add(new JLabel("        "));
         pnlRun.add(new JCheckBox("Visualize Progress    "));
         pnlRun.add(btnFindPath = new JButton("           Find Path           "));
@@ -121,44 +180,16 @@ public class GridMapUI extends JFrame implements ActionListener {
     /** 
      * Construct the panel showing the result after pathfinding.
     */
-    private JPanel getResultPanel() {
-        JPanel pnlResult = new JPanel(new GridBagLayout());
-        JPanel pnlInner = new JPanel();
-        pnlInner.setLayout(new BoxLayout(pnlInner, BoxLayout.Y_AXIS));
-        JPanel pnl1 = new JPanel();
-        pnl1.add(lblResultHeader = new JLabel(" Pahtfinding result  "));
-        JPanel pnl2 = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        pnl2.add(new JLabel("Status: "));
-        pnl2.add(lblStatus = new JLabel("                                  "));
-        lblResultHeader.setFont(HEADER_FONT);
-        JPanel pnl3 = new JPanel(new FlowLayout(FlowLayout.LEFT));        
-        pnl3.add(new JLabel("Alogorithm: "));
-        pnl3.add(lblAlgorithm = new JLabel("                                  "));
-        JPanel pnl4 = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        pnl4.add(new JLabel("Start time: "));
-        pnl4.add(lblStartTime = new JLabel("                             "));
-        JPanel pnl5 = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        pnl5.add(new JLabel("Finishing time: "));
-        pnl5.add(lblFinishTime = new JLabel("                             "));
-        JPanel pnl6 = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        pnl6.add(new JLabel("Time used: "));
-        pnl6.add(lblDuration = new JLabel("                              "));        
-        JPanel pnl7 = new JPanel(new FlowLayout(FlowLayout.LEFT));        
-        pnl7.add(new JLabel("Path lenght: "));
-        pnl7.add(lblPathLenght = new JLabel("                              "));  
-        JPanel pnl8 = new JPanel(new FlowLayout(FlowLayout.LEFT));        
-        pnl8.add(new JLabel("Nodes visited: "));
-        pnl8.add(lblNodesEvaluated = new JLabel("                              "));        
-        pnlInner.add(pnl1);
-        pnlInner.add(pnl2);        
-        pnlInner.add(pnl3);
-        pnlInner.add(pnl4);
-        pnlInner.add(pnl5);
-        pnlInner.add(pnl6);
-        pnlInner.add(pnl7);
-        pnlInner.add(pnl8);
-        pnlResult.add(pnlInner);
-        return pnlResult;
+    private JPanel getResultPanels() {
+
+        JPanel pnlResults = new JPanel();
+        pnlResults.setLayout(new BoxLayout(pnlResults, BoxLayout.Y_AXIS));
+        pnlResults.add(pnlResultsDisjkstra = new ResultPanel("Dijkstra"));
+        pnlResults.add(pnlResultsAstar = new ResultPanel("A-Star"));
+        pnlResults.add(pnlResultsJPS = new ResultPanel("JPS"));
+
+        return pnlResults;
+
     }
 
     void setMap(GridMap map) {
@@ -185,9 +216,27 @@ public class GridMapUI extends JFrame implements ActionListener {
         setMap(map);
     }
 
-    private void findPath() {
+    /**
+     * Execute pathfinding with given algorithm
+     * 
+     * @param algorith algorithm to be used, code values defined in MapUtil
+     * 
+     * @return  results object wrapping necessary return information
+    */
+    private Result findPath(int algorith) {
+
+        System.out.println("findPath(" + algorith + ")");
+
         // Temporarily work with Dijkstra only while developing the algorithm
-        Pathfinder finder = new DijkstraPathfinder();
+        Pathfinder finder;
+        if(algorith == MapUtil.ALGORITHM_DIJKSTRA) {
+            finder = new DijkstraPathfinder();
+        } else if(algorith == MapUtil.ALGORITHM_ASTAR) {
+            finder = new AStartPathfinder();
+        } else {
+            finder = new JPSPathfinder2();
+        }
+
         try {
             int startX = Integer.parseInt(tfStartX.getText().trim());
             int startY = Integer.parseInt(tfStartY.getText().trim());
@@ -196,23 +245,43 @@ public class GridMapUI extends JFrame implements ActionListener {
             Point starPoint = new Point(startX, startY);
             Point finishPoint = new Point(finishX, finishY);            
             Result result = finder.navigate(this.map, starPoint, finishPoint);
-            view.paintPath(result.path);
-            showResult(result);
+            return result;            
         } catch(Exception ex) {
-            System.out.println(ex.getMessage());
+            ex.printStackTrace();
+            return null;
         }
     }
 
-    private void showResult(Result result) {
-        lblStatus.setText(result.success ? "Success" : "Failed");
-        lblAlgorithm.setText(MapUtil.ALGORITHM_NAMES[result.algorithm]);
-        lblStartTime.setText(TIMESTAMP_FORMAT.format(new Date(result.startTime)));
-        lblFinishTime.setText(TIMESTAMP_FORMAT.format(new Date(result.finishTime)));
-        lblDuration.setText(result.duration + " ms");        
-        lblPathLenght.setText(String.format("%,.2f", result.distance));
-        lblNodesEvaluated.setText("" + result.numeOfEvaluatedNodes);
-    }
+    /**
+     * Find paths and show results.
+     */
+    private void findAllPaths() {
 
+        List<List<Node>> paths = new ArrayList<>(3);
+
+        if(cbDijkstra.isSelected()) {
+            System.out.print("find Dijkstra");
+            Result result = findPath(MapUtil.ALGORITHM_DIJKSTRA);
+            pnlResultsDisjkstra.showResult(result);
+            paths.add(result.path);
+        }
+
+        if(cbAstar.isSelected()) {
+            System.out.print("find A*");
+            Result result = findPath(MapUtil.ALGORITHM_ASTAR);
+            pnlResultsAstar.showResult(result);
+            paths.add(result.path);
+        }
+
+        if(cbJPS.isSelected()) {
+            System.out.print("find JPS");
+            Result result = findPath(MapUtil.ALGORITHM_JPS);
+            pnlResultsJPS.showResult(result);
+            paths.add(result.path);
+        }
+        view.paintPaths(paths);
+
+    }
 
     @Override
     public void actionPerformed(ActionEvent e) {
@@ -221,57 +290,11 @@ public class GridMapUI extends JFrame implements ActionListener {
         } else if(e.getSource() == btnLoadMap) {
             loadMap();
         } else if(e.getSource() == btnFindPath) {
-            findPath();
-
+            findAllPaths();
         }
     }
-
-    /*
-    private void checkCoordinates() {
-        try {
-            int startX = Integer.parseInt(tfStartX.getText().trim());
-            int startY = Integer.parseInt(tfStartY.getText().trim());
-            if(startX < map.getWidth() && startY < map.getHeight()) {
-                view.paintPixel(startX, startY, GridMap.PIXEL_STATUS_ENDPOINT);
-            }
-        } catch(Exception e) {
-            System.out.println(e.getMessage());
-        }
-        try {
-            int finishX = Integer.parseInt(tfFinishX.getText().trim());
-            int finishY = Integer.parseInt(tfFinishY.getText().trim());
-            if(finishX < map.getWidth() && finishY < map.getHeight()) {
-                view.paintPixel(finishX, finishY, GridMap.PIXEL_STATUS_ENDPOINT);
-            }
-        } catch(Exception e) {
-            System.out.println(e.getMessage());
-        }        
-    }
-
-
-    @Override
-    public void insertUpdate(DocumentEvent e) {
-        checkCoordinates();        
-    }
-
-    @Override
-    public void removeUpdate(DocumentEvent e) {
-        checkCoordinates();
-    }
-
-    @Override
-    public void changedUpdate(DocumentEvent e) {
-        checkCoordinates();
-    }
-    */
 
     public static void main(String[] args) {
-        //GridMap map = new GridMap(1000,  600);
-        //map.randomize(0.3);
-        
-        GridMapUI ui = new GridMapUI();
-        //ui.setMap(map);
-        //Edge[][][] edges = map.getAdjancencyList();
-        //System.out.println(edges[0]);
+        new GridMapUI();
     }
 }

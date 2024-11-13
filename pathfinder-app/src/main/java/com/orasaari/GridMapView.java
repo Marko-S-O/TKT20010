@@ -6,22 +6,22 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.util.Iterator;
 import java.util.List;
 
 /** A class representing a graphical view to a grid map */
 class GridMapView extends JPanel {
 
-    private static final int PIXEL_SIZE = 2; // number of physical pixels on the screen used to represent a pixel in a map
+    private static final int PIXEL_SIZE = 3; // number of physical pixels on the screen used to represent a pixel in a map
 
     private static final Color COLOR_BLOCKED = Color.black;
     private static final Color COLOR_FREE = Color.white;
-    private static final Color COLOR_PATH = Color.red;
+    private static final Color COLOR_JUMP = Color.red;
+    private static final Color[] PATH_COLORS = {Color.blue, Color.green, Color.pink};
 
     //private GridMap map; // grid map (abstract map, not graphical presentation canvas)
     private boolean[][] grid; 
     private int x0, y0, x1, y1; // Limits of the rectangle to be re-drawn
-    private List<Node> path = null;
+    private List<List<Node>> paths = null;
     
     GridMapView(GridMap map) {
         setMap(map);
@@ -39,7 +39,7 @@ class GridMapView extends JPanel {
 
     /** Paint full grid */
     void paintGrid() {
-        this.path = null;
+        this.paths = null;
         this.x0 = 0;
         this.y0 = 0;
         this.x1 = grid.length;
@@ -47,12 +47,12 @@ class GridMapView extends JPanel {
         repaint();
     }
 
-    void paintPath(List<Node> path) {
+    void paintPaths(List<List<Node>> paths) {
         this.x0 = 0;
         this.y0 = 0;
         this.x1 = grid.length;
         this.y1 = grid[0].length;  
-        this.path = path;
+        this.paths = paths;
         repaint();
     }
 
@@ -68,13 +68,14 @@ class GridMapView extends JPanel {
             }
         }
 
-        if(path != null) {
-            g2d.setColor(COLOR_PATH);
-            Iterator<Node> iter = path.iterator();
-            while(iter.hasNext()) {
-                Node node = iter.next();
-                g2d.fillRect(node.x * PIXEL_SIZE, node.y * PIXEL_SIZE, PIXEL_SIZE, PIXEL_SIZE);
-
+        if(paths != null) {
+            int i = 0;
+            for(List<Node> path : paths) {
+                for(Node node : path) {   
+                    g2d.setColor(node.jumpPassthrough ? COLOR_JUMP : PATH_COLORS[i]);                 
+                    g2d.fillRect(node.x * PIXEL_SIZE, node.y * PIXEL_SIZE, PIXEL_SIZE, PIXEL_SIZE);
+                }
+                i++;
             }
         }
     }

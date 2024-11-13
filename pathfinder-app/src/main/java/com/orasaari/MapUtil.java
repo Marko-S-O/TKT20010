@@ -11,7 +11,9 @@ class MapUtil {
 
     static final double SQRT2 = Math.sqrt(2.0);
     static final int ALGORITHM_DIJKSTRA = 0;
-    static final String[] ALGORITHM_NAMES = {"Dijkstra"};
+    static final int ALGORITHM_ASTAR = 1;
+    static final int ALGORITHM_JPS = 2;
+    static final String[] ALGORITHM_NAMES = {"Dijkstra", "A-Star", "JPS"};
     static final int GRID_BLOCKED = 0;
 
     /** 
@@ -74,12 +76,38 @@ class MapUtil {
         path.add(finishNode);
         int numOfPathNodes = 1;
         double distance = finishNode.distance;
-        Node previous = finishNode.previous;
+        Node nextNode = finishNode;
+        Node previousNode = finishNode.previous;
 
-        while(previous != null) {
+        while(previousNode != null) {
             numOfPathNodes += 1;
-            path.add(previous);
-            previous = previous.previous;
+
+            //System.out.println("numOfPathNodes: " + numOfPathNodes);
+            //System.out.println("previous: " + previous.x + ", " + previous.y);
+
+            // Check if there is a jump created by JPS on the path
+            int deltaX = nextNode.x - previousNode.x;
+            int deltaY = nextNode.y - previousNode.y;
+            if(deltaX > 1 || deltaY > 1) {
+
+                // fill the pixels between the jump end and start points
+                int directionX = deltaX > 0 ? -1: (deltaX == 0 ? 0 : 1);
+                int directiony = deltaY > 0 ? -1 : (deltaY == 0 ? 0 : 1);
+
+                int middleNodeX = nextNode.x + directionX;
+                int middleNodeY  = nextNode.y + directiony;
+                while(! (middleNodeX==previousNode.x && middleNodeY==previousNode.y) ) {
+                    Node middleNode = new Node(middleNodeX, middleNodeY);
+                    middleNode.jumpPassthrough = true;
+                    middleNodeX = middleNodeX + directionX;
+                    middleNodeY  = middleNodeY + directiony;
+                    path.add(middleNode);
+                }
+            }
+            
+            path.add(previousNode);
+            nextNode = previousNode;
+            previousNode = previousNode.previous;
         }
         path = path.reversed();
         result.path = path;
@@ -94,6 +122,22 @@ class MapUtil {
         result.success = success;
         
         return result;
+    }
+
+    /**
+     * Calculate octile distance between points (x0, y0) and (x1, y1).
+     */
+    static double octileDistance(int x0, int y0, int x1, int y1) {
+        int deltaX = Math.abs(x0 - x1);
+        int deltaY = Math.abs(y0 - y1);
+        double octileDistance = Math.min(deltaX, deltaY) * MapUtil.SQRT2 + Math.abs(deltaX - deltaY);
+        return octileDistance;
+    }
+
+
+    static double euclideanDistance(int x0, int y0, int x1, int y1) {
+        double e = Math.sqrt(Math.pow(Math.abs(x0-x1), 2) + Math.pow(Math.abs(y0-y1), 2));
+        return e;
     }
      
 }
