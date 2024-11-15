@@ -16,6 +16,7 @@
 # Haasteet ja avoimet kysymykset
 
 -   JPS laskee selkeästi hitaammin testatuilla kaupunkikartoilla ja sokkeloilla kuin A, vaikka käsittelee vähemmän soluja. Kun muut hitauskohdat oli optimoitu pois, oli helppo nähdä, että aika kuluu hyppyfunktiossa. Joko asia vain on niin, että tämäntyyppisissä pienehköissä kartoissa taulukoilla toteutettu A on tehokkaampi kuin JPS rekursiivisella hyppypaikan etsinnällä, tai sitten JPS-algoritmini käsittelee enemmän soluja kuin olisi pakko, vaikka laskeekin oikein.
+-   Kun purin rekursion, se n. puolitti suoritusajan. Suositusaika oli silti edelleen suurempi kuin A:lla ja se vaikutti käsiteltyjen solmujen määrään, joten palautin rekursion, kun en ollut varma sen oikeasta toiminnasta.
 
 # Jatkosuunnitelma
 
