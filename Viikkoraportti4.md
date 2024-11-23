@@ -2,7 +2,7 @@
 
 -   Toteutettu yksikkötestejä junitilla.
 -   Jotta olisi mahdollista testata Moving AI Labin skenaarioita vastaan, pitää käyttää tiukkoja sääntöjä kulmien osalta. Sitä varten toteutettu ohjelmaan jokaiselle pikselille esilaskettava 8-alkioinen boolean-taulukko, joka kertoo, voiko suuntaan siirtyä.
--   Edelle mainitusta ja aikaisemman JPS-version puutteista johtuen kirjoitettu JPS:n oleelliset osat uudestaan. Sain sen vihdoin lauantaina iltapäivällä toimimaan, mutta en ehtinyt kunnolla testata. Mahdollisesti siinä on vielä joitain bugeja, mutta ainakin pääosin se tuntuisi toimivan (kuva alla).
+-   Edelle mainitusta ja aikaisemman JPS-version puutteista johtuen kirjoitettu JPS:n oleelliset osat uudestaan. Sain sen vihdoin lauantaina iltapäivällä toimimaan, mutta en ehtinyt kunnolla testata. Mahdollisesti siinä on vielä joitain bugeja, mutta ainakin pääosin se tuntuisi toimivan, pruunaavan solmut oikein ja löytävän nyt oikeat hyppypisteetkin.
 
 # Ohjelman edistyminen
 
