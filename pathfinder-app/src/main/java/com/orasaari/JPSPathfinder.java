@@ -34,10 +34,6 @@ class JPSPathfinder implements Pathfinder {
         return x<0 || x>=width || y<0 || y>=height || !grid[x][y];
     }
 
-    private boolean isTraversable(int x, int y) {        
-        return x>=0 && x<width && y>=0 && y<height && grid[x][y];
-    }
-
     private boolean isTraversable(int x, int y, int directionX, int directionY) {        
         int direction = MapUtil.getDirection(directionX, directionY);
         boolean traversable = x>=0 && x<width && y>=0 && y<height && traversability[x][y][direction];
@@ -236,9 +232,10 @@ class JPSPathfinder implements Pathfinder {
         if (move.directionX != 0 && move.directionY != 0) { // Diagonal move
             System.out.println("Diagonal move " + jumpX + ", " + jumpY + ": " + move.directionX + ", " + move.directionY);
             System.out.println("isBlocked(jumpX - move.directionX, jumpY): " + isBlocked(jumpX - move.directionX, jumpY));
-            System.out.println("isTraversable(jumpX, jumpY + move.directionY): " + isTraversable(jumpX, jumpY + move.directionY));
+            System.out.println("isTraversable(jumpX, jumpY + move.directionY): " + isTraversable(jumpX, jumpY, 0, move.directionY));
             System.out.println("isBlocked(jumpX, jumpY - move.directionY): " + isBlocked(jumpX, jumpY - move.directionY));
-            System.out.println("isTraversable(jumpX + move.directionX, jumpY): " + isTraversable(jumpX + move.directionX, jumpY));
+            System.out.println("isTraversable(jumpX + move.directionX, jumpY): " + isTraversable(jumpX, jumpY, move.directionX, 0));
+            
             if ((isBlocked(jumpX + move.directionX, jumpY) && isTraversable(jumpX, jumpY, 0, move.directionY)) || 
                 (isBlocked(jumpX, jumpY + move.directionY) && isTraversable(jumpX, jumpY, move.directionX, 0)) || 
                 (isBlocked(jumpX - move.directionX, jumpY) && isTraversable(jumpX, jumpY, 0, - move.directionY)) || 
