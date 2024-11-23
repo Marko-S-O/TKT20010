@@ -11,7 +11,7 @@ import java.util.List;
 /** A class representing a graphical view to a grid map */
 class GridMapView extends JPanel {
 
-    private static final int PIXEL_SIZE = 3; // number of physical pixels on the screen used to represent a pixel in a map
+    private static final int PIXEL_SIZE = 50; // number of physical pixels on the screen used to represent a pixel in a map
 
     private static final Color COLOR_BLOCKED = Color.black;
     private static final Color COLOR_FREE = Color.white;

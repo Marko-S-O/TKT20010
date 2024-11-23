@@ -13,8 +13,8 @@ import java.util.PriorityQueue;
 class AStartPathfinder implements Pathfinder {
 
     // MOVES and WEIGHTS are just supporting variables that allow writing cleaner code in the navigate function.
-    private static final int[][] MOVES = {{-1,0}, {1,0}, {0,-1}, {0,1}, {-1,-1}, {1,1}, {-1,1}, {1,-1}};
-    private static final double[] WEIGHTS = {1, 1, 1, 1, MapUtil.SQRT2, MapUtil.SQRT2, MapUtil.SQRT2, MapUtil.SQRT2};
+    //private static final int[][] MOVES = {{-1,0}, {1,0}, {0,-1}, {0,1}, {-1,-1}, {1,1}, {-1,1}, {1,-1}};
+    //private static final double[] WEIGHTS = {1, 1, 1, 1, MapUtil.SQRT2, MapUtil.SQRT2, MapUtil.SQRT2, MapUtil.SQRT2};
 
     /** 
      * Internal class to compare place of two nodes in the priority queue. 
@@ -25,21 +25,29 @@ class AStartPathfinder implements Pathfinder {
         }
     }
 
+    public Result navigate(GridMap map, Point start , Point finish) {
+        return navigate(map, start, finish, false);
+    }   
+
     /**
      * Implement the pathfinding algoritm.
     */
-    public Result navigate(GridMap map, Point start , Point finish) {
+    public Result navigate(GridMap map, Point start , Point finish, boolean cutCorners) {
             
         System.out.println("AStartPathfinder.navigate, start: " + start + ", finish: " + finish);
 
+
+
+        boolean[][] grid = map.getGrid(); 
+        boolean[][][] travellability = map.getTraversability(cutCorners);
+
+        // Initialize the timer. Calculating travallebility of nodes is not included in performance evaluation.
         long startTime = System.currentTimeMillis();
 
         // Init heap
         PriorityQueue<Node> heap = new PriorityQueue<Node>(new ANodeComparator());
 
-        boolean[][] grid = map.getGrid(); 
-        int width = grid.length;
-        int height = grid[0].length;
+
 
         // Nodes are created as needed. They are maintained in an array and re-used 
         // to minimize overhead of node creation and storing.
@@ -72,18 +80,13 @@ class AStartPathfinder implements Pathfinder {
             // Currently, no edges are calculated to adjancency lists beforehand but movement options are evaluated on the fly.
             // Another option would be to describe available transfer options as aboolean table for each node (pixel).
             for(int i=0; i<8; i++) {
-                int nextNodeX = currentNode.x + MOVES[i][0];
-                int nextNodeY = currentNode.y + MOVES[i][1];
 
-                // check that the adjacent node (pixel) is inside the map limits
-                if(nextNodeX < 0 || nextNodeY <0 || nextNodeX >= width || nextNodeY >= height) {
+                if(!travellability[currentNode.x][currentNode.y][i]) {
                     continue;
                 }
 
-                // check that the adjacent node is free to travel
-                if(!grid[nextNodeX][nextNodeY]) {
-                    continue;
-                }
+                int nextNodeX = currentNode.x + MapUtil.MOVES[i][0];
+                int nextNodeY = currentNode.y + MapUtil.MOVES[i][1];
 
                 // Check if we have already created a node object for the particular location. If yes, re-use it.
                 Node nextNode = nodeList[nextNodeX][nextNodeY];
@@ -91,7 +94,7 @@ class AStartPathfinder implements Pathfinder {
                     nextNode = new Node(nextNodeX, nextNodeY);
                     nodeList[nextNodeX][nextNodeY] = nextNode;
                 }
-                double edgeWeight = WEIGHTS[i];
+                double edgeWeight = MapUtil.WEIGHTS[i];
 
                 // Update the Dijkstra algorithm to cover A* priority handling: add use of field aPriority to prioritize the heap.
                 // The heap comparator (internal class NodeComparator) needs to be updated accordingly.
