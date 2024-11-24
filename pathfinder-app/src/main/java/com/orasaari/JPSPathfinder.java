@@ -55,9 +55,9 @@ class JPSPathfinder implements Pathfinder {
      */
     private List<Integer> pruneNeighbours(Node node) {
 
-        if(node.arrivalDirection > -1) {
-            System.out.println("pruneNeighbours: " + node.x + ", " + node.y + ": " + MapUtil.MOVE_DIRECTIONS[node.arrivalDirection].directionX + ": " +MapUtil.MOVE_DIRECTIONS[node.arrivalDirection].directionY);      
-        }
+        //if(node.arrivalDirection > -1) {
+        //    System.out.println("pruneNeighbours: " + node.x + ", " + node.y + ": " + MapUtil.MOVE_DIRECTIONS[node.arrivalDirection].directionX + ": " +MapUtil.MOVE_DIRECTIONS[node.arrivalDirection].directionY);      
+        //}
 
         List<Integer> neighbours = new ArrayList<Integer>(8);
 

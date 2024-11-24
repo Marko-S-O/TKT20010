@@ -16,6 +16,7 @@ public class GridMap {
     private boolean[][] grid;
     private int width;
     private int height;
+    boolean[][][] traversability;
 
     GridMap(int width, int height) {
         grid = new boolean[width][height];
@@ -43,31 +44,35 @@ public class GridMap {
      * @return  travellability  a 3D array of boolean values indicating travellability to a direction from a node. Directions are defined im MapUtil.MOVES.
     */
     boolean[][][] getTraversability(boolean cutCorners) {
-        boolean[][][] traversability = new boolean[width][height][8];
-        for(int i=0; i<width; i++) {
-            for(int j=0; j<height; j++) {
-                if(grid[i][j]) {
-                    for(int k=0; k<8; k++) {
-                        int directionX = MapUtil.MOVES[k][0];
-                        int directionY = MapUtil.MOVES[k][1];
-                        int nextNodeX = i + directionX;
-                        int nextNodeY = j + directionY;
-                        if(nextNodeX < 0 || nextNodeY < 0 || nextNodeX >= width || nextNodeY >= height) {
-                            // The node is outside the map -> false
-                            traversability[i][j][k] = false;
-                        } else if(!grid[nextNodeX][nextNodeY]) {
-                            // The node is blocked -> always false
-                            traversability[i][j][k] = false;
-                        } else if(directionX == 0 || directionY == 0 || cutCorners) {
-                            // Verical or horizontal move or cutting corners is allowed -> always true
-                            traversability[i][j][k] = true;
-                        } else {
-                            // Cutting corners is not allowed -> either of the two adjacent nodes towards the moving direction can block the movement
-                            traversability[i][j][k] = grid[i+directionX][j] && grid[i][j+directionY]; 
+        if(traversability == null) {
+            boolean[][][] traversability = new boolean[width][height][8];
+            for(int i=0; i<width; i++) {
+                for(int j=0; j<height; j++) {
+                    if(grid[i][j]) {
+                        for(int k=0; k<8; k++) {
+                            int directionX = MapUtil.MOVES[k][0];
+                            int directionY = MapUtil.MOVES[k][1];
+                            int nextNodeX = i + directionX;
+                            int nextNodeY = j + directionY;
+                            if(nextNodeX < 0 || nextNodeY < 0 || nextNodeX >= width || nextNodeY >= height) {
+                                // The node is outside the map -> false
+                                traversability[i][j][k] = false;
+                            } else if(!grid[nextNodeX][nextNodeY]) {
+                                // The node is blocked -> always false
+                                traversability[i][j][k] = false;
+                            } else if(directionX == 0 || directionY == 0 || cutCorners) {
+                                // Verical or horizontal move or cutting corners is allowed -> always true
+                                traversability[i][j][k] = true;
+                            } else {
+                                // Cutting corners is not allowed -> either of the two adjacent nodes towards the moving direction can block the movement
+                                traversability[i][j][k] = grid[i+directionX][j] && grid[i][j+directionY]; 
+                            }
                         }
                     }
-                }
-            }  
+                }  
+            }
+            // save the traversability so that it does not have to be calculated again in perforamnce evaluation
+            this.traversability = traversability; 
         }
         return traversability;
     }

@@ -117,7 +117,9 @@ class MapUtil {
     }
 
     static final String MAP_DIRECTORY = "c:/users/ext/TKT20010/pathfinder-app/data/";
-        
+    static final String SCENARIO_DIRECTORY = "c:/users/ext/TKT20010/pathfinder-app/data/test/";    
+    static final String STREET_MAP_DIRECTORY = "c:/users/ext/TKT20010/pathfinder-app/data/street-map/";   
+
     /** 
      * Utility method to load a map file from a disc and convert it to two-dimensional boolean array format.
      * Currently, only maps of type of .map are supported.
@@ -204,7 +206,7 @@ class MapUtil {
             // Check if there is a jump created by JPS on the path
             int deltaX = nextNode.x - previousNode.x;
             int deltaY = nextNode.y - previousNode.y;
-            if(deltaX > 1 || deltaY > 1) {
+            if(Math.abs(deltaX) > 1 || Math.abs(deltaY) > 1) {
 
                 // fill the pixels between the jump end and start points
                 int directionX = deltaX > 0 ? -1: (deltaX == 0 ? 0 : 1);

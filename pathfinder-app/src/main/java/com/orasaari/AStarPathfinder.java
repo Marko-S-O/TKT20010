@@ -10,7 +10,7 @@ import java.util.PriorityQueue;
  * heap is prioritized according to distance + heuristic function instead of just distance from the start node.
  * Heuristic function = octile distance from a node in the end of edge to the finishing node.
  */
-class AStartPathfinder implements Pathfinder {
+class AStarPathfinder implements Pathfinder {
 
     // MOVES and WEIGHTS are just supporting variables that allow writing cleaner code in the navigate function.
     //private static final int[][] MOVES = {{-1,0}, {1,0}, {0,-1}, {0,1}, {-1,-1}, {1,1}, {-1,1}, {1,-1}};
@@ -34,7 +34,7 @@ class AStartPathfinder implements Pathfinder {
     */
     public Result navigate(GridMap map, Point start , Point finish, boolean cutCorners) {
             
-        System.out.println("AStartPathfinder.navigate, start: " + start + ", finish: " + finish);
+        // System.out.println("AStartPathfinder.navigate, start: " + start + ", finish: " + finish);
 
 
 

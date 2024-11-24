@@ -1,9 +1,12 @@
 package com.orasaari;
 
+import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+
 import java.awt.Font;
+import java.awt.Color;
 import java.awt.FlowLayout;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -17,7 +20,7 @@ class ResultPanel extends JPanel {
     private static final Font HEADER_FONT = new Font("Verdana", Font.BOLD, 17);
     private static final SimpleDateFormat TIMESTAMP_FORMAT = new SimpleDateFormat("dd.MM.yyyy HH:mm");
     
-    private JLabel lblResultHeader, lblStatus, lblAlgorithm, lblStartTime, lblFinishTime, lblDuration, lblPathLenght, lblNodesEvaluated;
+    private JLabel lblResultHeader, lblStatus, lblStartTime, lblFinishTime, lblDuration, lblPathLenght, lblNodesEvaluated;
 
     /**
      * Init the component.
@@ -27,8 +30,8 @@ class ResultPanel extends JPanel {
     ResultPanel(String algorith) {
 
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-        add(new JLabel(" "));
-        add(new JLabel(" "));
+        setBorder(BorderFactory.createLineBorder(Color.gray, 1));
+
         JPanel pnl1 = new JPanel(new FlowLayout());
         pnl1.add(lblResultHeader = new JLabel(algorith + " result  "));
         lblResultHeader.setFont(HEADER_FONT);
@@ -36,9 +39,6 @@ class ResultPanel extends JPanel {
         pnl2.add(new JLabel("Status: "));
         pnl2.add(lblStatus = new JLabel("                                  "));
 
-        JPanel pnl3 = new JPanel(new FlowLayout(FlowLayout.LEFT));        
-        pnl3.add(new JLabel("Alogorithm: "));
-        pnl3.add(lblAlgorithm = new JLabel("                                  "));
         JPanel pnl4 = new JPanel(new FlowLayout(FlowLayout.LEFT));
         pnl4.add(new JLabel("Start time: "));
         pnl4.add(lblStartTime = new JLabel("                             "));
@@ -56,7 +56,6 @@ class ResultPanel extends JPanel {
         pnl8.add(lblNodesEvaluated = new JLabel("                              "));        
         add(pnl1);
         add(pnl2);        
-        add(pnl3);
         add(pnl4);
         add(pnl5);
         add(pnl6);
@@ -73,7 +72,6 @@ class ResultPanel extends JPanel {
     void showResult(Result result) {
         if(result != null) {
             lblStatus.setText(result.success ? "Success" : "Failed");
-            lblAlgorithm.setText(MapUtil.ALGORITHM_NAMES[result.algorithm]);
             lblStartTime.setText(TIMESTAMP_FORMAT.format(new Date(result.startTime)));
             lblFinishTime.setText(TIMESTAMP_FORMAT.format(new Date(result.finishTime)));
             lblDuration.setText(result.duration + " ms");        

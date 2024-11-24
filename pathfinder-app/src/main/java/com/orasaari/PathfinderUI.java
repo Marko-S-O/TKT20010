@@ -1,6 +1,7 @@
 package com.orasaari;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.Point;
@@ -9,6 +10,8 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -28,12 +31,14 @@ public class PathfinderUI extends JFrame implements ActionListener {
   
     private GridMapView view;
     private GridMap map;
-    private JButton btnSelectFile, btnLoadMap, btnFindPath;
-    private JTextField tfFilename, tfStartX, tfStartY, tfFinishX, tfFinishY;
+    private JButton btnSelectFile, btnLoadMap, btnFindPath, btnPerformanceEvalulation;
+    private JTextField tfFilename, tfStartX, tfStartY, tfFinishX, tfFinishY, tfIterations;
     private JCheckBox cbDijkstra, cbAstar, cbJPS;
     private ResultPanel pnlResultsDisjkstra, pnlResultsAstar, pnlResultsJPS;
-
  
+    /** 
+     * Constructor to initialize the UI components.
+    */
     PathfinderUI() {
         setLayout(new BorderLayout());
         view = new GridMapView(new GridMap(1024, 1024));
@@ -46,7 +51,7 @@ public class PathfinderUI extends JFrame implements ActionListener {
         add(getControlPanel(), BorderLayout.SOUTH);
         add(getResultPanels(), BorderLayout.EAST);
 
-        setTitle("Pathfinder UI v. 0.1");
+        setTitle("Pathfinder UI v. 1.0");
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         pack();
         setLocation(50,5);
@@ -57,7 +62,8 @@ public class PathfinderUI extends JFrame implements ActionListener {
      * Construct the UI panel that contains all other components but the actual map.
     */
     private JPanel getControlPanel() {
-        JPanel pnlControl = new JPanel(new GridLayout(3,1));
+        JPanel pnlControl = new JPanel(new GridLayout(4,1));
+        pnlControl.setBorder(BorderFactory.createLineBorder(Color.gray, 1));
 
         JPanel pnlCoordinates = new JPanel();
         pnlCoordinates.add(new JLabel("Start X:"));
@@ -73,6 +79,12 @@ public class PathfinderUI extends JFrame implements ActionListener {
         pnlControl.add(pnlCoordinates);
         pnlControl.add(getRunPanel());
 
+        JPanel pnlBottom = new JPanel();
+        pnlBottom.add(new JLabel("Iterations: "));
+        pnlBottom.add(tfIterations = new JTextField(5));
+        pnlBottom.add(btnPerformanceEvalulation = new JButton("Run Performance Evaluation"));        
+        pnlControl.add(pnlBottom);
+
         return pnlControl;
     }
 
@@ -85,8 +97,7 @@ public class PathfinderUI extends JFrame implements ActionListener {
         pnlRun.add(cbAstar = new JCheckBox("A-Star", false));
         pnlRun.add(cbJPS = new JCheckBox("JPS", false));
         pnlRun.add(new JLabel("        "));
-        pnlRun.add(new JCheckBox("Visualize Progress    "));
-        pnlRun.add(btnFindPath = new JButton("           Find Path           "));
+        pnlRun.add(btnFindPath = new JButton("          Find Path          "));
         btnFindPath.addActionListener(this);
         return pnlRun;
     }
@@ -117,7 +128,6 @@ public class PathfinderUI extends JFrame implements ActionListener {
         pnlResults.add(pnlResultsJPS = new ResultPanel("JPS"));
 
         return pnlResults;
-
     }
 
     void setMap(GridMap map) {
@@ -160,7 +170,7 @@ public class PathfinderUI extends JFrame implements ActionListener {
         if(algorith == MapUtil.ALGORITHM_DIJKSTRA) {
             finder = new DijkstraPathfinder();
         } else if(algorith == MapUtil.ALGORITHM_ASTAR) {
-            finder = new AStartPathfinder();
+            finder = new AStarPathfinder();
         } else {
             finder = new JPSPathfinder();
         }
@@ -186,6 +196,8 @@ public class PathfinderUI extends JFrame implements ActionListener {
     private void findAllPaths() {
 
         List<List<Node>> paths = new ArrayList<>(3);
+
+        System.out.println("findAllPaths(): " + paths.size());
 
         if(cbDijkstra.isSelected()) {
             System.out.print("find Dijkstra");
@@ -219,6 +231,8 @@ public class PathfinderUI extends JFrame implements ActionListener {
             loadMap();
         } else if(e.getSource() == btnFindPath) {
             findAllPaths();
+        } else if(e.getSource() == btnPerformanceEvalulation) {
+            System.out.println("Run performance evaluation");
         }
     }
 

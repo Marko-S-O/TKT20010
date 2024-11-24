@@ -22,7 +22,7 @@ class DijkstraPathfinder implements Pathfinder {
     }
 
     public Result navigate(GridMap map, Point start, Point finish) {
-        return navigate(map, start, finish, true);
+        return navigate(map, start, finish, false);
     }
 
     /**
@@ -37,8 +37,7 @@ class DijkstraPathfinder implements Pathfinder {
     */
     public Result navigate(GridMap map, Point start, Point finish, boolean cutCorners) {
             
-        System.out.println("DijstraPathfinder.navigate, start: " + start + ", finish: " + finish);
-
+        // System.out.println("DijstraPathfinder.navigate, start: " + start + ", finish: " + finish);
 
         // Initialize valiables needed in iterating the route
         boolean[][] grid = map.getGrid(); 
