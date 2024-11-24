@@ -2,7 +2,7 @@
 
 -   Toteutettu yksikkötestejä junitilla.
 -   Jotta olisi mahdollista testata Moving AI Labin skenaarioita vastaan, pitää käyttää tiukkoja sääntöjä kulmien osalta. Sitä varten toteutettu ohjelmaan jokaiselle pikselille esilaskettava 8-alkioinen boolean-taulukko, joka kertoo, voiko suuntaan siirtyä.
--   Edelle mainitusta ja aikaisemman JPS-version puutteista johtuen kirjoitettu JPS:n oleelliset osat uudestaan. Sain sen vihdoin lauantaina iltapäivällä toimimaan, mutta en ehtinyt kunnolla testata. Mahdollisesti siinä on vielä joitain bugeja, mutta ainakin pääosin se tuntuisi toimivan, pruunaavan solmut oikein ja löytävän nyt oikeat hyppypisteetkin.
+-   Edelle mainitusta ja aikaisemman JPS-version puutteista johtuen kirjoitettu JPS:n oleelliset osat uudestaan. Se toimii ylhäältä vasemmalta kohti oikeaa alakulmaa kulkevilla reiteillä kaupunkikartoissa oikein ja laskee nopeasti, joissain liikesuunnissa on vielä pruunauksessa tai hyppypisteiden tunnistamisessa vielä bugeja.
 
 # Ohjelman edistyminen
 
@@ -14,13 +14,13 @@
 
 # Haasteet ja avoimet kysymykset
 
--   Tämä on tässä kohdassa lähinnä avoin kysymys: minkälaisilla kartoilla JPS oikeasti on tehokkaampi kuin hyvin toteutettu A. Vaikka se ”käsittelee” selkeästi pienemmän määrän soluja kuin A, se kuitenkin oikeasti hyppypisteiden etsinnässä evaluoi pitkiä polkuja rekursiivisesti, ja jokaisessa polun solussa tehdään useita evaluointeja. -\> Nyt ehdin hiukan testaamaan ja kaupunkikartoissa JPS näyttää tosiaan selvästi nopeammalta, jopa kertaluokkaa tehokkaammalta.
+-   Bugeja vielä joissain liikesuunnissa, joita debuggaan yksinkertaisilla 19x13 -kokoisilla testikartoilla yksi kerrallaan.
 
 # Jatkosuunnitelma
 
 Seuraavalla viikolla
 
--   JPS:n testaus ja finalisointi
+-   JPS:n testaus, fiksaus ja finalisointi
 -   Tehokkuusvertailun karttojen valinta ja tehokkuusvertailun toteutus. Tätä varten toteutan oman kustomoidun ohjelmansa.
 -   Junit-testien lisääminen
 -   Koodin siistiminen katselmointikuntoon
