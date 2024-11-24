@@ -55,8 +55,8 @@ class JPSPathfinder implements Pathfinder {
      */
     private List<Integer> pruneNeighbours(Node node) {
 
-        if(node.arrivalDirection >= 0) {
-            System.out.println("pruneNeighbours: " + node.x + ", " + node.y + ": " + MapUtil.MOVE_DIRECTIONS[node.arrivalDirection].directionX + ": " +MapUtil.MOVE_DIRECTIONS[node.arrivalDirection].directionY);
+        if(node.arrivalDirection > -1) {
+            System.out.println("pruneNeighbours: " + node.x + ", " + node.y + ": " + MapUtil.MOVE_DIRECTIONS[node.arrivalDirection].directionX + ": " +MapUtil.MOVE_DIRECTIONS[node.arrivalDirection].directionY);      
         }
 
         List<Integer> neighbours = new ArrayList<Integer>(8);
@@ -81,6 +81,7 @@ class JPSPathfinder implements Pathfinder {
             // Handle forced neighbours cases to see if we also need to make it possible to fork the path.
             // For sure there is a shorter way to write this, but, at least for now, this is a clear way to understand the logic by writing directions open one by one.
             if(directionX == 1 && directionY == 1) { // moving down-right
+                //System.out.println("prune diagonal");
                 if(traversability[node.x][node.y][MapUtil.RIGHT]) // right open, need to add it as well
                     neighbours.add(Integer.valueOf(MapUtil.RIGHT));
                 if(traversability[node.x][node.y][MapUtil.DOWN]) // down open, need to add it as well
@@ -120,14 +121,20 @@ class JPSPathfinder implements Pathfinder {
                 if(!traversability[node.x][node.y][MapUtil.LEFT] && traversability[node.x][node.y][MapUtil.LEFT_UP]) // 
                     neighbours.add(Integer.valueOf(MapUtil.LEFT_UP));                      
 
-            } else if(directionX > 0) { // moving horizontally
+            } else if(directionX != 0) { // moving horizontally
                 // with stricter cornering rules, we also need to: 1) allow 90 degree turns 2) check one node backwards for forced neighbours
+
 
                 boolean previousUpBlocked = !traversability[node.x-directionX][node.y][MapUtil.UP];
                 if(previousUpBlocked && isTraversable(node.x, node.y, directionX, -1)) // previous node up blocked, check up+direction
                     neighbours.add(Integer.valueOf(MapUtil.getDirection(directionX, -1)));
                 if(previousUpBlocked && traversability[node.x][node.y][MapUtil.UP]) // previous node up blocked, check 90 degree turn up
                     neighbours.add(Integer.valueOf(MapUtil.UP)); // allow 90 degree turn up as well
+
+                //System.out.println("prune horizontal neighbours");
+                //System.out.println("previousUpBlocked: " + previousUpBlocked);
+                //System.out.println("isTraversable(node.x, node.y, directionX, -1): " + isTraversable(node.x, node.y, directionX, -1));
+                //System.out.println("traversability[node.x][node.y][MapUtil.UP]: " + traversability[node.x][node.y][MapUtil.UP]);
 
                 boolean previousDownBlocked = !traversability[node.x-directionX][node.y][MapUtil.DOWN];
                 if(previousDownBlocked && isTraversable(node.x, node.y, directionX, 1)) // previous node down blocked, check down+direction
@@ -136,6 +143,7 @@ class JPSPathfinder implements Pathfinder {
                     neighbours.add(Integer.valueOf(MapUtil.DOWN));                    
                     
             } else { // moving vertically
+                //System.out.println("prune vertical");
                 boolean previousRightBlocked = !traversability[node.x][node.y-directionY][MapUtil.RIGHT];
                 if(previousRightBlocked && isTraversable(node.x, node.y, 1, directionY)) // previous node right blocked, check right+direction
                     neighbours.add(Integer.valueOf(MapUtil.getDirection(1, directionY)));
@@ -160,23 +168,23 @@ class JPSPathfinder implements Pathfinder {
 
         // successors(x) ← ∅        
         //List<Node> successors = new ArrayList<Node>();        
-        // To minimize overheads, successors straight to the open list
+        // To minimize overheads, successors are put straight to the open list
 
         // neighbours(x) ← prune(x, neighbours(x))
         List<Integer> neighbourgs = pruneNeighbours(currentNode);
         
-        System.out.println("identifySuccessors: " + currentNode);
-        System.out.println("neighbours: " + neighbourgs.size());
-        for(int i=0; i<neighbourgs.size(); i++) {
-            System.out.println("neighbour: " + MapUtil.MOVE_DIRECTIONS[neighbourgs.get(i)]);
-        }
+        //System.out.println("identifySuccessors: " + currentNode);
+        //System.out.println("neighbours: " + neighbourgs.size());
+        //for(int i=0; i<neighbourgs.size(); i++) {
+        //   System.out.println("neighbour: " + MapUtil.MOVE_DIRECTIONS[neighbourgs.get(i)]);
+        //}
 
         // for all n ∈ neighbours(x) do
         for(int i=0; i<neighbourgs.size(); i++) {
             
             int direction = neighbourgs.get(i);
-            System.out.println("---------------------------------------------------------");            
-            System.out.println("handle neighbour: " + MapUtil.MOVE_DIRECTIONS[direction]);
+            //System.out.println("---------------------------------------------------------");            
+            //System.out.println("handle neighbour: " + MapUtil.MOVE_DIRECTIONS[direction]);
 
             // n ← jump(x, direction(x, n), s, g)
             Node jumpNode = jump(currentNode, direction, start, goal);
@@ -188,7 +196,7 @@ class JPSPathfinder implements Pathfinder {
                 jumpNode.distance = currentNode.distance + MapUtil.octileDistance(currentNode.x, currentNode.y, jumpNode.x, jumpNode.y);
                 jumpNode.heuristic = MapUtil.octileDistance(jumpNode.x, jumpNode.y, goal.x, goal.y);
                 jumpNode.priority = jumpNode.distance + jumpNode.heuristic;
-                System.out.println("identifySuccessors, found jumpNode: " + jumpNode);
+                //System.out.println("identifySuccessors, found jumpNode: " + jumpNode);
                 openList.add(jumpNode);    
             }
         }
@@ -200,64 +208,62 @@ class JPSPathfinder implements Pathfinder {
     */
     private Node jump(Node currentNode, int arrivalDirection, Point start, Point goal) {
 
-        System.out.println("jump: " + currentNode);
-        System.out.println("arrivalDirection: " + MapUtil.MOVE_DIRECTIONS[arrivalDirection]);
-
-        // n ← step(x, ~d)
-        // if n is an obstacle or is outside the grid then return null
-        if(currentNode==null || isBlocked(currentNode.x, currentNode.y)) {
-            System.out.println("blocked, return null");
-            return null;
-        } else {
-            System.out.println("not blocked, moving one");
-        }
+        //System.out.println("jump: " + currentNode);
+        //System.out.println("arrivalDirection: " + MapUtil.MOVE_DIRECTIONS[arrivalDirection]);
 
         Move move = MapUtil.MOVE_DIRECTIONS[arrivalDirection];
+        // n ← step(x, ~d)
+        // if n is an obstacle or is outside the grid then return null
+        if(currentNode==null || isBlocked(currentNode.x, currentNode.y) || !isTraversable(currentNode.x, currentNode.y, move.directionX, move.directionY)) {
+            //System.out.println("blocked, return null");
+            return null;
+        } else {
+            //System.out.println("not blocked, moving one");
+        }
+
         int jumpX = currentNode.x + move.directionX;
         int jumpY = currentNode.y + move.directionY;
         int directionX = move.directionX;
         int directionY = move.directionY;
 
         Node newNode = new Node(jumpX, jumpY);
-        System.out.println("created new node: " + newNode);  
+        //System.out.println("created new node: " + newNode);  
         newNode.arrivalDirection = arrivalDirection;
 
         // if n = g then return n
         if(jumpX == goal.x && jumpY == goal.y) {
-            System.out.println("goal met");
+            //System.out.println("goal met");
             return newNode;
         }
 
         // if ∃ n′ ∈ neighbours(n) s.t. n′ is forced then return n
         if (move.directionX != 0 && move.directionY != 0) { // Diagonal move
-            System.out.println("Diagonal move " + jumpX + ", " + jumpY + ": " + move.directionX + ", " + move.directionY);
-            System.out.println("isBlocked(jumpX - move.directionX, jumpY): " + isBlocked(jumpX - move.directionX, jumpY));
-            System.out.println("isTraversable(jumpX, jumpY + move.directionY): " + isTraversable(jumpX, jumpY, 0, move.directionY));
-            System.out.println("isBlocked(jumpX, jumpY - move.directionY): " + isBlocked(jumpX, jumpY - move.directionY));
-            System.out.println("isTraversable(jumpX + move.directionX, jumpY): " + isTraversable(jumpX, jumpY, move.directionX, 0));
-            
+            //System.out.println("Diagonal move " + jumpX + ", " + jumpY + ": " + move.directionX + ", " + move.directionY);
+            //System.out.println("isBlocked(jumpX - move.directionX, jumpY): " + isBlocked(jumpX - move.directionX, jumpY));
+            //System.out.println("isTraversable(jumpX, jumpY + move.directionY): " + isTraversable(jumpX, jumpY, 0, move.directionY));
+            //System.out.println("isBlocked(jumpX, jumpY - move.directionY): " + isBlocked(jumpX, jumpY - move.directionY));
+            //System.out.println("isTraversable(jumpX + move.directionX, jumpY): " + isTraversable(jumpX, jumpY, move.directionX, 0));
+
             if ((isBlocked(jumpX + move.directionX, jumpY) && isTraversable(jumpX, jumpY, 0, move.directionY)) || 
                 (isBlocked(jumpX, jumpY + move.directionY) && isTraversable(jumpX, jumpY, move.directionX, 0)) || 
                 (isBlocked(jumpX - move.directionX, jumpY) && isTraversable(jumpX, jumpY, 0, - move.directionY)) || 
                 (isBlocked(jumpX, jumpY - move.directionY) && isTraversable(jumpX, jumpY, move.directionX, 0))) {
-                System.out.println("Forced diagonal neighbor detected: " + newNode);
+                //System.out.println("Forced diagonal neighbor detected: " + newNode);
                 return newNode;
             }
         } else if (move.directionX != 0) { // Horizontal move
             // We are applying strict cornering rules here: both adjacent nodes must be free to allow diagonal move.            
-            // It would be nice to have have this parametrized but, at least for now, we are following the AI Moving Lab 
-            // convention only to keep the results comparable and minimze complexity.
-
-            // evaluate if we are in a forced stop by a corner
+            // It would be nice to have have this parametrized but, at least for now, we are following only the AI Moving Lab 
+            // convention to keep the results comparable and minimze complexity.
             if((isBlocked(currentNode.x, jumpY + 1) && (isTraversable(jumpX, jumpY, 0, 1 )) ||                 
-                isBlocked(currentNode.x, jumpY - 1) && isTraversable(jumpX, jumpY, 0, 1))) {            
-                    System.out.println("Forced horizontal neighbor detected: " + newNode);
+                isBlocked(currentNode.x, jumpY - 1) && isTraversable(jumpX, jumpY, 0, -1))) {            
+                //System.out.println("Forced horizontal neighbor detected: " + newNode);
                 return newNode;                
             }
         } else { // Vertical move
             if((isBlocked(currentNode.x+1, currentNode.y) && (isTraversable(jumpX, jumpY, 1, 0 )) ||                 
                 isBlocked(currentNode.x-1, currentNode.y) && isTraversable(jumpX, jumpY, -1, 0))) {            
-                    System.out.println("Forced horizontal neighbor detected: " + newNode);
+                //System.out.println("Forced horizontal neighbor detected: " + newNode);
                 return newNode;                
             }
         }   
@@ -267,14 +273,14 @@ class JPSPathfinder implements Pathfinder {
             int verticalOnlyDirection = MapUtil.VERTICAL_ONLY_PATHS[arrivalDirection]; // map diagonal path to its vertical component only direction
             int horizontalOnlyDirection = MapUtil.HORIZONTAL_ONLY_PATHS[arrivalDirection]; // map diagonal path to its vertical component only direction
             if(jump(newNode, verticalOnlyDirection, start, goal) != null || jump(newNode, horizontalOnlyDirection, start, goal) != null) {
-                System.out.println("straight path found: " + newNode);
+                //System.out.println("straight path found: " + newNode);
             
                 return newNode;
             }
         }
 
         // return jump(n, ~d, s, g)
-        System.out.println("continue jump: " + newNode + ": " + MapUtil.MOVE_DIRECTIONS[arrivalDirection]);
+        //System.out.println("continue jump: " + newNode + ": " + MapUtil.MOVE_DIRECTIONS[arrivalDirection]);
         return jump(newNode, arrivalDirection, start, goal);
     
     }
@@ -288,7 +294,7 @@ class JPSPathfinder implements Pathfinder {
     */
     public Result navigate(GridMap map, Point start, Point goal, boolean cutCorners) {
 
-        System.out.println("navigate JPS " + start + " -> " + goal);
+        //System.out.println("navigate JPS " + start + " -> " + goal);
             
         // save necessary data to instance variables to be used in jump calcuations
         this.grid = map.getGrid(); 
@@ -319,8 +325,8 @@ class JPSPathfinder implements Pathfinder {
 
             node = openList.poll();
 
-            System.out.println("************************************************************************");          
-            System.out.println("naw node to handle: " + node);
+            //System.out.println("************************************************************************");          
+            //System.out.println("new node to handle: " + node);
             numOfEvaluatedNodes++;
 
             if(node.x==goal.x && node.y==goal.y) {
