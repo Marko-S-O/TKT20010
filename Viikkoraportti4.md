@@ -14,7 +14,7 @@
 
 # Haasteet ja avoimet kysymykset
 
--   Tämä on tässä kohdassa lähinnä avoin kysymys: minkälaisilla kartoilla JPS oikeasti on tehokkaampi kuin hyvin toteutettu A. Vaikka se ”käsittelee” selkeästi pienemmän määrän soluja kuin A, se kuitenkin oikeasti hyppypisteiden etsinnässä evaluoi pitkiä polkuja rekursiivisesti, ja jokaisessa polun solussa tehdään useita evaluointeja. Googlailin hiukan tätä ja aiheesta löytyi runsaasti mielenkiintoista keskustelua.
+-   Tämä on tässä kohdassa lähinnä avoin kysymys: minkälaisilla kartoilla JPS oikeasti on tehokkaampi kuin hyvin toteutettu A. Vaikka se ”käsittelee” selkeästi pienemmän määrän soluja kuin A, se kuitenkin oikeasti hyppypisteiden etsinnässä evaluoi pitkiä polkuja rekursiivisesti, ja jokaisessa polun solussa tehdään useita evaluointeja. -\> Nyt ehdin hiukan testaamaan ja kaupunkikartoissa JPS näyttää tosiaan selvästi nopeammalta, jopa kertaluokkaa tehokkaammalta.
 
 # Jatkosuunnitelma
 
