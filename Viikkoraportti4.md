@@ -2,7 +2,7 @@
 
 -   Toteutettu yksikkötestejä junitilla.
 -   Jotta olisi mahdollista testata Moving AI Labin skenaarioita vastaan, pitää käyttää tiukkoja sääntöjä kulmien osalta. Sitä varten toteutettu ohjelmaan jokaiselle pikselille esilaskettava 8-alkioinen boolean-taulukko, joka kertoo, voiko suuntaan siirtyä.
--   Edelle mainitusta ja aikaisemman JPS-version puutteista johtuen kirjoitettu JPS:n oleelliset osat uudestaan. Se toimii ylhäältä vasemmalta kohti oikeaa alakulmaa kulkevilla reiteillä kaupunkikartoissa oikein ja laskee nopeasti, joissain liikesuunnissa on vielä pruunauksessa tai hyppypisteiden tunnistamisessa vielä bugeja.
+-   Edelle mainitusta ja aikaisemman JPS-version puutteista johtuen kirjoitettu JPS:n oleelliset osat uudestaan. Nyt näyttäisi siltä, että kaupunkikartoilla kaikkiin eri suuntiin testattuna se toimii oikein.
 
 # Ohjelman edistyminen
 
@@ -14,18 +14,17 @@
 
 # Haasteet ja avoimet kysymykset
 
--   Bugeja vielä joissain liikesuunnissa, joita debuggaan yksinkertaisilla 19x13 -kokoisilla testikartoilla yksi kerrallaan.
+-   Ei tällä erää etenemistä haittaavia asiaioita
 
 # Jatkosuunnitelma
 
 Seuraavalla viikolla
 
--   JPS:n testaus, fiksaus ja finalisointi
+-   Testaus vielä Moving AI Labin valituilla kartoilla ja riittävien yksikkötestiskenaarioiden tekeminen niitä vasten.
 -   Tehokkuusvertailun karttojen valinta ja tehokkuusvertailun toteutus. Tätä varten toteutan oman kustomoidun ohjelmansa.
--   Junit-testien lisääminen
+-   Junit-testien kattavuuden lisääminen
 -   Koodin siistiminen katselmointikuntoon
--   Kuluvalla viikolla pysytyin käyttämään tähän rajallisesti aikaa. Ensi viikko on pääosin varattu tälle, joten toivon pääseväni merkittävästi eteenpäin lopputuotosten kanssa.
 
 # Käytetty työaika
 
-15 h ![](media/b47676ec914961293b96862963c100c7.png)
+15 h
