@@ -8,23 +8,24 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * A class to execute performance evaluations. Can be run in the command line or from the UI.
+ */
 public class PerformanceEvaluator {
     
     private Map<String, GridMap> mapMap = new HashMap<String, GridMap>();
 
     /** 
-     * A class representing a scenario that is used in performance evaluation. 
+     * A private class representing a scenario that is used in performance evaluation. 
      * One scenario can be run multiple times and with multiple algorithms.
     */
     private static class Scenario {
-        int scenarioIndex;
         GridMap map;
         Point start;
         Point goal;
         double distance;
 
         Scenario(int scenarioIndex, GridMap map, int startX, int startY, int goalX, int goalY, double distance) {
-            this.scenarioIndex = scenarioIndex;
             this.map = map;
             this.start = new Point(startX, startY);
             this.goal = new Point(goalX, goalY);
@@ -32,33 +33,19 @@ public class PerformanceEvaluator {
         }   
     }
 
-    /* 
-     * A wrapper class for a single evaluation result.
-    */
-    static class Evaluation {
-        int scenario; // an index of the scenario = row number in the scenario file
-        int algorithm;
-        Result result;
-        long startTime;
-        long finishTime;    
-        boolean correctDistance;
-    }
-
-    PerformanceEvaluator() {
-        System.out.println("PerformanceEvaluator init.");
-    }   
-
     /**
-     * Load the scenarios from a file. The file format is the Moving AI Lab .scen format.
+     * Load the scenario list from a file. The file format is the Moving AI Lab .scen format.
+     * Also, load the maps that are used in the scenarios.
      * 
      * @param filename  filename of the file that is located in MapUtil.SCENARIO_DIRECTORY;
-     * @return
+     * 
+     * @return  a list of scenarios including the loaded grid maps
      */
     private List<Scenario> loadScenarios(String filename) {
         
         List<Scenario> scenarioList = new ArrayList<Scenario>();
         
-        try (BufferedReader reader = new BufferedReader(new FileReader(MapUtil.SCENARIO_DIRECTORY + filename))) { 
+        try (BufferedReader reader = new BufferedReader(new FileReader(filename))) { 
             String line;
             boolean firstLine = true;
             int scenarioIndex = 0;
@@ -72,7 +59,7 @@ public class PerformanceEvaluator {
                 String[] fields = line.split("\\t+");
                 GridMap map = mapMap.get(fields[1]);
 
-                // Maps are taking a lot of heap. Load each map only once and store it in a map.
+                // Maps are taking a lot of heap. Load each map only once and store it in the map map.
                 if(map == null) {
                     String mapFilename = MapUtil.STREET_MAP_DIRECTORY + fields[1];
                     map = MapUtil.loadMap(mapFilename);
@@ -84,7 +71,6 @@ public class PerformanceEvaluator {
                 int goalY = Integer.parseInt(fields[7]);
                 double distance = Double.parseDouble(fields[8]);
                 scenarioIndex++;
-                //System.out.println("map: " + fields[1] + ", start: " + startX + ", " + startY + ", goal: " + goalX + ", " + goalY + ", distance: " + distance);
                 Scenario scenario = new Scenario(scenarioIndex, map, startX, startY, goalX, goalY, distance);
                 scenarioList.add(scenario);                
             }
@@ -99,7 +85,7 @@ public class PerformanceEvaluator {
      * 
      * @param algorithms    a list of algorithms to be used in the evaluation, mapping to constants in MapUtil
      * 
-     * @return  a map of pathfinders
+     * @return  A map of pathfinders: the key is the algorithm code Mapping to MapUtil.ALGORITHM_* and the value is the Pathfinder object.
     */
     private Map<Integer, Pathfinder> getPatfinders(List<Integer> algorithms) {
         Map<Integer, Pathfinder> map = new HashMap<Integer, Pathfinder>(3);
@@ -117,23 +103,23 @@ public class PerformanceEvaluator {
     }
 
     /**
-     * Collect the evaluation results from Evaluation objects to a PerformanceResults.
+     * Collect the evaluation results from Evaluation objects to a PerformanceEvaluationResults.
      * 
      * @param evaluationList   list of all evaluations from a single run
      * 
      * @return  composed results of evaluations
     */
-    private PerformanceResults collectEvaluateResults(List<Evaluation> evaluationList) {
-        PerformanceResults performanceResults = new PerformanceResults();
+    private PerformanceEvaluationResults collectEvaluateResults(List<PerformanceEvaluation> evaluationList) {
+        PerformanceEvaluationResults performanceResults = new PerformanceEvaluationResults();
         for(int i=0; i<evaluationList.size(); i++) {
-            Evaluation evaluation = evaluationList.get(i);
+            PerformanceEvaluation evaluation = evaluationList.get(i);
             performanceResults.addEvaluationResult(evaluation);
         }
         return performanceResults;
     }
 
     /* 
-     * Run the evaluation listed in a scenario file with given number of iterations and selected algorithms.
+     * Run the all the evaluations listed in the scenario file with given number of iterations and selected algorithms.
      * 
      * @param iterations    number of iterations for each scenario * algorithm
      * @param filename      filename of the scenario file
@@ -141,11 +127,11 @@ public class PerformanceEvaluator {
      * 
      * @return  composed results of evaluations
     */  
-    PerformanceResults runEvaluation(int iterations, String filename, List<Integer> algorithms) {
+    PerformanceEvaluationResults runEvaluation(int iterations, String filename, List<Integer> algorithms) {
 
         Map<Integer, Pathfinder> pathfinderMap = getPatfinders(algorithms);
         List<Scenario> scenarioList = loadScenarios(filename);
-        List<Evaluation> evaluationList = new ArrayList<Evaluation>(iterations * algorithms.size() * scenarioList.size());
+        List<PerformanceEvaluation> evaluationList = new ArrayList<PerformanceEvaluation>(iterations * algorithms.size() * scenarioList.size());
 
         for(int i=0; i<scenarioList.size(); i++) {
             System.out.println("Running scenario: " + i);
@@ -158,7 +144,7 @@ public class PerformanceEvaluator {
                     int algorithmIndex = (j + k) % algorithms.size();
                     int algorithm = algorithms.get(algorithmIndex); 
                     Pathfinder pathfinder = pathfinderMap.get(algorithm);
-                    Evaluation evaluation = new Evaluation();
+                    PerformanceEvaluation evaluation = new PerformanceEvaluation();
                     evaluation.algorithm = algorithm;
                     evaluation.startTime = System.currentTimeMillis();
                     evaluation.result = pathfinder.navigate(scenario.map, scenario.start, scenario.goal);
@@ -172,17 +158,23 @@ public class PerformanceEvaluator {
             }
         }
 
-        PerformanceResults performanceResults = collectEvaluateResults(evaluationList);
+        PerformanceEvaluationResults performanceResults = collectEvaluateResults(evaluationList);
         return performanceResults;
     }
 
+    /**
+     * The entry point for cases we want to execute from the command line instead of UI.
+     * When run from the command line, there is no option to save the results in CSV files.
+     * 
+     * @param args  No args are used, prepare run options directly to the main method code.
+     */
     public static void main(String[] args) {
         List<Integer> algorithms = new ArrayList<Integer>(6);
         algorithms.add(MapUtil.ALGORITHM_DIJKSTRA);
         algorithms.add(MapUtil.ALGORITHM_ASTAR);
         algorithms.add(MapUtil.ALGORITHM_JPS);
         PerformanceEvaluator p = new PerformanceEvaluator();
-        PerformanceResults pr = p.runEvaluation(9, "test-1.scen", algorithms);
+        PerformanceEvaluationResults pr = p.runEvaluation(9, MapUtil.SCENARIO_DIRECTORY + "test-1.scen", algorithms);
         System.out.println(pr);
     }   
     

@@ -9,10 +9,9 @@ import java.util.PriorityQueue;
  */
 class DijkstraPathfinder implements Pathfinder {
 
-    /** 
-     * A comparator class for the priority heap to calculate the place in open list.
-     * Dijkstra, this is simply the distance from the starting point and noheuristic function is used.
-     * 
+     /** 
+     * Internal class to decide the order of two nodes in the priority queue.  
+     * In Dijkstra, the priority is only the distance of the node from the starting point.
     */
     private class NodeComparator implements Comparator<Node> {
         @Override
@@ -21,35 +20,38 @@ class DijkstraPathfinder implements Pathfinder {
         }
     }
 
+    /* 
+     * @see com.orasaari.DijkstraPathfinder#navigate(com.orasaari.GridMap, java.awt.Point, java.awt.Point, boolean)
+    */
     public Result navigate(GridMap map, Point start, Point finish) {
         return navigate(map, start, finish, false);
     }
 
     /**
-     * Implement the pathfinding algoritm.
+     * Implement the Dijkstra pathfinding.
      * 
-     * @param   map     2D grid map
-     * @param   start   starting point in the 2D gripd (x, y)
-     * @param   finish  finishing point (goal) in the 2D gripd (x, y)
+     * @param map           The 2D grid map where the path is searched.
+     * @param start         The starting point of the path.
+     * @param goal          The finishing point of the path.
+     * @param cutCorners    If false, diagonal movement is allowed only if both of the adjacent (vertical and horizontal neighbors 
+     *                      towards the moving direction) nodes are traversable. Currently, only using false value in the performance evaluation
+     *                      to have comparable results with the Moving AI Lab scenarios.
      * 
-     * @return  result  result to be used in the UI and performance evaluation
-     * 
+     * @return              the Result object wrapping the pathfinding results
     */
     public Result navigate(GridMap map, Point start, Point finish, boolean cutCorners) {
             
-        // System.out.println("DijstraPathfinder.navigate, start: " + start + ", finish: " + finish);
-
-        // Initialize valiables needed in iterating the route
         boolean[][] grid = map.getGrid(); 
-        boolean[][][] travellability = map.getTraversability(cutCorners);
-
+        boolean[][][] travellability = map.getTraversability(cutCorners); // pre-calculated traversability to the adjacent nodes
+ 
+        
+        // Initialize the timer. Calculating travallebility of nodes is not included in performance evaluation.
         long startTime = System.currentTimeMillis();
         
         // Initialize the priority heap
         PriorityQueue<Node> heap = new PriorityQueue<Node>(new NodeComparator());
 
-        // Nodes are created as needed. They are maintained in an array and re-used 
-        // to minimize overhead of node creation and storing.
+        // Nodes are created only as needed and maintained in an array and re-used to minimize overhead.
         Node[][] nodeList = new Node[grid.length][grid[0].length];
 
         // Initialize the priority heap with the starting node
@@ -59,30 +61,27 @@ class DijkstraPathfinder implements Pathfinder {
         heap.add(currentNode);           
         int numeOfEvaluatedNodes = 0;
 
-        // Execute iterating the route
+        // Execute the pathfinding iteration
         while(!heap.isEmpty()) {
-
             currentNode = heap.poll();
 
-            // We are only calculating the the route (not distance to each node) so we can finish when the finishing node is found.
             if(currentNode.x == finish.x && currentNode.y == finish.y) {
-                break;
+                break; // goal met, finish and collect results
             }
 
             // check, if the current node is in already handled
             if(currentNode.handled) {
-                continue;
+                continue; // skip already handled nodes
             }
 
-            // mark the current node handled to prevent it to be handled multiple times
-            currentNode.handled = true;
-            numeOfEvaluatedNodes++;
+            currentNode.handled = true; // handle node & mark it as handled
+            numeOfEvaluatedNodes++; // number of evaluated nodes is additional information for performance evaluation
 
-            // Iterate over the potential edges of the current node
+            // Iterate over the potential edges of the current node. 
             for(int i=0; i<8; i++) {
 
                 if(!travellability[currentNode.x][currentNode.y][i]) {
-                    continue;
+                    continue; // blocked edger or ouside grid, skip
                 }
 
                 int nextNodeX = currentNode.x + MapUtil.MOVES[i][0];
@@ -96,7 +95,8 @@ class DijkstraPathfinder implements Pathfinder {
                 }
                 double edgeWeight = MapUtil.WEIGHTS[i];
 
-                // check if our distance from the current node to the next node is smaller that the current shortest route to the next node
+                // Check if our distance from the current node to the next node is smaller that the current shortest route 
+                // to the next node. If yes, update to the object and add it to the priority heap.
                 double newDistance = currentNode.distance + edgeWeight;
                 if(newDistance < nextNode.distance) {
                     nextNode.distance = newDistance;
@@ -106,8 +106,8 @@ class DijkstraPathfinder implements Pathfinder {
             }
         }
 
+        // Iteration finished, collect results and return
         long finishTime = System.currentTimeMillis();
-
         boolean success = currentNode.x == finish.x && currentNode.y == finish.y;
         Result result = MapUtil.collectResults(currentNode, startTime, finishTime, numeOfEvaluatedNodes, MapUtil.ALGORITHM_ASTAR, success);
         return result;

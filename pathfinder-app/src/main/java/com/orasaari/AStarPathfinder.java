@@ -6,18 +6,16 @@ import java.util.PriorityQueue;
 
 /**
  * Implementation of the A* algorith. 
+ * 
  * This is a copy of Dijkstra with only minor modifications in the the navigate function: 
  * heap is prioritized according to distance + heuristic function instead of just distance from the start node.
- * Heuristic function = octile distance from a node in the end of edge to the finishing node.
+ * Heuristic function = octile distance from a node in the end of edge to the goal node.
  */
 class AStarPathfinder implements Pathfinder {
 
-    // MOVES and WEIGHTS are just supporting variables that allow writing cleaner code in the navigate function.
-    //private static final int[][] MOVES = {{-1,0}, {1,0}, {0,-1}, {0,1}, {-1,-1}, {1,1}, {-1,1}, {1,-1}};
-    //private static final double[] WEIGHTS = {1, 1, 1, 1, MapUtil.SQRT2, MapUtil.SQRT2, MapUtil.SQRT2, MapUtil.SQRT2};
-
-    /** 
-     * Internal class to compare place of two nodes in the priority queue. 
+     /** 
+     * Internal class to decide the order of two nodes in the priority queue.  
+     * The priority is the distance of the node from the starting point + heuristic function (octile distance to the goal)
     */
     private class ANodeComparator implements Comparator<Node> {        
         public int compare(Node n1, Node n2) {
@@ -25,64 +23,68 @@ class AStarPathfinder implements Pathfinder {
         }
     }
 
+    /* 
+     * @see com.orasaari.AStarPathfinder#navigate(com.orasaari.GridMap, java.awt.Point, java.awt.Point, boolean)
+    */
     public Result navigate(GridMap map, Point start , Point finish) {
         return navigate(map, start, finish, false);
     }   
 
     /**
-     * Implement the pathfinding algoritm.
+     * Implement the A* pathfinding.
+     * 
+     * @param map           The 2D grid map where the path is searched.
+     * @param start         The starting point of the path.
+     * @param goal          The finishing point of the path.
+     * @param cutCorners    If false, diagonal movement is allowed only if both of the adjacent (vertical and horizontal neighbors 
+     *                      towards the moving direction) nodes are traversable. Currently, only using false value in the performance evaluation
+     *                      to have comparable results with the Moving AI Lab scenarios.
+     * 
+     * @return              the Result object wrapping the pathfinding results
     */
-    public Result navigate(GridMap map, Point start , Point finish, boolean cutCorners) {
+    public Result navigate(GridMap map, Point start , Point goal, boolean cutCorners) {
             
-        // System.out.println("AStartPathfinder.navigate, start: " + start + ", finish: " + finish);
-
-
-
         boolean[][] grid = map.getGrid(); 
-        boolean[][][] travellability = map.getTraversability(cutCorners);
+        boolean[][][] travellability = map.getTraversability(cutCorners); // pre-calculated traversability to the adjacent nodes
 
         // Initialize the timer. Calculating travallebility of nodes is not included in performance evaluation.
         long startTime = System.currentTimeMillis();
 
-        // Init heap
+        // Initialize the priority heap
         PriorityQueue<Node> heap = new PriorityQueue<Node>(new ANodeComparator());
 
-
-
-        // Nodes are created as needed. They are maintained in an array and re-used 
-        // to minimize overhead of node creation and storing.
+        // Nodes are created only as needed and maintained in an array and re-used to minimize overhead.
         Node[][] nodeList = new Node[grid.length][grid[0].length];
+
+        // Initialize the priority heap with the starting node
         Node currentNode = new Node(start.x, start.y);
         nodeList[start.x][start.y] = currentNode;
         currentNode.distance = 0;
-        double octileDistance = MapUtil.octileDistance(start.x, start.y, finish.x, finish.y);
+        double octileDistance = MapUtil.octileDistance(start.x, start.y, goal.x, goal.y);
         currentNode.priority = octileDistance;
         heap.add(currentNode);           
         int numeOfEvaluatedNodes = 0;
 
-        // Execute iteration
+        // Execute the pathfinding iteration
         while(!heap.isEmpty()) {
-
             currentNode = heap.poll();
-
-            // We are only calculating the the route so we can finish when in the end node
-            if(currentNode.x == finish.x && currentNode.y == finish.y) {
-                break;
+            
+            if(currentNode.x == goal.x && currentNode.y == goal.y) {
+                break; // goal met, finish and collect results
             }
-            // check, if the current node is in the handled list
+            
             if(currentNode.handled) {
-                continue;
+                continue; // skip already handled nodes
             }
-            currentNode.handled = true;
-            numeOfEvaluatedNodes++;
+
+            currentNode.handled = true; // handle node & mark it as handled
+            numeOfEvaluatedNodes++;     // number of evaluated nodes is additional information for performance evaluation
 
             // Iterate over the potential edges of the current node. 
-            // Currently, no edges are calculated to adjancency lists beforehand but movement options are evaluated on the fly.
-            // Another option would be to describe available transfer options as aboolean table for each node (pixel).
             for(int i=0; i<8; i++) {
 
                 if(!travellability[currentNode.x][currentNode.y][i]) {
-                    continue;
+                    continue; // blocked edger or ouside grid, skip
                 }
 
                 int nextNodeX = currentNode.x + MapUtil.MOVES[i][0];
@@ -94,27 +96,23 @@ class AStarPathfinder implements Pathfinder {
                     nextNode = new Node(nextNodeX, nextNodeY);
                     nodeList[nextNodeX][nextNodeY] = nextNode;
                 }
-                double edgeWeight = MapUtil.WEIGHTS[i];
-
-                // Update the Dijkstra algorithm to cover A* priority handling: add use of field aPriority to prioritize the heap.
-                // The heap comparator (internal class NodeComparator) needs to be updated accordingly.
-                double newDistance = currentNode.distance + edgeWeight;
-                if(newDistance < nextNode.distance) {
-                    nextNode.distance = newDistance;
-
-                    // Change new priority for the heap.
-                    // Priority = distance + heuristic function (in Dijkstra only distance).
-                    // Heuristic function = octile distance to the finish node.                
-                    octileDistance = MapUtil.octileDistance(nextNodeX, nextNodeY, finish.x, finish.y);                    
-                    nextNode.priority = newDistance + octileDistance;
+               
+                // Calculate priority = distance from the start + heuritsic function (octile distance to the goal)
+                double edgeWeight = MapUtil.WEIGHTS[i]; // 1 for straight, sqrt(2) for diagonal
+                double distance = currentNode.distance + edgeWeight;
+                if(distance < nextNode.distance) {
+                    nextNode.distance = distance;
+                    octileDistance = MapUtil.octileDistance(nextNodeX, nextNodeY, goal.x, goal.y);                    
+                    nextNode.priority = distance + octileDistance;
                     heap.add(nextNode);
                     nextNode.previous = currentNode;
                 }                
             }
         }
 
+        // Iteration finished, collect results and return
         long finishTime = System.currentTimeMillis();
-        boolean success = currentNode.x == finish.x && currentNode.y == finish.y;
+        boolean success = currentNode.x == goal.x && currentNode.y == goal.y;
         Result result = MapUtil.collectResults(currentNode, startTime, finishTime, numeOfEvaluatedNodes, MapUtil.ALGORITHM_DIJKSTRA, success);
         return result;
     }  

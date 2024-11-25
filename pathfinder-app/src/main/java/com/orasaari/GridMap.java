@@ -1,21 +1,14 @@
-/**
-* A  representation class for a 2D grid map.
-* This is just a data container without functionality.
-*/
 package com.orasaari;
 
-
+/**
+* A  representation class for a 2D grid map. To maximize peformance of the pathfinding,
+* boolean array is used for representation.
+*/
 public class GridMap {
 
-    static final byte PIXEL_STATUS_BLOCKED = 0;
-    static final byte PIXEL_STATUS_FREE = 1;
-    static final byte PIXEL_STATUS_TRIED = 2;
-    static final byte PIXEL_STATUS_ROUTE = 3;
-    static final byte PIXEL_STATUS_ENDPOINT = 4;
-
     private boolean[][] grid;
-    private int width;
-    private int height;
+    private int width = -1;
+    private int height = -1;
     boolean[][][] traversability;
 
     GridMap(int width, int height) {
@@ -30,18 +23,22 @@ public class GridMap {
         this.height = grid[0].length;
     }
  
+    /** 
+     * Get the array representation of the map 
+    */
     boolean[][] getGrid() {
         return this.grid;
     }
 
     /**
-     * To be able to efficiently utilize the available pre-calculated scenarios for 2D city maps, we need to adjust travellaibility rule:
-     * If we are not allowed to cut corners, we need to check that the diagonal move is not blocked in the both sides even if the next node is free.
+     * To be able to efficiently utilize Moving AI Lab 2D grid maps, we need to adjust travellaibility rule: If we are not allowed to 
+     * cut corners, we need to check that the diagonal move is free in the both sides even if the next diagonal node is free.
+     * 
      * @see https://www.movingai.com/benchmarks/street/index.html
      * 
-     * @param   cutCorners  if true, the diagonal move is allowed only if the vertical and horizontal nodes towards the moving direction are free.
+     * @param   cutCorners  If true, the diagonal move is allowed only if the vertical and horizontal nodes towards the moving direction are free.
      * 
-     * @return  travellability  a 3D array of boolean values indicating travellability to a direction from a node. Directions are defined im MapUtil.MOVES.
+     * @return  TEraversability: a 3D array of boolean values indicating travellability to a direction from a node. Directions are defined im MapUtil.MOVES.
     */
     boolean[][][] getTraversability(boolean cutCorners) {
         if(traversability == null) {
@@ -54,15 +51,12 @@ public class GridMap {
                             int directionY = MapUtil.MOVES[k][1];
                             int nextNodeX = i + directionX;
                             int nextNodeY = j + directionY;
-                            if(nextNodeX < 0 || nextNodeY < 0 || nextNodeX >= width || nextNodeY >= height) {
-                                // The node is outside the map -> false
-                                traversability[i][j][k] = false;
-                            } else if(!grid[nextNodeX][nextNodeY]) {
-                                // The node is blocked -> always false
-                                traversability[i][j][k] = false;
+                            if(nextNodeX < 0 || nextNodeY < 0 || nextNodeX >= width || nextNodeY >= height) {                               
+                                traversability[i][j][k] = false;  // The node is outside the map -> false
+                            } else if(!grid[nextNodeX][nextNodeY]) {                                
+                                traversability[i][j][k] = false; // The node is blocked -> always false
                             } else if(directionX == 0 || directionY == 0 || cutCorners) {
-                                // Verical or horizontal move or cutting corners is allowed -> always true
-                                traversability[i][j][k] = true;
+                                traversability[i][j][k] = true; // cutting corners
                             } else {
                                 // Cutting corners is not allowed -> either of the two adjacent nodes towards the moving direction can block the movement
                                 traversability[i][j][k] = grid[i+directionX][j] && grid[i][j+directionY]; 
@@ -78,16 +72,24 @@ public class GridMap {
     }
 
 
+    /**
+     * @return  The width of the map, or -1 if the map is not initialized.
+     */
     int getWidth() {
         return this.width;
     }
 
+    /**
+     * @return  The height of the map, or -1 if the map is not initialized.
+     */
     int getHeight() {
         return this.height;
     }
 
     /** 
-     * Utility method to create a random map. Used only to test visualization. 
+     * An utility method to create a random map. Used only to test visualization. 
+     * 
+     * @param blockProb     The probability of a node being blocked in randomization.
      */
     void randomize(double blockProb) {
         for(int i=0; i<width; i++) 

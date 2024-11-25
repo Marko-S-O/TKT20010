@@ -12,7 +12,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
- * An UI component class to show a pathfinding result of a single algorithm. 
+ * An UI component class to show a pathfinding results for a single algorithm. 
  * Intended to be used as an embedded component in the GridMapUI class.
  */
 class ResultPanel extends JPanel {
@@ -64,10 +64,9 @@ class ResultPanel extends JPanel {
     }
 
     /**
-     * Show the result after a pathginding run.
+     * Show the results after a pathginding run.
      * 
      * @param result    Result of a single pathfinding run
-     * 
      */
     void showResult(Result result) {
         if(result != null) {

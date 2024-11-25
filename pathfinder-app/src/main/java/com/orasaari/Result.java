@@ -25,6 +25,7 @@ public class Result {
     /** Distance between start and finish nodes (pixels) in the grid. */
     double distance;
 
+    /** String representation for debugging purposes */
     public String toString() {
         return "Result:: distance: " + distance + " path lenght: " + numOfPathNodes + ", duration: " + duration + ", eval. nodes: " + numeOfEvaluatedNodes + ", algorithm: " + algorithm + ", success: " + success;
     }

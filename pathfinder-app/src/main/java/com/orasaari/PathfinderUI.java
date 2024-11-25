@@ -24,20 +24,20 @@ import javax.swing.JTextField;
 import javax.swing.WindowConstants;
 
 /** 
- * The main class to run pathfinding algorithms.
- * The entry point to the application.
+ * The main UI class. Includes functions to 
+ * - Run and visualize pathfinding: select and load a map file, select algorithms, find paths and show the results and path on the map
+ * - run performance evaluation with a selected scenario file, algorithms and number of iterations & show the results.
 */
-public class PathfinderUI extends JFrame implements ActionListener {
-  
+public class PathfinderUI extends JFrame implements ActionListener {  
     private GridMapView view;
     private GridMap map;
-    private JButton btnSelectFile, btnLoadMap, btnFindPath, btnPerformanceEvalulation;
-    private JTextField tfFilename, tfStartX, tfStartY, tfFinishX, tfFinishY, tfIterations;
+    private JButton btnSelectFile, btnLoadMap, btnFindPath, btnLoadScenarioFile, btnPerformanceEvalulation;
+    private JTextField tfMapFilename, tfStartX, tfStartY, tfFinishX, tfFinishY, tfIterations, tfPerformanceEvaluationFilename;
     private JCheckBox cbDijkstra, cbAstar, cbJPS;
     private ResultPanel pnlResultsDisjkstra, pnlResultsAstar, pnlResultsJPS;
  
     /** 
-     * Constructor to initialize the UI components.
+     * Initialize the UI.
     */
     PathfinderUI() {
         setLayout(new BorderLayout());
@@ -59,7 +59,7 @@ public class PathfinderUI extends JFrame implements ActionListener {
     }
 
     /**
-     * Construct the UI panel that contains all other components but the actual map.
+     * Construct the UI main panel that contains all other components but the actual grid map.
     */
     private JPanel getControlPanel() {
         JPanel pnlControl = new JPanel(new GridLayout(4,1));
@@ -78,18 +78,13 @@ public class PathfinderUI extends JFrame implements ActionListener {
         pnlControl.add(getFilePanel()); 
         pnlControl.add(pnlCoordinates);
         pnlControl.add(getRunPanel());
-
-        JPanel pnlBottom = new JPanel();
-        pnlBottom.add(new JLabel("Iterations: "));
-        pnlBottom.add(tfIterations = new JTextField(5));
-        pnlBottom.add(btnPerformanceEvalulation = new JButton("Run Performance Evaluation"));        
-        pnlControl.add(pnlBottom);
+        pnlControl.add(getPerformanceEvalautionPanel());
 
         return pnlControl;
     }
 
     /** 
-     * Construct the panel with components to set run parameters and execute pathfinding.
+     * Construct the sub-panel with components to set run parameters and execute pathfinding.
     */
     private JPanel getRunPanel() {
         JPanel pnlRun = new JPanel();
@@ -103,63 +98,100 @@ public class PathfinderUI extends JFrame implements ActionListener {
     }
 
     /** 
-     * Construct the sub-panel that allows user to select and load a map file
+     * Construct the sub-panel that allows user to select and load a map file.
      */
     private JPanel getFilePanel() {
         JPanel pnlFile = new JPanel();
-        pnlFile.add(btnSelectFile = new JButton("Select File"));
-        btnSelectFile.addActionListener(this);
         pnlFile.add(new JLabel("Filename: "));
-        pnlFile.add(tfFilename = new JTextField(20));
+        pnlFile.add(tfMapFilename = new JTextField(20));
+        pnlFile.add(btnSelectFile = new JButton("Select Map File"));
+        btnSelectFile.addActionListener(this);        
         pnlFile.add(btnLoadMap = new JButton("Load Map"));
         btnLoadMap.addActionListener(this);
         return pnlFile;
     }
 
     /** 
-     * Construct the panel showing the result after pathfinding.
+     * Construct the sub-panel showing the result after pathfinding.
     */
     private JPanel getResultPanels() {
-
         JPanel pnlResults = new JPanel();
         pnlResults.setLayout(new BoxLayout(pnlResults, BoxLayout.Y_AXIS));
         pnlResults.add(pnlResultsDisjkstra = new ResultPanel("Dijkstra"));
         pnlResults.add(pnlResultsAstar = new ResultPanel("A-Star"));
         pnlResults.add(pnlResultsJPS = new ResultPanel("JPS"));
-
         return pnlResults;
     }
 
+    /**
+     * Construct the sub-panel for the performance evaluation.
+    */
+    private JPanel getPerformanceEvalautionPanel() {
+        JPanel pnl = new JPanel();
+        pnl.add(new JLabel("Scenario filename: "));
+        pnl.add(tfPerformanceEvaluationFilename = new JTextField(20));
+        pnl.add(btnLoadScenarioFile = new JButton("Select Scenario File"));
+        pnl.add(new JLabel("Iterations: "));
+        pnl.add(tfIterations = new JTextField(5));
+        pnl.add(btnPerformanceEvalulation = new JButton("Run Performance Evaluation"));        
+        btnLoadScenarioFile.addActionListener(this);
+        btnPerformanceEvalulation.addActionListener(this);
+        return pnl;
+    }
+
+    /**
+     * Set the grid map to be visualized and used for pathfinding.
+     * 
+     * @param map   2D grid map to be visualized and used for pathfinding.
+     */
     void setMap(GridMap map) {
         this.map = map;
         view.setMap(map);
     }
 
-    /** Action method to select a map file */  
-    private void selectFile() {
+    /**
+     *  Action method to select the used map file.
+    */  
+    private void selectMapFile() {
         JFileChooser jfc = new JFileChooser();
-        jfc.setDialogTitle("Select a MAP file");
+        jfc.setDialogTitle("Select a Map File");
         jfc.setFileSelectionMode(JFileChooser.FILES_ONLY);
         jfc.setCurrentDirectory(new File(MapUtil.MAP_DIRECTORY));
         int result = jfc.showOpenDialog(this);
         if(result == JFileChooser.APPROVE_OPTION) {
             String filename = jfc.getSelectedFile().getPath();
-            tfFilename.setText(filename);
+            tfMapFilename.setText(filename);
         }
     }
 
+    /** 
+     * Action method to select the performance evaluation scenario list file .
+    */  
+    private void selectScenarioFile() {
+        JFileChooser jfc = new JFileChooser();
+        jfc.setDialogTitle("Select a Scenario File");
+        jfc.setFileSelectionMode(JFileChooser.FILES_ONLY);
+        jfc.setCurrentDirectory(new File(MapUtil.SCENARIO_DIRECTORY));
+        int result = jfc.showOpenDialog(this);
+        if(result == JFileChooser.APPROVE_OPTION) {
+            String filename = jfc.getSelectedFile().getPath();
+            tfPerformanceEvaluationFilename.setText(filename);
+        }
+    }
+
+    /** Load the map file using the MapUtil class. */
     private void loadMap() {
-        String filename = tfFilename.getText();
+        String filename = tfMapFilename.getText();
         GridMap map = MapUtil.loadMap(filename);
         setMap(map);
     }
 
     /**
-     * Execute pathfinding with given algorithm
+     * Execute a single pathfinding run with a given algorithm.
      * 
-     * @param algorith algorithm to be used, code values defined in MapUtil
-     * 
-     * @return  results object wrapping necessary return information
+     * @param algorith  Algorithm to be used, values defined in MapUtil.
+     *  
+     * @return  A results object wrapping necessary information to be visualized, or null in the case of an error.
     */
     private Result findPath(int algorith) {
 
@@ -191,51 +223,83 @@ public class PathfinderUI extends JFrame implements ActionListener {
     }
 
     /**
-     * Find paths and show results.
+     * Execute pathgfinding with selected algorithms, start point and goal.
      */
     private void findAllPaths() {
 
         List<List<Node>> paths = new ArrayList<>(3);
 
-        System.out.println("findAllPaths(): " + paths.size());
-
         if(cbDijkstra.isSelected()) {
-            System.out.print("find Dijkstra");
             Result result = findPath(MapUtil.ALGORITHM_DIJKSTRA);
             pnlResultsDisjkstra.showResult(result);
             paths.add(result.path);
         }
 
         if(cbAstar.isSelected()) {
-            System.out.print("find A*");
             Result result = findPath(MapUtil.ALGORITHM_ASTAR);
             pnlResultsAstar.showResult(result);
             paths.add(result.path);
         }
 
         if(cbJPS.isSelected()) {
-            System.out.print("find JPS");
             Result result = findPath(MapUtil.ALGORITHM_JPS);
             pnlResultsJPS.showResult(result);
             paths.add(result.path);
         }
         view.paintPaths(paths);
-
     }
 
+    /**
+     * Action method to run the performance evaluation with the selected algorithms, 
+     * number of iterastions and scenario file.
+     */
+    private void runPerformanceEvaluation() {
+        PerformanceEvaluator evaluator = new PerformanceEvaluator();
+
+        int iterations = Integer.parseInt(tfIterations.getText().trim());
+        String filename = tfPerformanceEvaluationFilename.getText().trim();
+
+        List<Integer> algorithms = new ArrayList<>(3);
+        if(cbDijkstra.isSelected()) {
+            algorithms.add(MapUtil.ALGORITHM_DIJKSTRA);
+        }
+        if(cbAstar.isSelected()) {
+            algorithms.add(MapUtil.ALGORITHM_ASTAR);
+        }
+        if(cbJPS.isSelected()) {
+            algorithms.add(MapUtil.ALGORITHM_JPS);
+        }
+
+        PerformanceEvaluationDialog dialog = new PerformanceEvaluationDialog(this);
+        dialog.showText("Performance evaluation underway, results will be shown here shortly...");
+
+        PerformanceEvaluationResults results = evaluator.runEvaluation(iterations, filename, algorithms); 
+        dialog.showResults(results);
+    }
+
+    /**
+     * The event listener method to handle button clicks.
+     */
     @Override
     public void actionPerformed(ActionEvent e) {
         if(e.getSource() == btnSelectFile) {
-            selectFile();
+            selectMapFile();
         } else if(e.getSource() == btnLoadMap) {
             loadMap();
         } else if(e.getSource() == btnFindPath) {
             findAllPaths();
         } else if(e.getSource() == btnPerformanceEvalulation) {
-            System.out.println("Run performance evaluation");
-        }
+            runPerformanceEvaluation();
+        } else if (e.getSource() == btnLoadScenarioFile) {
+            selectScenarioFile();
+        }               
     }
 
+    /**
+     * The entry point to the application.
+     * 
+     * @param args  No args in use.
+     */
     public static void main(String[] args) {
         new PathfinderUI();
     }

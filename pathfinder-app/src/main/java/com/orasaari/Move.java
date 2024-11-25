@@ -1,17 +1,16 @@
 package com.orasaari;
 
     /* 
-     * Instead of using two-dimensional integer array to represent the moving directions like in Dijkstra, A*,
-     * wrap move directions to a class to make code a bit more compact and readable in JPS.
+     * A simple wrapper class for x and y coordinates of moving direction.
     */
     class Move {
-        int directionX;
-        int directionY;
+        int directionX; // x coordinate of the moving direction (1, 0, -1)
+        int directionY; // y coordinate of the moving direction (1, 0, -1)
         Move(int directionX, int directionY) {
             this.directionX = directionX;
             this.directionY = directionY;
         }
         public String toString() {
-            return "Move(" + directionX + "," + directionY + ")";
+            return "Move(" + directionX + ", " + directionY + ")";
         }
     }
