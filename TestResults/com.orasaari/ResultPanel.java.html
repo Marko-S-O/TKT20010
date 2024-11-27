@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ResultPanel.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">pathfinder-app</a> &gt; <a href="index.source.html" class="el_package">com.orasaari</a> &gt; <span class="el_source">ResultPanel.java</span></div><h1>ResultPanel.java</h1><pre class="source lang-java linenums">package com.orasaari;
+
+import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+
+import java.awt.Font;
+import java.awt.Color;
+import java.awt.FlowLayout;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+/**
+ * An UI component class to show a pathfinding results for a single algorithm. 
+ * Intended to be used as an embedded component in the GridMapUI class.
+ */
+class ResultPanel extends JPanel {
+
+<span class="nc" id="L20">    private static final Font HEADER_FONT = new Font(&quot;Verdana&quot;, Font.BOLD, 17);</span>
+<span class="nc" id="L21">    private static final SimpleDateFormat TIMESTAMP_FORMAT = new SimpleDateFormat(&quot;dd.MM.yyyy HH:mm&quot;);</span>
+    
+    private JLabel lblResultHeader, lblStatus, lblStartTime, lblFinishTime, lblDuration, lblPathLenght, lblNodesEvaluated;
+
+    /**
+     * Init the component.
+     * 
+     * @param algorith  Textual name of the algorithm to be shown in the UI to identify the results.
+     */
+<span class="nc" id="L30">    ResultPanel(String algorith) {</span>
+
+<span class="nc" id="L32">        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));</span>
+<span class="nc" id="L33">        setBorder(BorderFactory.createLineBorder(Color.gray, 1));</span>
+
+<span class="nc" id="L35">        JPanel pnl1 = new JPanel(new FlowLayout());</span>
+<span class="nc" id="L36">        pnl1.add(lblResultHeader = new JLabel(algorith + &quot; result  &quot;));</span>
+<span class="nc" id="L37">        lblResultHeader.setFont(HEADER_FONT);</span>
+<span class="nc" id="L38">        JPanel pnl2 = new JPanel(new FlowLayout(FlowLayout.LEFT));</span>
+<span class="nc" id="L39">        pnl2.add(new JLabel(&quot;Status: &quot;));</span>
+<span class="nc" id="L40">        pnl2.add(lblStatus = new JLabel(&quot;                                  &quot;));</span>
+
+<span class="nc" id="L42">        JPanel pnl4 = new JPanel(new FlowLayout(FlowLayout.LEFT));</span>
+<span class="nc" id="L43">        pnl4.add(new JLabel(&quot;Start time: &quot;));</span>
+<span class="nc" id="L44">        pnl4.add(lblStartTime = new JLabel(&quot;                             &quot;));</span>
+<span class="nc" id="L45">        JPanel pnl5 = new JPanel(new FlowLayout(FlowLayout.LEFT));</span>
+<span class="nc" id="L46">        pnl5.add(new JLabel(&quot;Finish time: &quot;));</span>
+<span class="nc" id="L47">        pnl5.add(lblFinishTime = new JLabel(&quot;                             &quot;));</span>
+<span class="nc" id="L48">        JPanel pnl6 = new JPanel(new FlowLayout(FlowLayout.LEFT));</span>
+<span class="nc" id="L49">        pnl6.add(new JLabel(&quot;Time used: &quot;));</span>
+<span class="nc" id="L50">        pnl6.add(lblDuration = new JLabel(&quot;                              &quot;));        </span>
+<span class="nc" id="L51">        JPanel pnl7 = new JPanel(new FlowLayout(FlowLayout.LEFT));        </span>
+<span class="nc" id="L52">        pnl7.add(new JLabel(&quot;Path lenght: &quot;));</span>
+<span class="nc" id="L53">        pnl7.add(lblPathLenght = new JLabel(&quot;                              &quot;));  </span>
+<span class="nc" id="L54">        JPanel pnl8 = new JPanel(new FlowLayout(FlowLayout.LEFT));        </span>
+<span class="nc" id="L55">        pnl8.add(new JLabel(&quot;Nodes visited: &quot;));</span>
+<span class="nc" id="L56">        pnl8.add(lblNodesEvaluated = new JLabel(&quot;                              &quot;));        </span>
+<span class="nc" id="L57">        add(pnl1);</span>
+<span class="nc" id="L58">        add(pnl2);        </span>
+<span class="nc" id="L59">        add(pnl4);</span>
+<span class="nc" id="L60">        add(pnl5);</span>
+<span class="nc" id="L61">        add(pnl6);</span>
+<span class="nc" id="L62">        add(pnl7);</span>
+<span class="nc" id="L63">        add(pnl8);</span>
+<span class="nc" id="L64">    }</span>
+
+    /**
+     * Show the results after a pathginding run.
+     * 
+     * @param result    Result of a single pathfinding run
+     */
+    void showResult(Result result) {
+<span class="nc bnc" id="L72" title="All 2 branches missed.">        if(result != null) {</span>
+<span class="nc bnc" id="L73" title="All 2 branches missed.">            lblStatus.setText(result.success ? &quot;Success&quot; : &quot;Failed&quot;);</span>
+<span class="nc" id="L74">            lblStartTime.setText(TIMESTAMP_FORMAT.format(new Date(result.startTime)));</span>
+<span class="nc" id="L75">            lblFinishTime.setText(TIMESTAMP_FORMAT.format(new Date(result.finishTime)));</span>
+<span class="nc" id="L76">            lblDuration.setText(result.duration + &quot; ms&quot;);        </span>
+<span class="nc" id="L77">            lblPathLenght.setText(String.format(&quot;%,.2f&quot;, result.distance));</span>
+<span class="nc" id="L78">            lblNodesEvaluated.setText(&quot;&quot; + result.numeOfEvaluatedNodes);</span>
+<span class="nc" id="L79">        } else {</span>
+<span class="nc" id="L80">            System.out.println(&quot;showResult() can't view result: result is null&quot;);</span>
+        }
+<span class="nc" id="L82">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

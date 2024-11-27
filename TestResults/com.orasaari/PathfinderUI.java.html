@@ -1,0 +1,307 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PathfinderUI.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">pathfinder-app</a> &gt; <a href="index.source.html" class="el_package">com.orasaari</a> &gt; <span class="el_source">PathfinderUI.java</span></div><h1>PathfinderUI.java</h1><pre class="source lang-java linenums">package com.orasaari;
+
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.GridLayout;
+import java.awt.Point;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextField;
+import javax.swing.WindowConstants;
+
+/** 
+ * The main UI class. Includes functions to 
+ * - Run and visualize pathfinding: select and load a map file, select algorithms, find paths and show the results and path on the map
+ * - run performance evaluation with a selected scenario file, algorithms and number of iterations &amp; show the results.
+*/
+public class PathfinderUI extends JFrame implements ActionListener {  
+    private GridMapView view;
+    private GridMap map;
+    private JButton btnSelectFile, btnLoadMap, btnFindPath, btnLoadScenarioFile, btnPerformanceEvalulation;
+    private JTextField tfMapFilename, tfStartX, tfStartY, tfFinishX, tfFinishY, tfIterations, tfPerformanceEvaluationFilename;
+    private JCheckBox cbDijkstra, cbAstar, cbJPS;
+    private ResultPanel pnlResultsDisjkstra, pnlResultsAstar, pnlResultsJPS;
+ 
+    /** 
+     * Initialize the UI.
+    */
+<span class="nc" id="L42">    PathfinderUI() {</span>
+<span class="nc" id="L43">        setLayout(new BorderLayout());</span>
+<span class="nc" id="L44">        view = new GridMapView(new GridMap(1024, 1024));</span>
+
+<span class="nc" id="L46">        JScrollPane scp = new JScrollPane(view);</span>
+<span class="nc" id="L47">        Dimension d = new Dimension(1200, 800);</span>
+<span class="nc" id="L48">        scp.setPreferredSize(d);</span>
+<span class="nc" id="L49">        scp.setMinimumSize(d);</span>
+<span class="nc" id="L50">        add(scp, BorderLayout.CENTER);        </span>
+<span class="nc" id="L51">        add(getControlPanel(), BorderLayout.SOUTH);</span>
+<span class="nc" id="L52">        add(getResultPanels(), BorderLayout.EAST);</span>
+
+<span class="nc" id="L54">        setTitle(&quot;Pathfinder UI v. 1.0&quot;);</span>
+<span class="nc" id="L55">        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);</span>
+<span class="nc" id="L56">        pack();</span>
+<span class="nc" id="L57">        setLocation(50,5);</span>
+<span class="nc" id="L58">        setVisible(true);</span>
+<span class="nc" id="L59">    }</span>
+
+    /**
+     * Construct the UI main panel that contains all other components but the actual grid map.
+    */
+    private JPanel getControlPanel() {
+<span class="nc" id="L65">        JPanel pnlControl = new JPanel(new GridLayout(4,1));</span>
+<span class="nc" id="L66">        pnlControl.setBorder(BorderFactory.createLineBorder(Color.gray, 1));</span>
+
+<span class="nc" id="L68">        JPanel pnlCoordinates = new JPanel();</span>
+<span class="nc" id="L69">        pnlCoordinates.add(new JLabel(&quot;Start X:&quot;));</span>
+<span class="nc" id="L70">        pnlCoordinates.add(tfStartX = new JTextField(4));</span>
+<span class="nc" id="L71">        pnlCoordinates.add(new JLabel(&quot;  Y:&quot;));</span>
+<span class="nc" id="L72">        pnlCoordinates.add(tfStartY = new JTextField(4));</span>
+<span class="nc" id="L73">        pnlCoordinates.add(new JLabel(&quot;     Finish X:&quot;));</span>
+<span class="nc" id="L74">        pnlCoordinates.add(tfFinishX = new JTextField(4));</span>
+<span class="nc" id="L75">        pnlCoordinates.add(new JLabel(&quot;  Y:&quot;));</span>
+<span class="nc" id="L76">        pnlCoordinates.add(tfFinishY = new JTextField(4));</span>
+
+<span class="nc" id="L78">        pnlControl.add(getFilePanel()); </span>
+<span class="nc" id="L79">        pnlControl.add(pnlCoordinates);</span>
+<span class="nc" id="L80">        pnlControl.add(getRunPanel());</span>
+<span class="nc" id="L81">        pnlControl.add(getPerformanceEvalautionPanel());</span>
+
+<span class="nc" id="L83">        return pnlControl;</span>
+    }
+
+    /** 
+     * Construct the sub-panel with components to set run parameters and execute pathfinding.
+    */
+    private JPanel getRunPanel() {
+<span class="nc" id="L90">        JPanel pnlRun = new JPanel();</span>
+<span class="nc" id="L91">        pnlRun.add(cbDijkstra = new JCheckBox(&quot;Dijstra&quot;, false));</span>
+<span class="nc" id="L92">        pnlRun.add(cbAstar = new JCheckBox(&quot;A-Star&quot;, false));</span>
+<span class="nc" id="L93">        pnlRun.add(cbJPS = new JCheckBox(&quot;JPS&quot;, false));</span>
+<span class="nc" id="L94">        pnlRun.add(new JLabel(&quot;        &quot;));</span>
+<span class="nc" id="L95">        pnlRun.add(btnFindPath = new JButton(&quot;          Find Path          &quot;));</span>
+<span class="nc" id="L96">        btnFindPath.addActionListener(this);</span>
+<span class="nc" id="L97">        return pnlRun;</span>
+    }
+
+    /** 
+     * Construct the sub-panel that allows user to select and load a map file.
+     */
+    private JPanel getFilePanel() {
+<span class="nc" id="L104">        JPanel pnlFile = new JPanel();</span>
+<span class="nc" id="L105">        pnlFile.add(new JLabel(&quot;Filename: &quot;));</span>
+<span class="nc" id="L106">        pnlFile.add(tfMapFilename = new JTextField(20));</span>
+<span class="nc" id="L107">        pnlFile.add(btnSelectFile = new JButton(&quot;Select Map File&quot;));</span>
+<span class="nc" id="L108">        btnSelectFile.addActionListener(this);        </span>
+<span class="nc" id="L109">        pnlFile.add(btnLoadMap = new JButton(&quot;Load Map&quot;));</span>
+<span class="nc" id="L110">        btnLoadMap.addActionListener(this);</span>
+<span class="nc" id="L111">        return pnlFile;</span>
+    }
+
+    /** 
+     * Construct the sub-panel showing the result after pathfinding.
+    */
+    private JPanel getResultPanels() {
+<span class="nc" id="L118">        JPanel pnlResults = new JPanel();</span>
+<span class="nc" id="L119">        pnlResults.setLayout(new BoxLayout(pnlResults, BoxLayout.Y_AXIS));</span>
+<span class="nc" id="L120">        pnlResults.add(pnlResultsDisjkstra = new ResultPanel(&quot;Dijkstra&quot;));</span>
+<span class="nc" id="L121">        pnlResults.add(pnlResultsAstar = new ResultPanel(&quot;A-Star&quot;));</span>
+<span class="nc" id="L122">        pnlResults.add(pnlResultsJPS = new ResultPanel(&quot;JPS&quot;));</span>
+<span class="nc" id="L123">        return pnlResults;</span>
+    }
+
+    /**
+     * Construct the sub-panel for the performance evaluation.
+    */
+    private JPanel getPerformanceEvalautionPanel() {
+<span class="nc" id="L130">        JPanel pnl = new JPanel();</span>
+<span class="nc" id="L131">        pnl.add(new JLabel(&quot;Scenario filename: &quot;));</span>
+<span class="nc" id="L132">        pnl.add(tfPerformanceEvaluationFilename = new JTextField(20));</span>
+<span class="nc" id="L133">        pnl.add(btnLoadScenarioFile = new JButton(&quot;Select Scenario File&quot;));</span>
+<span class="nc" id="L134">        pnl.add(new JLabel(&quot;Iterations: &quot;));</span>
+<span class="nc" id="L135">        pnl.add(tfIterations = new JTextField(5));</span>
+<span class="nc" id="L136">        pnl.add(btnPerformanceEvalulation = new JButton(&quot;Run Performance Evaluation&quot;));        </span>
+<span class="nc" id="L137">        btnLoadScenarioFile.addActionListener(this);</span>
+<span class="nc" id="L138">        btnPerformanceEvalulation.addActionListener(this);</span>
+<span class="nc" id="L139">        return pnl;</span>
+    }
+
+    /**
+     * Set the grid map to be visualized and used for pathfinding.
+     * 
+     * @param map   2D grid map to be visualized and used for pathfinding.
+     */
+    void setMap(GridMap map) {
+<span class="nc" id="L148">        this.map = map;</span>
+<span class="nc" id="L149">        view.setMap(map);</span>
+<span class="nc" id="L150">    }</span>
+
+    /**
+     *  Action method to select the used map file.
+    */  
+    private void selectMapFile() {
+<span class="nc" id="L156">        JFileChooser jfc = new JFileChooser();</span>
+<span class="nc" id="L157">        jfc.setDialogTitle(&quot;Select a Map File&quot;);</span>
+<span class="nc" id="L158">        jfc.setFileSelectionMode(JFileChooser.FILES_ONLY);</span>
+<span class="nc" id="L159">        jfc.setCurrentDirectory(new File(MapUtils.MAP_DIRECTORY));</span>
+<span class="nc" id="L160">        int result = jfc.showOpenDialog(this);</span>
+<span class="nc bnc" id="L161" title="All 2 branches missed.">        if(result == JFileChooser.APPROVE_OPTION) {</span>
+<span class="nc" id="L162">            String filename = jfc.getSelectedFile().getPath();</span>
+<span class="nc" id="L163">            tfMapFilename.setText(filename);</span>
+        }
+<span class="nc" id="L165">    }</span>
+
+    /** 
+     * Action method to select the performance evaluation scenario list file .
+    */  
+    private void selectScenarioFile() {
+<span class="nc" id="L171">        JFileChooser jfc = new JFileChooser();</span>
+<span class="nc" id="L172">        jfc.setDialogTitle(&quot;Select a Scenario File&quot;);</span>
+<span class="nc" id="L173">        jfc.setFileSelectionMode(JFileChooser.FILES_ONLY);</span>
+<span class="nc" id="L174">        jfc.setCurrentDirectory(new File(MapUtils.SCENARIO_DIRECTORY));</span>
+<span class="nc" id="L175">        int result = jfc.showOpenDialog(this);</span>
+<span class="nc bnc" id="L176" title="All 2 branches missed.">        if(result == JFileChooser.APPROVE_OPTION) {</span>
+<span class="nc" id="L177">            String filename = jfc.getSelectedFile().getPath();</span>
+<span class="nc" id="L178">            tfPerformanceEvaluationFilename.setText(filename);</span>
+        }
+<span class="nc" id="L180">    }</span>
+
+    /** Load the map file using the MapUtil class. */
+    private void loadMap() {
+<span class="nc" id="L184">        String filename = tfMapFilename.getText();</span>
+<span class="nc" id="L185">        GridMap map = MapUtils.loadMap(filename);</span>
+<span class="nc" id="L186">        setMap(map);</span>
+<span class="nc" id="L187">    }</span>
+
+    /**
+     * Execute a single pathfinding run with a given algorithm.
+     * 
+     * @param algorith  Algorithm to be used, values defined in MapUtil.
+     *  
+     * @return  A results object wrapping necessary information to be visualized, or null in the case of an error.
+    */
+    private Result findPath(int algorith) {
+
+<span class="nc" id="L198">        System.out.println(&quot;findPath(&quot; + algorith + &quot;)&quot;);</span>
+
+        // Temporarily work with Dijkstra only while developing the algorithm
+        Pathfinder finder;
+<span class="nc bnc" id="L202" title="All 2 branches missed.">        if(algorith == MapUtils.ALGORITHM_DIJKSTRA) {</span>
+<span class="nc" id="L203">            finder = new DijkstraPathfinder();</span>
+<span class="nc bnc" id="L204" title="All 2 branches missed.">        } else if(algorith == MapUtils.ALGORITHM_ASTAR) {</span>
+<span class="nc" id="L205">            finder = new AStarPathfinder();</span>
+<span class="nc" id="L206">        } else {</span>
+<span class="nc" id="L207">            finder = new JPSPathfinder();</span>
+        }
+
+        try {
+<span class="nc" id="L211">            int startX = Integer.parseInt(tfStartX.getText().trim());</span>
+<span class="nc" id="L212">            int startY = Integer.parseInt(tfStartY.getText().trim());</span>
+<span class="nc" id="L213">            int finishX = Integer.parseInt(tfFinishX.getText().trim());</span>
+<span class="nc" id="L214">            int finishY = Integer.parseInt(tfFinishY.getText().trim());</span>
+<span class="nc" id="L215">            Point starPoint = new Point(startX, startY);</span>
+<span class="nc" id="L216">            Point finishPoint = new Point(finishX, finishY);            </span>
+<span class="nc" id="L217">            Result result = finder.navigate(this.map, starPoint, finishPoint);</span>
+<span class="nc" id="L218">            return result;            </span>
+<span class="nc" id="L219">        } catch(Exception ex) {</span>
+<span class="nc" id="L220">            ex.printStackTrace();</span>
+<span class="nc" id="L221">            return null;</span>
+        }
+    }
+
+    /**
+     * Execute pathgfinding with selected algorithms, start point and goal.
+     */
+    private void findAllPaths() {
+
+<span class="nc" id="L230">        List&lt;List&lt;Node&gt;&gt; paths = new ArrayList&lt;&gt;(3);</span>
+
+<span class="nc bnc" id="L232" title="All 2 branches missed.">        if(cbDijkstra.isSelected()) {</span>
+<span class="nc" id="L233">            Result result = findPath(MapUtils.ALGORITHM_DIJKSTRA);</span>
+<span class="nc" id="L234">            pnlResultsDisjkstra.showResult(result);</span>
+<span class="nc" id="L235">            paths.add(result.path);</span>
+        }
+
+<span class="nc bnc" id="L238" title="All 2 branches missed.">        if(cbAstar.isSelected()) {</span>
+<span class="nc" id="L239">            Result result = findPath(MapUtils.ALGORITHM_ASTAR);</span>
+<span class="nc" id="L240">            pnlResultsAstar.showResult(result);</span>
+<span class="nc" id="L241">            paths.add(result.path);</span>
+        }
+
+<span class="nc bnc" id="L244" title="All 2 branches missed.">        if(cbJPS.isSelected()) {</span>
+<span class="nc" id="L245">            Result result = findPath(MapUtils.ALGORITHM_JPS);</span>
+<span class="nc" id="L246">            pnlResultsJPS.showResult(result);</span>
+<span class="nc" id="L247">            paths.add(result.path);</span>
+        }
+<span class="nc" id="L249">        view.paintPaths(paths);</span>
+<span class="nc" id="L250">    }</span>
+
+    /**
+     * Action method to run the performance evaluation with the selected algorithms, 
+     * number of iterastions and scenario file.
+     */
+    private void runPerformanceEvaluation() {
+<span class="nc" id="L257">        PerformanceEvaluator evaluator = new PerformanceEvaluator();</span>
+
+<span class="nc" id="L259">        int iterations = Integer.parseInt(tfIterations.getText().trim());</span>
+<span class="nc" id="L260">        String filename = tfPerformanceEvaluationFilename.getText().trim();</span>
+
+<span class="nc" id="L262">        List&lt;Integer&gt; algorithms = new ArrayList&lt;&gt;(3);</span>
+<span class="nc bnc" id="L263" title="All 2 branches missed.">        if(cbDijkstra.isSelected()) {</span>
+<span class="nc" id="L264">            algorithms.add(MapUtils.ALGORITHM_DIJKSTRA);</span>
+        }
+<span class="nc bnc" id="L266" title="All 2 branches missed.">        if(cbAstar.isSelected()) {</span>
+<span class="nc" id="L267">            algorithms.add(MapUtils.ALGORITHM_ASTAR);</span>
+        }
+<span class="nc bnc" id="L269" title="All 2 branches missed.">        if(cbJPS.isSelected()) {</span>
+<span class="nc" id="L270">            algorithms.add(MapUtils.ALGORITHM_JPS);</span>
+        }
+
+<span class="nc" id="L273">        PerformanceEvaluationDialog dialog = new PerformanceEvaluationDialog(this);</span>
+<span class="nc" id="L274">        dialog.showText(&quot;Performance evaluation underway, results will be shown here shortly...&quot;);</span>
+
+<span class="nc" id="L276">        PerformanceEvaluationResults results = evaluator.runEvaluation(iterations, filename, algorithms); </span>
+<span class="nc" id="L277">        dialog.showResults(results);</span>
+<span class="nc" id="L278">    }</span>
+
+    /**
+     * The event listener method to handle button clicks.
+     */
+    @Override
+    public void actionPerformed(ActionEvent e) {
+<span class="nc bnc" id="L285" title="All 2 branches missed.">        if(e.getSource() == btnSelectFile) {</span>
+<span class="nc" id="L286">            selectMapFile();</span>
+<span class="nc bnc" id="L287" title="All 2 branches missed.">        } else if(e.getSource() == btnLoadMap) {</span>
+<span class="nc" id="L288">            loadMap();</span>
+<span class="nc bnc" id="L289" title="All 2 branches missed.">        } else if(e.getSource() == btnFindPath) {</span>
+<span class="nc" id="L290">            findAllPaths();</span>
+<span class="nc bnc" id="L291" title="All 2 branches missed.">        } else if(e.getSource() == btnPerformanceEvalulation) {</span>
+<span class="nc" id="L292">            runPerformanceEvaluation();</span>
+<span class="nc bnc" id="L293" title="All 2 branches missed.">        } else if (e.getSource() == btnLoadScenarioFile) {</span>
+<span class="nc" id="L294">            selectScenarioFile();</span>
+        }               
+<span class="nc" id="L296">    }</span>
+
+    /**
+     * The entry point to the application.
+     * 
+     * @param args  No args in use.
+     */
+    public static void main(String[] args) {
+<span class="nc" id="L304">        new PathfinderUI();</span>
+<span class="nc" id="L305">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

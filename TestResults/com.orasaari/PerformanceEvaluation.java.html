@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PerformanceEvaluation.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">pathfinder-app</a> &gt; <a href="index.source.html" class="el_package">com.orasaari</a> &gt; <span class="el_source">PerformanceEvaluation.java</span></div><h1>PerformanceEvaluation.java</h1><pre class="source lang-java linenums">package com.orasaari;
+
+import java.text.SimpleDateFormat;
+
+/* 
+    * A wrapper class for results of a single evaluation: one scenario, one algorithm, one iteration.
+    */
+<span class="fc" id="L8">class PerformanceEvaluation {</span>
+
+<span class="fc" id="L10">    private static final SimpleDateFormat TIMESTAMP_FORMAT = new SimpleDateFormat(&quot;yyyy-MM-dd HH:mm:ss&quot;);</span>
+
+    int algorithm;
+    Result result;
+    long startTime;
+    long finishTime;    
+    boolean correctDistance;
+
+    /**
+     * Construct a line for a CSV export file.
+     * 
+     * @return  CSV representation of the evaluation
+     */
+    String toCsvString() {
+<span class="fc" id="L24">        return(</span>
+<span class="fc" id="L25">            TIMESTAMP_FORMAT.format(result.startTime) + &quot;,&quot; +</span>
+<span class="fc" id="L26">            result.duration + &quot;,&quot; + </span>
+<span class="fc" id="L27">            result.algorithm + &quot;,&quot; + </span>
+<span class="fc" id="L28">            result.distance + &quot;,&quot; + </span>
+<span class="fc" id="L29">            result.success + &quot;,&quot; + </span>
+<span class="fc" id="L30">            correctDistance + &quot;,&quot; +</span>
+<span class="fc" id="L31">            result.numOfPathNodes + &quot;,&quot; + </span>
+<span class="fc" id="L32">            result.numeOfEvaluatedNodes</span>
+        );    
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

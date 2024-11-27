@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PerformanceEvaluationDialog.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">pathfinder-app</a> &gt; <a href="index.source.html" class="el_package">com.orasaari</a> &gt; <span class="el_source">PerformanceEvaluationDialog.java</span></div><h1>PerformanceEvaluationDialog.java</h1><pre class="source lang-java linenums">package com.orasaari;
+
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextArea;
+
+/** 
+ * A dialog class for displaying the results of a performance evaluation run.
+ */
+public class PerformanceEvaluationDialog extends JDialog implements ActionListener {
+
+<span class="nc" id="L21">    private JTextArea textArea = new JTextArea(45, 50);</span>
+<span class="nc" id="L22">    private JButton saveButton = new JButton(&quot;Save to CSV file&quot;);</span>
+<span class="nc" id="L23">    private JButton closeButton = new JButton(&quot;   Close        &quot;);</span>
+    private PerformanceEvaluationResults results;
+
+    /**
+     * Lay out the UI components and show the dialog.
+     * 
+     * @param parent    The parent frame, used for setting the location of the dialog.
+     */
+<span class="nc" id="L31">    PerformanceEvaluationDialog(JFrame parent)  {</span>
+
+<span class="nc" id="L33">        setLayout(new BorderLayout());</span>
+<span class="nc" id="L34">        setTitle(&quot;Performance Evaluation Results&quot;);</span>
+<span class="nc" id="L35">        setLocationRelativeTo(parent);</span>
+<span class="nc" id="L36">        setLocation(250, 50);</span>
+
+<span class="nc" id="L38">        textArea.setEditable(false);</span>
+<span class="nc" id="L39">        textArea.setFont(new Font(textArea.getFont().getName(), textArea.getFont().getStyle(), 17));</span>
+<span class="nc" id="L40">        add(textArea, BorderLayout.CENTER);</span>
+
+<span class="nc" id="L42">        JPanel southPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));</span>
+<span class="nc" id="L43">        southPanel.add(saveButton);</span>
+<span class="nc" id="L44">        southPanel.add(closeButton);</span>
+<span class="nc" id="L45">        saveButton.addActionListener(this);</span>
+<span class="nc" id="L46">        closeButton.addActionListener(this);</span>
+<span class="nc" id="L47">        add(southPanel, BorderLayout.SOUTH);</span>
+<span class="nc" id="L48">        add(new JLabel(&quot;  &quot;), BorderLayout.WEST);</span>
+<span class="nc" id="L49">        add(new JLabel(&quot;  &quot;), BorderLayout.EAST);</span>
+
+<span class="nc" id="L51">        setDefaultCloseOperation(DISPOSE_ON_CLOSE);        </span>
+<span class="nc" id="L52">        setPreferredSize(getPreferredSize());</span>
+<span class="nc" id="L53">        pack();</span>
+<span class="nc" id="L54">        setVisible(true);</span>
+<span class="nc" id="L55">    }</span>
+
+    /**
+     * Set the text to be displayed in the main text area of the dialog.
+     * 
+     * @param text  The text to be shown.
+     */
+    void showText(String text) {
+<span class="nc" id="L63">        textArea.setText(text);</span>
+<span class="nc" id="L64">    }</span>
+
+    /**
+     * Show the results of a performance evaluation run.
+     * 
+     * @param results   Results from a single performance evaluation run which can consist multiple algorithms, iterations and scenarios.
+    */
+    void showResults(PerformanceEvaluationResults results) {
+<span class="nc" id="L72">        this.results = results;</span>
+<span class="nc" id="L73">        textArea.setText(results.toString());</span>
+<span class="nc" id="L74">    }</span>
+
+    /**
+     * Save results to two CSV files: one for all individual evaluations and one for the summary per algorihm.
+     */
+    void saveToCsv() {
+<span class="nc" id="L80">        MapUtils.saveToCsv(results);</span>
+<span class="nc" id="L81">        JOptionPane.showConfirmDialog(</span>
+<span class="nc" id="L82">            this,</span>
+<span class="nc" id="L83">            &quot;CSV files evaluations.csv and evaluation_summary.csv have been saved to the current folder.&quot;,</span>
+<span class="nc" id="L84">            &quot;Saved&quot;,</span>
+<span class="nc" id="L85">            JOptionPane.PLAIN_MESSAGE,</span>
+<span class="nc" id="L86">            JOptionPane.INFORMATION_MESSAGE);</span>
+<span class="nc" id="L87">    }</span>
+
+
+    /**
+     * An event handler for the button clicks.
+     */
+    @Override
+    public void actionPerformed(ActionEvent e) {
+<span class="nc bnc" id="L95" title="All 2 branches missed.">        if(e.getSource() == saveButton) {</span>
+<span class="nc" id="L96">            saveToCsv();</span>
+<span class="nc bnc" id="L97" title="All 2 branches missed.">        } else if(e.getSource() == closeButton) {</span>
+<span class="nc" id="L98">            dispose();</span>
+        }
+<span class="nc" id="L100">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

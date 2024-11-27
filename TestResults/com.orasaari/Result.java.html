@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Result.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">pathfinder-app</a> &gt; <a href="index.source.html" class="el_package">com.orasaari</a> &gt; <span class="el_source">Result.java</span></div><h1>Result.java</h1><pre class="source lang-java linenums">package com.orasaari;
+
+import java.util.List;
+
+/** 
+ * A wrapper class to cover all the necessary result data for a single pathfinding run.
+*/
+<span class="fc" id="L8">public class Result {</span>
+
+    boolean success; 
+    List&lt;Node&gt; path;
+    long startTime;
+    long finishTime;
+    long duration;
+
+    /** Number of nodes in the found shortest paths. For A, Dijkstra, this is equal to pixels on the grid. For JPS, the number may differ because of the jumps. */ 
+    int numOfPathNodes; 
+
+    /** Number of nodes that were taken from the open list (priority heap) by the pathfinding algorithm */
+    int numeOfEvaluatedNodes;
+
+    /** Int code of the algorithm. Codes are defined in class MapUtil. */
+    int algorithm;
+
+    /** Distance between start and finish nodes (pixels) in the grid. */
+    double distance;
+
+    /** String representation for debugging purposes */
+    public String toString() {
+<span class="fc" id="L30">        return &quot;Result:: distance: &quot; + distance + &quot; path lenght: &quot; + numOfPathNodes + &quot;, duration: &quot; + duration + &quot;, eval. nodes: &quot; + numeOfEvaluatedNodes + &quot;, algorithm: &quot; + algorithm + &quot;, success: &quot; + success;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

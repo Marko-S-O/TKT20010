@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PerformanceEvaluationResults.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">pathfinder-app</a> &gt; <a href="index.source.html" class="el_package">com.orasaari</a> &gt; <span class="el_source">PerformanceEvaluationResults.java</span></div><h1>PerformanceEvaluationResults.java</h1><pre class="source lang-java linenums">package com.orasaari;
+
+import java.util.ArrayList;
+
+/**
+ * A data class for results of a single evaluation session, including 1-3 algorithms, 
+ * 1-n scenarios and 1-n iterations for each algorith and scenario.
+ */
+<span class="fc" id="L9">class PerformanceEvaluationResults {</span>
+    
+<span class="fc" id="L11">    int[] numberOfEvaluations = new int[3];</span>
+<span class="fc" id="L12">    long[] executionTime = new long[3];    </span>
+<span class="fc" id="L13">    int[] success = new int[3];</span>
+<span class="fc" id="L14">    int[] correctDistance = new int[3];</span>
+<span class="fc" id="L15">    int[] failures = new int[3];</span>
+<span class="fc" id="L16">    int[] evaluatedNodes = new int[3];</span>
+<span class="fc" id="L17">    int[] pathNodes = new int[3];</span>
+<span class="fc" id="L18">    ArrayList&lt;PerformanceEvaluation&gt; evaluations = new ArrayList&lt;PerformanceEvaluation&gt;(500);</span>
+
+    /**
+     * Add a single evaluation to the results
+     * 
+     * @param evaluation    Evalution result for a single run of one algorithm, one scenario, one iteration.
+     */
+    void addEvaluationResult(PerformanceEvaluation evaluation) {
+<span class="fc" id="L26">        Result result = evaluation.result;</span>
+<span class="fc" id="L27">        int algorithm = evaluation.algorithm;</span>
+<span class="fc" id="L28">        numberOfEvaluations[algorithm]++;</span>
+<span class="fc" id="L29">        executionTime[algorithm] += result.duration;</span>
+<span class="pc bpc" id="L30" title="1 of 2 branches missed.">        if(result.success) {</span>
+<span class="fc" id="L31">            success[algorithm]++;</span>
+<span class="fc" id="L32">        } else {</span>
+<span class="nc" id="L33">            failures[algorithm]++;</span>
+        }
+<span class="pc bpc" id="L35" title="1 of 2 branches missed.">        if(evaluation.correctDistance) {</span>
+<span class="fc" id="L36">            correctDistance[algorithm]++;</span>
+<span class="fc" id="L37">        } else {</span>
+<span class="nc" id="L38">            correctDistance[algorithm]++;</span>
+        }        
+<span class="fc" id="L40">        evaluatedNodes[algorithm] += result.numeOfEvaluatedNodes;</span>
+<span class="fc" id="L41">        pathNodes[algorithm] += result.numOfPathNodes;</span>
+<span class="fc" id="L42">        evaluations.add(evaluation);</span>
+<span class="fc" id="L43">    }</span>
+
+    /**
+     * Construct a string representation for a single algorithm covering all scenarios and iterations.
+     */
+    private String algoritmResultString(int algorithm, String name) {
+<span class="fc" id="L49">        return &quot;\n\nAlgorithm: &quot; + name + &quot; (&quot; + algorithm + &quot;)&quot; +</span>
+<span class="fc" id="L50">        &quot;\n evaluations: &quot; + numberOfEvaluations[algorithm] + </span>
+<span class="fc" id="L51">        &quot;\n success: &quot; + success[algorithm] + </span>
+<span class="fc" id="L52">        &quot;\n failures: &quot; + failures[algorithm] + </span>
+<span class="fc" id="L53">        &quot;\n correct distance: &quot; + correctDistance[algorithm] + </span>
+<span class="fc" id="L54">        &quot;\n total execution time: &quot; + executionTime[algorithm]  + </span>
+<span class="fc" id="L55">        &quot;\n average time: &quot; + executionTime[algorithm] / numberOfEvaluations[algorithm] + </span>
+<span class="fc" id="L56">        &quot;\n avg. evaluated nodes: &quot; + evaluatedNodes[algorithm] / numberOfEvaluations[algorithm] + </span>
+<span class="fc" id="L57">        &quot;\n avg. path nodes: &quot; + pathNodes[algorithm] / numberOfEvaluations[algorithm];        </span>
+    }
+
+    /** 
+     * Construct a string representation of one evaluation session including all algorithms, scenarios and iterations.
+    */
+    public String toString() {
+<span class="fc" id="L64">        String result = &quot;\nEvaluation Results Summary:&quot;;</span>
+
+<span class="pc bpc" id="L66" title="1 of 2 branches missed.">        if(numberOfEvaluations[MapUtils.ALGORITHM_DIJKSTRA] &gt; 0) {</span>
+<span class="fc" id="L67">            result += algoritmResultString(MapUtils.ALGORITHM_DIJKSTRA, &quot;Dijkstra&quot;);    </span>
+        } 
+
+<span class="pc bpc" id="L70" title="1 of 2 branches missed.">        if(numberOfEvaluations[MapUtils.ALGORITHM_ASTAR] &gt; 0) {</span>
+<span class="fc" id="L71">            result += algoritmResultString(MapUtils.ALGORITHM_ASTAR, &quot;A*&quot;);</span>
+        }
+
+<span class="pc bpc" id="L74" title="1 of 2 branches missed.">        if(numberOfEvaluations[MapUtils.ALGORITHM_JPS] &gt; 0) {</span>
+<span class="fc" id="L75">            result += algoritmResultString(MapUtils.ALGORITHM_JPS, &quot;JPS&quot;);</span>
+        }
+<span class="fc" id="L77">        return result;</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

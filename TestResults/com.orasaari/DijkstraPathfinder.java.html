@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>DijkstraPathfinder.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">pathfinder-app</a> &gt; <a href="index.source.html" class="el_package">com.orasaari</a> &gt; <span class="el_source">DijkstraPathfinder.java</span></div><h1>DijkstraPathfinder.java</h1><pre class="source lang-java linenums">package com.orasaari;
+
+import java.awt.Point;
+import java.util.Comparator;
+import java.util.PriorityQueue;
+
+/**
+ * Implementation of the basic Dijkstra algorith.
+ */
+<span class="fc" id="L10">class DijkstraPathfinder implements Pathfinder {</span>
+
+     /** 
+     * Internal class to decide the order of two nodes in the priority queue.  
+     * In Dijkstra, the priority is only the distance of the node from the starting point.
+    */
+<span class="fc" id="L16">    private class NodeComparator implements Comparator&lt;Node&gt; {</span>
+        @Override
+        public int compare(Node n1, Node n2) {
+<span class="fc" id="L19">            return Double.compare(n1.distance, n2.distance);</span>
+        }
+    }
+
+    /* 
+     * @see com.orasaari.DijkstraPathfinder#navigate(com.orasaari.GridMap, java.awt.Point, java.awt.Point, boolean)
+    */
+    public Result navigate(GridMap map, Point start, Point finish) {
+<span class="fc" id="L27">        return navigate(map, start, finish, false);</span>
+    }
+
+    /**
+     * Implement the Dijkstra pathfinding.
+     * 
+     * @param map           The 2D grid map where the path is searched.
+     * @param start         The starting point of the path.
+     * @param goal          The finishing point of the path.
+     * @param cutCorners    If false, diagonal movement is allowed only if both of the adjacent (vertical and horizontal neighbors 
+     *                      towards the moving direction) nodes are traversable. Currently, only using false value in the performance evaluation
+     *                      to have comparable results with the Moving AI Lab scenarios.
+     * 
+     * @return              the Result object wrapping the pathfinding results
+    */
+    public Result navigate(GridMap map, Point start, Point finish, boolean cutCorners) {
+            
+<span class="fc" id="L44">        boolean[][] grid = map.getGrid(); </span>
+<span class="fc" id="L45">        boolean[][][] travellability = map.getTraversability(cutCorners); // pre-calculated traversability to the adjacent nodes</span>
+ 
+        
+        // Initialize the timer. Calculating travallebility of nodes is not included in performance evaluation.
+<span class="fc" id="L49">        long startTime = System.currentTimeMillis();</span>
+        
+        // Initialize the priority heap
+<span class="fc" id="L52">        PriorityQueue&lt;Node&gt; heap = new PriorityQueue&lt;Node&gt;(new NodeComparator());</span>
+
+        // Nodes are created only as needed and maintained in an array and re-used to minimize overhead.
+<span class="fc" id="L55">        Node[][] nodeList = new Node[grid.length][grid[0].length];</span>
+
+        // Initialize the priority heap with the starting node
+<span class="fc" id="L58">        Node currentNode = new Node(start.x, start.y);</span>
+<span class="fc" id="L59">        nodeList[start.x][start.y] = currentNode;</span>
+<span class="fc" id="L60">        currentNode.distance = 0;</span>
+<span class="fc" id="L61">        heap.add(currentNode);           </span>
+<span class="fc" id="L62">        int numeOfEvaluatedNodes = 0;</span>
+
+        // Execute the pathfinding iteration
+<span class="pc bpc" id="L65" title="1 of 2 branches missed.">        while(!heap.isEmpty()) {</span>
+<span class="fc" id="L66">            currentNode = heap.poll();</span>
+
+<span class="fc bfc" id="L68" title="All 4 branches covered.">            if(currentNode.x == finish.x &amp;&amp; currentNode.y == finish.y) {</span>
+<span class="fc" id="L69">                break; // goal met, finish and collect results</span>
+            }
+
+            // check, if the current node is in already handled
+<span class="fc bfc" id="L73" title="All 2 branches covered.">            if(currentNode.handled) {</span>
+<span class="fc" id="L74">                continue; // skip already handled nodes</span>
+            }
+
+<span class="fc" id="L77">            currentNode.handled = true; // handle node &amp; mark it as handled</span>
+<span class="fc" id="L78">            numeOfEvaluatedNodes++; // number of evaluated nodes is additional information for performance evaluation</span>
+
+            // Iterate over the potential edges of the current node. 
+<span class="fc bfc" id="L81" title="All 2 branches covered.">            for(int i=0; i&lt;8; i++) {</span>
+
+<span class="fc bfc" id="L83" title="All 2 branches covered.">                if(!travellability[currentNode.x][currentNode.y][i]) {</span>
+<span class="fc" id="L84">                    continue; // blocked edger or ouside grid, skip</span>
+                }
+
+<span class="fc" id="L87">                int nextNodeX = currentNode.x + MapUtils.MOVES[i][0];</span>
+<span class="fc" id="L88">                int nextNodeY = currentNode.y + MapUtils.MOVES[i][1];</span>
+
+                // Check if we have already created a node object for the particular location. If yes, re-use it.
+<span class="fc" id="L91">                Node nextNode = nodeList[nextNodeX][nextNodeY];</span>
+<span class="fc bfc" id="L92" title="All 2 branches covered.">                if(nextNode == null) {</span>
+<span class="fc" id="L93">                    nextNode = new Node(nextNodeX, nextNodeY);</span>
+<span class="fc" id="L94">                    nodeList[nextNodeX][nextNodeY] = nextNode;</span>
+                }
+<span class="fc" id="L96">                double edgeWeight = MapUtils.WEIGHTS[i];</span>
+
+                // Check if our distance from the current node to the next node is smaller that the current shortest route 
+                // to the next node. If yes, update to the object and add it to the priority heap.
+<span class="fc" id="L100">                double newDistance = currentNode.distance + edgeWeight;</span>
+<span class="fc bfc" id="L101" title="All 2 branches covered.">                if(newDistance &lt; nextNode.distance) {</span>
+<span class="fc" id="L102">                    nextNode.distance = newDistance;</span>
+<span class="fc" id="L103">                    heap.add(nextNode);</span>
+<span class="fc" id="L104">                    nextNode.previous = currentNode;</span>
+                }                
+            }
+        }
+
+        // Iteration finished, collect results and return
+<span class="fc" id="L110">        long finishTime = System.currentTimeMillis();</span>
+<span class="pc bpc" id="L111" title="2 of 4 branches missed.">        boolean success = currentNode.x == finish.x &amp;&amp; currentNode.y == finish.y;</span>
+<span class="fc" id="L112">        Result result = MapUtils.collectResults(currentNode, startTime, finishTime, numeOfEvaluatedNodes, MapUtils.ALGORITHM_ASTAR, success);</span>
+<span class="fc" id="L113">        return result;</span>
+    }  
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
