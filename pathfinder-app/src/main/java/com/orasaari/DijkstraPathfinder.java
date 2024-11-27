@@ -84,8 +84,8 @@ class DijkstraPathfinder implements Pathfinder {
                     continue; // blocked edger or ouside grid, skip
                 }
 
-                int nextNodeX = currentNode.x + MapUtil.MOVES[i][0];
-                int nextNodeY = currentNode.y + MapUtil.MOVES[i][1];
+                int nextNodeX = currentNode.x + MapUtils.MOVES[i][0];
+                int nextNodeY = currentNode.y + MapUtils.MOVES[i][1];
 
                 // Check if we have already created a node object for the particular location. If yes, re-use it.
                 Node nextNode = nodeList[nextNodeX][nextNodeY];
@@ -93,7 +93,7 @@ class DijkstraPathfinder implements Pathfinder {
                     nextNode = new Node(nextNodeX, nextNodeY);
                     nodeList[nextNodeX][nextNodeY] = nextNode;
                 }
-                double edgeWeight = MapUtil.WEIGHTS[i];
+                double edgeWeight = MapUtils.WEIGHTS[i];
 
                 // Check if our distance from the current node to the next node is smaller that the current shortest route 
                 // to the next node. If yes, update to the object and add it to the priority heap.
@@ -109,7 +109,7 @@ class DijkstraPathfinder implements Pathfinder {
         // Iteration finished, collect results and return
         long finishTime = System.currentTimeMillis();
         boolean success = currentNode.x == finish.x && currentNode.y == finish.y;
-        Result result = MapUtil.collectResults(currentNode, startTime, finishTime, numeOfEvaluatedNodes, MapUtil.ALGORITHM_ASTAR, success);
+        Result result = MapUtils.collectResults(currentNode, startTime, finishTime, numeOfEvaluatedNodes, MapUtils.ALGORITHM_ASTAR, success);
         return result;
     }  
 }

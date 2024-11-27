@@ -63,16 +63,16 @@ class PerformanceEvaluationResults {
     public String toString() {
         String result = "\nEvaluation Results Summary:";
 
-        if(numberOfEvaluations[MapUtil.ALGORITHM_DIJKSTRA] > 0) {
-            result += algoritmResultString(MapUtil.ALGORITHM_DIJKSTRA, "Dijkstra");    
+        if(numberOfEvaluations[MapUtils.ALGORITHM_DIJKSTRA] > 0) {
+            result += algoritmResultString(MapUtils.ALGORITHM_DIJKSTRA, "Dijkstra");    
         } 
 
-        if(numberOfEvaluations[MapUtil.ALGORITHM_ASTAR] > 0) {
-            result += algoritmResultString(MapUtil.ALGORITHM_ASTAR, "A*");
+        if(numberOfEvaluations[MapUtils.ALGORITHM_ASTAR] > 0) {
+            result += algoritmResultString(MapUtils.ALGORITHM_ASTAR, "A*");
         }
 
-        if(numberOfEvaluations[MapUtil.ALGORITHM_JPS] > 0) {
-            result += algoritmResultString(MapUtil.ALGORITHM_JPS, "JPS");
+        if(numberOfEvaluations[MapUtils.ALGORITHM_JPS] > 0) {
+            result += algoritmResultString(MapUtils.ALGORITHM_JPS, "JPS");
         }
         return result;
     }

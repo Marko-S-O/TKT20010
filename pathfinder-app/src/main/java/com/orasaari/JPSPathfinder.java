@@ -42,17 +42,24 @@ class JPSPathfinder implements Pathfinder {
      * Check if the node is inside the map and traversable. Required by the forced neighbour evaluation and neighbour pruning.
     */
     private boolean isTraversable(int x, int y, int directionX, int directionY) {        
-        int direction = MapUtil.getDirection(directionX, directionY); // Map (dx, dy) movement directions to the integer code representing one of the 8 directions.
-        boolean traversable = x>=0 && x<width && y>=0 && y<height && traversability[x][y][direction];
-        return traversable;
+        int direction = MapUtils.getDirection(directionX, directionY); // Map (dx, dy) movement directions to the integer code representing one of the 8 directions.
+        boolean inGrid = x>=0 && x<width && y>=0 && y<height;
+        if(inGrid) {
+            return traversability[x][y][direction];
+        } else {
+            return false;
+        }
+        
     }
 
 
     /**
-     * Identify successors of a node by pruning the neighbours. To minimize overhead, we only identify 
-     * directions here and create actual node objects later as needed.
+     * neighbours(x) ← prune(x, neighbours(x))
      * 
-     * Note: the vertical movement code is split to more cases than would be mandatory to keep the 
+     * Identify potential successors of a node by pruning the neighbours. To minimize overhead, we only identify 
+     * directions to evaluate further here and create actual node objects later as needed.
+     * 
+     * Note: the vertical movement code is split to more cases than would be (in code level) mandatory to keep the 
      * code more readable and understandable.
      * 
      * @param   arrivalDirection    Direction from which the node was arrvived from, value mapping to MapUtil.MOVES.
@@ -73,8 +80,8 @@ class JPSPathfinder implements Pathfinder {
         } else { 
             // we have a direction from which the node was arrived to -> prune neighbours based on the direction
             int direction = node.arrivalDirection;
-            int directionX = MapUtil.MOVE_DIRECTIONS[direction].directionX;
-            int directionY = MapUtil.MOVE_DIRECTIONS[direction].directionY;
+            int directionX = MapUtils.MOVE_DIRECTIONS[direction].directionX;
+            int directionY = MapUtils.MOVE_DIRECTIONS[direction].directionY;
 
             // Add the arrival direction if can continue straight.
             if(traversability[node.x][node.y][direction]) { 
@@ -84,73 +91,73 @@ class JPSPathfinder implements Pathfinder {
             // Handle forced neighbours. Vertical paths are checked first.
             if(directionX == 1 && directionY == 1) { // moving down-right
                 //System.out.println("prune diagonal");
-                if(traversability[node.x][node.y][MapUtil.RIGHT]) // right open, need to add it as well
-                    neighbours.add(Integer.valueOf(MapUtil.RIGHT));
-                if(traversability[node.x][node.y][MapUtil.DOWN]) // down open, need to add it as well
-                    neighbours.add(Integer.valueOf(MapUtil.DOWN));
-                if(!traversability[node.x][node.y][MapUtil.RIGHT] && traversability[node.x][node.y][MapUtil.RIGHT_UP]) // right blocked, check up-right
-                    neighbours.add(Integer.valueOf(MapUtil.RIGHT_UP));
-                if(!traversability[node.x][node.y][MapUtil.DOWN] && traversability[node.x][node.y][MapUtil.LEFT_DOWN]) // down blocked, check down-left
-                    neighbours.add(Integer.valueOf(MapUtil.LEFT_DOWN));
+                if(traversability[node.x][node.y][MapUtils.RIGHT]) // right open, need to add it as well
+                    neighbours.add(Integer.valueOf(MapUtils.RIGHT));
+                if(traversability[node.x][node.y][MapUtils.DOWN]) // down open, need to add it as well
+                    neighbours.add(Integer.valueOf(MapUtils.DOWN));
+                //if(!traversability[node.x][node.y][MapUtils.RIGHT] && traversability[node.x][node.y][MapUtils.RIGHT_UP]) // right blocked, check up-right
+                //    neighbours.add(Integer.valueOf(MapUtils.RIGHT_UP));
+                //if(!traversability[node.x][node.y][MapUtils.DOWN] && traversability[node.x][node.y][MapUtils.LEFT_DOWN]) // down blocked, check down-left
+                //    neighbours.add(Integer.valueOf(MapUtils.LEFT_DOWN));
 
             } else if(directionX == 1 && directionY == -1) { // moving up-right
-                if(traversability[node.x][node.y][MapUtil.RIGHT]) 
-                    neighbours.add(Integer.valueOf(MapUtil.RIGHT));
-                if(traversability[node.x][node.y][MapUtil.UP]) // 
-                    neighbours.add(Integer.valueOf(MapUtil.UP));
-                if(!traversability[node.x][node.y][MapUtil.RIGHT] && traversability[node.x][node.y][MapUtil.RIGHT_UP]) // 
-                    neighbours.add(Integer.valueOf(MapUtil.RIGHT_UP));
-                if(!traversability[node.x][node.y][MapUtil.DOWN] && traversability[node.x][node.y][MapUtil.LEFT_DOWN]) // 
-                    neighbours.add(Integer.valueOf(MapUtil.LEFT_DOWN));
+                if(traversability[node.x][node.y][MapUtils.RIGHT]) 
+                    neighbours.add(Integer.valueOf(MapUtils.RIGHT));
+                if(traversability[node.x][node.y][MapUtils.UP]) // 
+                    neighbours.add(Integer.valueOf(MapUtils.UP));
+                //if(!traversability[node.x][node.y][MapUtils.RIGHT] && traversability[node.x][node.y][MapUtils.RIGHT_UP]) // 
+                //    neighbours.add(Integer.valueOf(MapUtils.RIGHT_UP));
+                //if(!traversability[node.x][node.y][MapUtils.DOWN] && traversability[node.x][node.y][MapUtils.LEFT_DOWN]) // 
+                //    neighbours.add(Integer.valueOf(MapUtils.LEFT_DOWN));
 
             } else if(directionX == -1 && directionY == 1) { // moving down-left
-                if(traversability[node.x][node.y][MapUtil.DOWN]) 
-                    neighbours.add(Integer.valueOf(MapUtil.DOWN));
-                if(traversability[node.x][node.y][MapUtil.LEFT]) 
-                    neighbours.add(Integer.valueOf(MapUtil.LEFT));
-                if(!traversability[node.x][node.y][MapUtil.RIGHT] && traversability[node.x][node.y][MapUtil.RIGHT_DOWN]) // 
-                    neighbours.add(Integer.valueOf(MapUtil.RIGHT_DOWN));
-                if(!traversability[node.x][node.y][MapUtil.LEFT] && traversability[node.x][node.y][MapUtil.LEFT_UP]) // 
-                    neighbours.add(Integer.valueOf(MapUtil.LEFT_UP));                
+                if(traversability[node.x][node.y][MapUtils.DOWN]) 
+                    neighbours.add(Integer.valueOf(MapUtils.DOWN));
+                if(traversability[node.x][node.y][MapUtils.LEFT]) 
+                    neighbours.add(Integer.valueOf(MapUtils.LEFT));
+                //if(!traversability[node.x][node.y][MapUtils.RIGHT] && traversability[node.x][node.y][MapUtils.RIGHT_DOWN]) // 
+                //    neighbours.add(Integer.valueOf(MapUtils.RIGHT_DOWN));
+                //if(!traversability[node.x][node.y][MapUtils.LEFT] && traversability[node.x][node.y][MapUtils.LEFT_UP]) // 
+                //    neighbours.add(Integer.valueOf(MapUtils.LEFT_UP));                
 
             } else if(directionX == -1 && directionY == -1) { // moving up-left
-                if(traversability[node.x][node.y][MapUtil.UP])  
-                    neighbours.add(Integer.valueOf(MapUtil.UP));
-                if(traversability[node.x][node.y][MapUtil.LEFT])  
-                    neighbours.add(Integer.valueOf(MapUtil.LEFT));
-                if(!traversability[node.x][node.y][MapUtil.RIGHT] && traversability[node.x][node.y][MapUtil.RIGHT_DOWN]) // 
-                    neighbours.add(Integer.valueOf(MapUtil.RIGHT_DOWN));
-                if(!traversability[node.x][node.y][MapUtil.LEFT] && traversability[node.x][node.y][MapUtil.LEFT_UP]) // 
-                    neighbours.add(Integer.valueOf(MapUtil.LEFT_UP));                      
+                if(traversability[node.x][node.y][MapUtils.UP])  
+                    neighbours.add(Integer.valueOf(MapUtils.UP));
+                if(traversability[node.x][node.y][MapUtils.LEFT])  
+                    neighbours.add(Integer.valueOf(MapUtils.LEFT));
+                //if(!traversability[node.x][node.y][MapUtils.RIGHT] && traversability[node.x][node.y][MapUtils.RIGHT_DOWN]) // 
+                //    neighbours.add(Integer.valueOf(MapUtils.RIGHT_DOWN));
+                //if(!traversability[node.x][node.y][MapUtils.LEFT] && traversability[node.x][node.y][MapUtils.LEFT_UP]) // 
+                //    neighbours.add(Integer.valueOf(MapUtils.LEFT_UP));                      
 
             } else if(directionX != 0) { // moving horizontally
 
                 // with stricter cornering rules, we also need to: 1) allow 90 degree turns 2) instead of the current node, check one node backwards for forced neighbours
-                boolean previousUpBlocked = !traversability[node.x-directionX][node.y][MapUtil.UP];
+                boolean previousUpBlocked = !traversability[node.x-directionX][node.y][MapUtils.UP];
                 if(previousUpBlocked && isTraversable(node.x, node.y, directionX, -1)) // previous node up blocked, check up + arrival direction
-                    neighbours.add(Integer.valueOf(MapUtil.getDirection(directionX, -1)));
-                if(previousUpBlocked && traversability[node.x][node.y][MapUtil.UP]) // previous node up blocked, check 90 degree turn up
-                    neighbours.add(Integer.valueOf(MapUtil.UP));
+                    neighbours.add(Integer.valueOf(MapUtils.getDirection(directionX, -1)));
+                if(previousUpBlocked && traversability[node.x][node.y][MapUtils.UP]) // previous node up blocked, check 90 degree turn up
+                    neighbours.add(Integer.valueOf(MapUtils.UP));
 
-                boolean previousDownBlocked = !traversability[node.x-directionX][node.y][MapUtil.DOWN];
+                boolean previousDownBlocked = !traversability[node.x-directionX][node.y][MapUtils.DOWN];
                 if(previousDownBlocked && isTraversable(node.x, node.y, directionX, 1)) // previous node down blocked, check down + moving direction
-                    neighbours.add(Integer.valueOf(MapUtil.getDirection(directionX, 1)));
-                if(previousDownBlocked && traversability[node.x][node.y][MapUtil.DOWN]) //  previous node up blocked, check 90 degree turn down
-                    neighbours.add(Integer.valueOf(MapUtil.DOWN));                    
+                    neighbours.add(Integer.valueOf(MapUtils.getDirection(directionX, 1)));
+                if(previousDownBlocked && traversability[node.x][node.y][MapUtils.DOWN]) //  previous node up blocked, check 90 degree turn down
+                    neighbours.add(Integer.valueOf(MapUtils.DOWN));                    
                     
             } else { // moving vertically
             
-                boolean previousRightBlocked = !traversability[node.x][node.y-directionY][MapUtil.RIGHT];
+                boolean previousRightBlocked = !traversability[node.x][node.y-directionY][MapUtils.RIGHT];
                 if(previousRightBlocked && isTraversable(node.x, node.y, 1, directionY)) // previous node right blocked, check right + moving direction
-                    neighbours.add(Integer.valueOf(MapUtil.getDirection(1, directionY)));
-                if(previousRightBlocked && traversability[node.x][node.y][MapUtil.RIGHT]) // previous node right blocked, check 90 degrees right
-                    neighbours.add(Integer.valueOf(MapUtil.RIGHT));
+                    neighbours.add(Integer.valueOf(MapUtils.getDirection(1, directionY)));
+                if(previousRightBlocked && traversability[node.x][node.y][MapUtils.RIGHT]) // previous node right blocked, check 90 degrees right
+                    neighbours.add(Integer.valueOf(MapUtils.RIGHT));
 
-                boolean previousLeftBlocked = !traversability[node.x][node.y-directionY][MapUtil.LEFT];
+                boolean previousLeftBlocked = !traversability[node.x][node.y-directionY][MapUtils.LEFT];
                 if(previousLeftBlocked && isTraversable(node.x, node.y, -1, directionY)) // previous node left blocked, check left + moving direction
-                    neighbours.add(Integer.valueOf(MapUtil.getDirection(-1, directionY)));
-                if(previousLeftBlocked && traversability[node.x][node.y][MapUtil.LEFT]) // previous node left blocked, check 90 degrees left
-                    neighbours.add(Integer.valueOf(MapUtil.LEFT));
+                    neighbours.add(Integer.valueOf(MapUtils.getDirection(-1, directionY)));
+                if(previousLeftBlocked && traversability[node.x][node.y][MapUtils.LEFT]) // previous node left blocked, check 90 degrees left
+                    neighbours.add(Integer.valueOf(MapUtils.LEFT));
     
             }
         }
@@ -179,8 +186,8 @@ class JPSPathfinder implements Pathfinder {
             if(jumpNode != null && !closed[jumpNode.x][jumpNode.y]) {
                 jumpNode.arrivalDirection = direction; // keep the track of the moving direction for neighbour pruning
                 jumpNode.previous = currentNode; // maintain the links to be able to backtrace & collect the path after the goal is found
-                jumpNode.distance = currentNode.distance + MapUtil.octileDistance(currentNode.x, currentNode.y, jumpNode.x, jumpNode.y);
-                jumpNode.heuristic = MapUtil.octileDistance(jumpNode.x, jumpNode.y, goal.x, goal.y);
+                jumpNode.distance = currentNode.distance + MapUtils.octileDistance(currentNode.x, currentNode.y, jumpNode.x, jumpNode.y);
+                jumpNode.heuristic = MapUtils.octileDistance(jumpNode.x, jumpNode.y, goal.x, goal.y);
                 jumpNode.priority = jumpNode.distance + jumpNode.heuristic;
                 openList.add(jumpNode);    
             }
@@ -196,7 +203,7 @@ class JPSPathfinder implements Pathfinder {
     */
     private Node jump(Node currentNode, int arrivalDirection, Point start, Point goal) {
 
-        Move move = MapUtil.MOVE_DIRECTIONS[arrivalDirection];
+        Move move = MapUtils.MOVE_DIRECTIONS[arrivalDirection];
 
         // n ← step(x, ~d)
         // if n is an obstacle or is outside the grid then return null
@@ -243,8 +250,8 @@ class JPSPathfinder implements Pathfinder {
         // if ~d is diagonal then for all i ∈ {1, 2} do if jump(n, ~di, s, g) is not null then return n
         // When moving diagonally, we need to check if we have horizaontal or vertical paths available. If yes, we need to stop jumping and evaluate them as well.
         if(directionX != 0 && directionY != 0) {
-            int verticalOnlyDirection = MapUtil.VERTICAL_ONLY_PATHS[arrivalDirection]; // map diagonal path to its vertical component only direction
-            int horizontalOnlyDirection = MapUtil.HORIZONTAL_ONLY_PATHS[arrivalDirection]; // map diagonal path to its horizontal component only direction
+            int verticalOnlyDirection = MapUtils.VERTICAL_ONLY_PATHS[arrivalDirection]; // map diagonal path to its vertical component only direction
+            int horizontalOnlyDirection = MapUtils.HORIZONTAL_ONLY_PATHS[arrivalDirection]; // map diagonal path to its horizontal component only direction
             if(jump(newNode, verticalOnlyDirection, start, goal) != null || jump(newNode, horizontalOnlyDirection, start, goal) != null) {
                 return newNode;
             }
@@ -276,10 +283,6 @@ class JPSPathfinder implements Pathfinder {
     */
     public Result navigate(GridMap map, Point start, Point goal, boolean cutCorners) {
 
-       if(cutCorners) {
-            throw new IllegalArgumentException("Current JPS implementation does not support cutting corners.");
-        }
-            
         // save necessary data to instance variables to be used in jump calcuations
         this.grid = map.getGrid(); 
         this.width = grid.length;
@@ -296,7 +299,7 @@ class JPSPathfinder implements Pathfinder {
         // Initialize the priority heap with the starting node
         Node startNode = new Node(start.x, start.y);
         startNode.distance = 0;
-        startNode.heuristic = MapUtil.octileDistance(start.x, start.y, goal.x, goal.y); 
+        startNode.heuristic = MapUtils.octileDistance(start.x, start.y, goal.x, goal.y); 
         startNode.priority = startNode.heuristic;
         startNode.arrivalDirection = -1; // -1 = no direction, handle all neighbours
         openList.add(startNode);    
@@ -320,7 +323,7 @@ class JPSPathfinder implements Pathfinder {
         // Iteration finished, collect results and return
         long finishTime = System.currentTimeMillis();
         boolean success = node.x == goal.x && node.y == goal.y;
-        Result result = MapUtil.collectResults(node, startTime, finishTime, numOfEvaluatedNodes, MapUtil.ALGORITHM_JPS, success);
+        Result result = MapUtils.collectResults(node, startTime, finishTime, numOfEvaluatedNodes, MapUtils.ALGORITHM_JPS, success);
         return result;
     }  
 }

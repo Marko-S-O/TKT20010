@@ -156,7 +156,7 @@ public class PathfinderUI extends JFrame implements ActionListener {
         JFileChooser jfc = new JFileChooser();
         jfc.setDialogTitle("Select a Map File");
         jfc.setFileSelectionMode(JFileChooser.FILES_ONLY);
-        jfc.setCurrentDirectory(new File(MapUtil.MAP_DIRECTORY));
+        jfc.setCurrentDirectory(new File(MapUtils.MAP_DIRECTORY));
         int result = jfc.showOpenDialog(this);
         if(result == JFileChooser.APPROVE_OPTION) {
             String filename = jfc.getSelectedFile().getPath();
@@ -171,7 +171,7 @@ public class PathfinderUI extends JFrame implements ActionListener {
         JFileChooser jfc = new JFileChooser();
         jfc.setDialogTitle("Select a Scenario File");
         jfc.setFileSelectionMode(JFileChooser.FILES_ONLY);
-        jfc.setCurrentDirectory(new File(MapUtil.SCENARIO_DIRECTORY));
+        jfc.setCurrentDirectory(new File(MapUtils.SCENARIO_DIRECTORY));
         int result = jfc.showOpenDialog(this);
         if(result == JFileChooser.APPROVE_OPTION) {
             String filename = jfc.getSelectedFile().getPath();
@@ -182,7 +182,7 @@ public class PathfinderUI extends JFrame implements ActionListener {
     /** Load the map file using the MapUtil class. */
     private void loadMap() {
         String filename = tfMapFilename.getText();
-        GridMap map = MapUtil.loadMap(filename);
+        GridMap map = MapUtils.loadMap(filename);
         setMap(map);
     }
 
@@ -199,9 +199,9 @@ public class PathfinderUI extends JFrame implements ActionListener {
 
         // Temporarily work with Dijkstra only while developing the algorithm
         Pathfinder finder;
-        if(algorith == MapUtil.ALGORITHM_DIJKSTRA) {
+        if(algorith == MapUtils.ALGORITHM_DIJKSTRA) {
             finder = new DijkstraPathfinder();
-        } else if(algorith == MapUtil.ALGORITHM_ASTAR) {
+        } else if(algorith == MapUtils.ALGORITHM_ASTAR) {
             finder = new AStarPathfinder();
         } else {
             finder = new JPSPathfinder();
@@ -230,19 +230,19 @@ public class PathfinderUI extends JFrame implements ActionListener {
         List<List<Node>> paths = new ArrayList<>(3);
 
         if(cbDijkstra.isSelected()) {
-            Result result = findPath(MapUtil.ALGORITHM_DIJKSTRA);
+            Result result = findPath(MapUtils.ALGORITHM_DIJKSTRA);
             pnlResultsDisjkstra.showResult(result);
             paths.add(result.path);
         }
 
         if(cbAstar.isSelected()) {
-            Result result = findPath(MapUtil.ALGORITHM_ASTAR);
+            Result result = findPath(MapUtils.ALGORITHM_ASTAR);
             pnlResultsAstar.showResult(result);
             paths.add(result.path);
         }
 
         if(cbJPS.isSelected()) {
-            Result result = findPath(MapUtil.ALGORITHM_JPS);
+            Result result = findPath(MapUtils.ALGORITHM_JPS);
             pnlResultsJPS.showResult(result);
             paths.add(result.path);
         }
@@ -261,13 +261,13 @@ public class PathfinderUI extends JFrame implements ActionListener {
 
         List<Integer> algorithms = new ArrayList<>(3);
         if(cbDijkstra.isSelected()) {
-            algorithms.add(MapUtil.ALGORITHM_DIJKSTRA);
+            algorithms.add(MapUtils.ALGORITHM_DIJKSTRA);
         }
         if(cbAstar.isSelected()) {
-            algorithms.add(MapUtil.ALGORITHM_ASTAR);
+            algorithms.add(MapUtils.ALGORITHM_ASTAR);
         }
         if(cbJPS.isSelected()) {
-            algorithms.add(MapUtil.ALGORITHM_JPS);
+            algorithms.add(MapUtils.ALGORITHM_JPS);
         }
 
         PerformanceEvaluationDialog dialog = new PerformanceEvaluationDialog(this);

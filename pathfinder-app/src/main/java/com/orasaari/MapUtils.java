@@ -3,13 +3,15 @@ package com.orasaari;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.List;
 import java.util.ArrayList;
 
 /** 
  * A static util class to implement utility methods and store global constants.
  */
-class MapUtil {
+class MapUtils {
 
     // Define some constants for convienience and code readability.
     static final double SQRT2 = Math.sqrt(2.0);
@@ -36,7 +38,7 @@ class MapUtil {
     static final int[][] MOVES = {{-1,0}, {1,0}, {0,-1}, {0,1}, {-1,-1}, {1,1}, {-1,1}, {1,-1}};
 
     /** Distances of corresponding MOVES. Intended to simplify code and make algorithms faster. Used by A* and Dijkstra */
-    static final double[] WEIGHTS = {1, 1, 1, 1, MapUtil.SQRT2, MapUtil.SQRT2, MapUtil.SQRT2, MapUtil.SQRT2};
+    static final double[] WEIGHTS = {1, 1, 1, 1, MapUtils.SQRT2, MapUtils.SQRT2, MapUtils.SQRT2, MapUtils.SQRT2};
 
     /** Moving directions are running around the clock from north-east to north. These are used by JPS but the order is the same as A* and mapping to the traversabilty table indices. */
     static final Move[] MOVE_DIRECTIONS = {
@@ -85,6 +87,7 @@ class MapUtil {
      * @return  The numeric direction code mapping the the traversability matrix.
      */
     static int getDirection(int directionX, int directionY) {
+
         if(directionX == -1) {
             if(directionY == -1) {
                 return LEFT_UP;
@@ -96,8 +99,6 @@ class MapUtil {
         } else if(directionX == 0) {
             if(directionY == -1) {
                 return UP;
-            } else if(directionY == 0) {
-                throw new IllegalArgumentException("Invalid direction: " + directionX + ", " + directionY);
             } else {
                 return DOWN;
             }
@@ -110,9 +111,8 @@ class MapUtil {
                 return RIGHT_DOWN;
             }
         } else {
-            throw new IllegalArgumentException("Invalid direction: " + directionX + ", " + directionY);
+            return -1;
         }
-
     }
  
     /** 
@@ -236,18 +236,61 @@ class MapUtil {
     static double octileDistance(int x0, int y0, int x1, int y1) {
         int deltaX = Math.abs(x0 - x1);
         int deltaY = Math.abs(y0 - y1);
-        double octileDistance = Math.min(deltaX, deltaY) * MapUtil.SQRT2 + Math.abs(deltaX - deltaY);
+        double octileDistance = Math.min(deltaX, deltaY) * MapUtils.SQRT2 + Math.abs(deltaX - deltaY);
         return octileDistance;
     }
 
-    /* 
-     * Calculate euclidian distance between points (x0, y0) and (x1, y1). 
+    /**
+     * Write a summary line for a single algorithm to the summary CSV file.
      * 
-     * Not currently in use, can be used to demostrate effect of a different heuristic function in JPS and A*.
-    */
-    static double euclideanDistance(int x0, int y0, int x1, int y1) {
-        double e = Math.sqrt(Math.pow(Math.abs(x0-x1), 2) + Math.pow(Math.abs(y0-y1), 2));
-        return e;
+     * @param writer        The file to be used.
+     * @param algorithm     The algorithm id, mapping to MapUtil.ALGORITHM_*
+     * @param algorithmName Name of the algorithm to be written to the file.
+     * @throws IOException  Thrown automatically in case of I/O errors.
+     */
+
+     private static void writeSummaryLine(FileWriter writer, int algorithm, String algorithmName, PerformanceEvaluationResults results) throws IOException {
+        writer.write("algorithmName," + 
+            results.numberOfEvaluations[algorithm] + ',' + 
+            results.success[algorithm] + ',' + 
+            results.correctDistance[algorithm] + ',' + 
+            results.executionTime[algorithm] + ',' + 
+            results.executionTime[algorithm] / results.numberOfEvaluations[algorithm] + ',' + 
+            results.pathNodes[algorithm] + ',' + 
+            results.evaluatedNodes[algorithm] + '\n'); 
+    }
+
+    /**
+     * Save the performance evaluation results to a CSV files to be used further, for example, in Excel.
+     */
+    static void saveToCsv(PerformanceEvaluationResults results) {
+        
+        // Write detailed results of all evaluations to be used, for example, in Excel.
+        try (FileWriter writer = new FileWriter("evaluation_details.csv")) {
+            writer.write("Timestamp,Duration,Algorithm,Distance,Success,CorrectDistance,PathNodes,EvaluatedNodes\n");
+            for(PerformanceEvaluation evaluation : results.evaluations) {
+                writer.write(evaluation.toCsvString() + "\n");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        // Write summary lines for each algorithms to another file.
+        try (FileWriter writer = new FileWriter("evaluation_summary.csv")) {
+            writer.write("Algorithm,NumberOfEvaluations,Success,CorrectDistance,TotalTime,AverageTime,AveragePathNodes,AverageEvaluatedNodes\n");
+            if(results.numberOfEvaluations[MapUtils.ALGORITHM_DIJKSTRA] > 0) {
+                writeSummaryLine(writer, MapUtils.ALGORITHM_DIJKSTRA, "Dijkstra", results);
+            } 
+            if(results.numberOfEvaluations[MapUtils.ALGORITHM_ASTAR] > 0) {
+                writeSummaryLine(writer, MapUtils.ALGORITHM_ASTAR, "A*", results);
+            }
+            if(results.numberOfEvaluations[MapUtils.ALGORITHM_JPS] > 0) {
+                writeSummaryLine(writer, MapUtils.ALGORITHM_JPS, "JPS", results);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }        
+
     }
      
 }

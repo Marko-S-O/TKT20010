@@ -60,7 +60,7 @@ class AStarPathfinder implements Pathfinder {
         Node currentNode = new Node(start.x, start.y);
         nodeList[start.x][start.y] = currentNode;
         currentNode.distance = 0;
-        double octileDistance = MapUtil.octileDistance(start.x, start.y, goal.x, goal.y);
+        double octileDistance = MapUtils.octileDistance(start.x, start.y, goal.x, goal.y);
         currentNode.priority = octileDistance;
         heap.add(currentNode);           
         int numeOfEvaluatedNodes = 0;
@@ -87,23 +87,32 @@ class AStarPathfinder implements Pathfinder {
                     continue; // blocked edger or ouside grid, skip
                 }
 
-                int nextNodeX = currentNode.x + MapUtil.MOVES[i][0];
-                int nextNodeY = currentNode.y + MapUtil.MOVES[i][1];
+                int nextNodeX = currentNode.x + MapUtils.MOVES[i][0];
+                int nextNodeY = currentNode.y + MapUtils.MOVES[i][1];
 
                 // Check if we have already created a node object for the particular location. If yes, re-use it.
+                boolean existingNode = true;
                 Node nextNode = nodeList[nextNodeX][nextNodeY];
                 if(nextNode == null) {
+                    existingNode = false;
                     nextNode = new Node(nextNodeX, nextNodeY);
                     nodeList[nextNodeX][nextNodeY] = nextNode;
                 }
-               
+
                 // Calculate priority = distance from the start + heuritsic function (octile distance to the goal)
-                double edgeWeight = MapUtil.WEIGHTS[i]; // 1 for straight, sqrt(2) for diagonal
+                double edgeWeight = MapUtils.WEIGHTS[i]; // 1 for straight, sqrt(2) for diagonal
                 double distance = currentNode.distance + edgeWeight;
-                if(distance < nextNode.distance) {
+                if(distance < nextNode.distance) {                    
                     nextNode.distance = distance;
-                    octileDistance = MapUtil.octileDistance(nextNodeX, nextNodeY, goal.x, goal.y);                    
+                    octileDistance = MapUtils.octileDistance(nextNodeX, nextNodeY, goal.x, goal.y);                    
                     nextNode.priority = distance + octileDistance;
+
+                    // PriorityQueue does seem to automatically re-ordering the elements when the priority changes.
+                    // This came up just once in hundreds of runs but needs to be handled by removing and adding back the node.
+                    // This carries some overhead but there is no easy way around it.      
+                    if(existingNode) {
+                        heap.remove(nextNode);
+                    }              
                     heap.add(nextNode);
                     nextNode.previous = currentNode;
                 }                
@@ -113,7 +122,7 @@ class AStarPathfinder implements Pathfinder {
         // Iteration finished, collect results and return
         long finishTime = System.currentTimeMillis();
         boolean success = currentNode.x == goal.x && currentNode.y == goal.y;
-        Result result = MapUtil.collectResults(currentNode, startTime, finishTime, numeOfEvaluatedNodes, MapUtil.ALGORITHM_DIJKSTRA, success);
+        Result result = MapUtils.collectResults(currentNode, startTime, finishTime, numeOfEvaluatedNodes, MapUtils.ALGORITHM_ASTAR, success);
         return result;
     }  
 }

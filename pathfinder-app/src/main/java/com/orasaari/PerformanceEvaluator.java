@@ -61,8 +61,8 @@ public class PerformanceEvaluator {
 
                 // Maps are taking a lot of heap. Load each map only once and store it in the map map.
                 if(map == null) {
-                    String mapFilename = MapUtil.STREET_MAP_DIRECTORY + fields[1];
-                    map = MapUtil.loadMap(mapFilename);
+                    String mapFilename = MapUtils.STREET_MAP_DIRECTORY + fields[1];
+                    map = MapUtils.loadMap(mapFilename);
                     mapMap.put(fields[1], map);
                 }                 
                 int startX = Integer.parseInt(fields[4]);
@@ -75,6 +75,7 @@ public class PerformanceEvaluator {
                 scenarioList.add(scenario);                
             }
         } catch(Exception e) {
+            System.out.println("Error reading scenario file: " + filename);
             e.printStackTrace();
         } 
         return scenarioList;
@@ -91,9 +92,9 @@ public class PerformanceEvaluator {
         Map<Integer, Pathfinder> map = new HashMap<Integer, Pathfinder>(3);
         for(int i=0; i<algorithms.size(); i++) {
             int algorithm = algorithms.get(i);
-            if(algorithm == MapUtil.ALGORITHM_DIJKSTRA) {
+            if(algorithm == MapUtils.ALGORITHM_DIJKSTRA) {
                 map.put(algorithm, new DijkstraPathfinder());
-            } else if(algorithm == MapUtil.ALGORITHM_ASTAR) {
+            } else if(algorithm == MapUtils.ALGORITHM_ASTAR) {
                 map.put(algorithm, new AStarPathfinder());
             } else {
                 map.put(algorithm, new JPSPathfinder());
@@ -150,9 +151,6 @@ public class PerformanceEvaluator {
                     evaluation.result = pathfinder.navigate(scenario.map, scenario.start, scenario.goal);
                     evaluation.finishTime = System.currentTimeMillis();
                     evaluation.correctDistance = Math.abs(evaluation.result.distance - scenario.distance) < 0.01;
-                    if(evaluation.result.duration <= 0) {
-                        System.out.println("Duration is zero or negative: " + evaluation.result.duration);
-                    }
                     evaluationList.add(evaluation);
                 }
             }
@@ -162,6 +160,9 @@ public class PerformanceEvaluator {
         return performanceResults;
     }
 
+
+
+
     /**
      * The entry point for cases we want to execute from the command line instead of UI.
      * When run from the command line, there is no option to save the results in CSV files.
@@ -169,13 +170,14 @@ public class PerformanceEvaluator {
      * @param args  No args are used, prepare run options directly to the main method code.
      */
     public static void main(String[] args) {
-        List<Integer> algorithms = new ArrayList<Integer>(6);
-        algorithms.add(MapUtil.ALGORITHM_DIJKSTRA);
-        algorithms.add(MapUtil.ALGORITHM_ASTAR);
-        algorithms.add(MapUtil.ALGORITHM_JPS);
+        List<Integer> algorithms = new ArrayList<Integer>(3);
+        algorithms.add(MapUtils.ALGORITHM_DIJKSTRA);
+        algorithms.add(MapUtils.ALGORITHM_ASTAR);
+        algorithms.add(MapUtils.ALGORITHM_JPS);
         PerformanceEvaluator p = new PerformanceEvaluator();
-        PerformanceEvaluationResults pr = p.runEvaluation(9, MapUtil.SCENARIO_DIRECTORY + "test-1.scen", algorithms);
-        System.out.println(pr);
+        PerformanceEvaluationResults results = p.runEvaluation(9, MapUtils.SCENARIO_DIRECTORY + "test-1.scen", algorithms);
+        System.out.println(results);
+        MapUtils.saveToCsv(results);
     }   
     
 }
