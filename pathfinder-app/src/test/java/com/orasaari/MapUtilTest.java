@@ -43,7 +43,7 @@ public class MapUtilTest {
         List<Node> path = TestUtils.getTestPath();
         Node finishNodel = path.get(path.size()-1);
         long startTime = System.currentTimeMillis();
-        Result result = MapUtil.collectResults(finishNodel, startTime, startTime+1000, 5000, MapUtil.ALGORITHM_ASTAR, true);
+        Result result = MapUtils.collectResults(finishNodel, startTime, startTime+1000, 5000, MapUtils.ALGORITHM_ASTAR, true);
         assertEquals(result.numOfPathNodes, 996);
         assertEquals(result.distance, 1200.04, 0.01);
         assertEquals(result.duration, 1000);
@@ -52,13 +52,13 @@ public class MapUtilTest {
 
     @Test
     public void mapShouldLoadCorrenctly() {
-        GridMap map = MapUtil.loadMap(TestUtils.TEST_DATA_DIRECTORY + MAP_FILE);
+        GridMap map = MapUtils.loadMap(TestUtils.TEST_DATA_DIRECTORY + MAP_FILE);
         assertTrue(validateMap(map));
     }
 
     @Test
     public void octileDistanceShouldBeCalculatedCorrenctly() {
-        double distance = MapUtil.octileDistance(5,5, 1000,500);
+        double distance = MapUtils.octileDistance(5,5, 1000,500);
         assertEquals(distance, 1200.04, 0.01);
     }
 

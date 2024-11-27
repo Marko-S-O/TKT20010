@@ -1,5 +1,6 @@
 package com.orasaari;
 
+import java.awt.Point;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,7 +22,7 @@ public class TestUtils {
 
         // Diagonal move (5,5) -> (500,500)
         for(int i=6; i<=500; i++) {
-            distance += MapUtil.SQRT2;
+            distance += MapUtils.SQRT2;
             Node node = new Node(i, i);
             node.previous = previeousNode;
             node.distance = distance;
@@ -41,7 +42,28 @@ public class TestUtils {
 
         goal.previous = previeousNode;
         return path;
+    }
 
+    static boolean testInCityMap(Pathfinder pathfinder, String mapFilename, int startX, int startY, int goalX, int goalY, double distance) {
+        GridMap map = MapUtils.loadMap(MapUtils.MAP_DIRECTORY + "street-map\\" + mapFilename);
+        Point start = new Point(startX, startY);
+        Point goal = new Point(goalX, goalY);
+        Result result = pathfinder.navigate(map, start, goal);
+        System.out.println(mapFilename + ": " + result.distance + " (" + startX + "," + startY + ") -> (" + goalX + "," + goalY + "), correct: " + distance);
+        System.out.println(result.toString());
+        boolean foundPath = result.success;
+        boolean correctDistance = Math.abs(result.distance - distance) < 0.01;
+        System.out.println("Found path: " + foundPath + ", correct distance: " + correctDistance);
+        return foundPath && correctDistance;
+    }
+
+    static boolean testInOtherMap(Pathfinder pathfinder, GridMap map, int startX, int startY, int goalX, int goalY, double distance) {
+        Point start = new Point(startX, startY);
+        Point goal = new Point(goalX, goalY);
+        Result result = pathfinder.navigate(map, start, goal);
+        boolean foundPath = result.success;
+        boolean correctDistance = Math.abs(result.distance - distance) < 0.01;
+        return foundPath && correctDistance;
     }
 
 }
