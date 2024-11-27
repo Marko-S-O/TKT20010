@@ -1,0 +1,4 @@
+Algorithm,NumberOfEvaluations,Success,CorrectDistance,TotalTime,AverageTime,AveragePathNodes,AverageEvaluatedNodes
+Dijkstra,2700,2700,2700,376822,139,1192,784871
+A-Star,2700,2700,2700,241367,89,1192,242253
+JPS,2700,2700,2700,56659,20,148,1452
