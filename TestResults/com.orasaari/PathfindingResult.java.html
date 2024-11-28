@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PathfindingResult.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">pathfinder-app</a> &gt; <a href="index.source.html" class="el_package">com.orasaari</a> &gt; <span class="el_source">PathfindingResult.java</span></div><h1>PathfindingResult.java</h1><pre class="source lang-java linenums">package com.orasaari;
+
+import java.util.List;
+
+/** 
+ * Pathdinding result data.
+*/
+<span class="fc" id="L8">public class PathfindingResult {</span>
+
+    /** True if the goal node was found */
+    boolean goalFound; 
+
+    /** List of linked nodes in the path */
+    List&lt;Node&gt; path;
+
+    /** System clock timestamp when the pathdinding started */
+    long startTime;
+
+    /** System clock timestamp when the goal was met */
+    long goalTime;
+
+    /** Duration of pathfinding, goalTime - startTime */
+    long pathfindingDuration;
+
+    /** Number */
+    int numberOfPathNodes; 
+
+    /** Number of nodes opened in pathfinding */
+    int nodesEvaluated;
+
+    /** Numeric code of the altorithm. */
+    int algorithmCode;
+
+    /** Distance between start and and goal (or last evaluated node if goal was not found) */
+    double distance;
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

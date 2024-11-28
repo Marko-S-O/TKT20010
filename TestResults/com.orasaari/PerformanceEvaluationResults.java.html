@@ -1,21 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PerformanceEvaluationResults.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">pathfinder-app</a> &gt; <a href="index.source.html" class="el_package">com.orasaari</a> &gt; <span class="el_source">PerformanceEvaluationResults.java</span></div><h1>PerformanceEvaluationResults.java</h1><pre class="source lang-java linenums">package com.orasaari;
 
+import java.io.FileWriter;
 import java.util.ArrayList;
 
 /**
- * A data class for results of a single evaluation session, including 1-3 algorithms, 
+ * A class for results of an evaluation session, including 1-3 algorithms, 
  * 1-n scenarios and 1-n iterations for each algorith and scenario.
  */
-<span class="fc" id="L9">class PerformanceEvaluationResults {</span>
+<span class="fc" id="L10">class PerformanceEvaluationResults {</span>
     
-<span class="fc" id="L11">    int[] numberOfEvaluations = new int[3];</span>
-<span class="fc" id="L12">    long[] executionTime = new long[3];    </span>
-<span class="fc" id="L13">    int[] success = new int[3];</span>
-<span class="fc" id="L14">    int[] correctDistance = new int[3];</span>
-<span class="fc" id="L15">    int[] failures = new int[3];</span>
-<span class="fc" id="L16">    int[] evaluatedNodes = new int[3];</span>
-<span class="fc" id="L17">    int[] pathNodes = new int[3];</span>
-<span class="fc" id="L18">    ArrayList&lt;PerformanceEvaluation&gt; evaluations = new ArrayList&lt;PerformanceEvaluation&gt;(500);</span>
+<span class="fc" id="L12">    int[] numberOfEvaluations = new int[3];</span>
+<span class="fc" id="L13">    long[] executionTime = new long[3];    </span>
+<span class="fc" id="L14">    int[] success = new int[3];</span>
+<span class="fc" id="L15">    int[] correctDistance = new int[3];</span>
+<span class="fc" id="L16">    int[] failures = new int[3];</span>
+<span class="fc" id="L17">    int[] evaluatedNodes = new int[3];</span>
+<span class="fc" id="L18">    int[] pathNodes = new int[3];</span>
+<span class="fc" id="L19">    ArrayList&lt;PerformanceEvaluation&gt; evaluations = new ArrayList&lt;PerformanceEvaluation&gt;(8100);</span>
 
     /**
      * Add a single evaluation to the results
@@ -23,59 +24,117 @@ import java.util.ArrayList;
      * @param evaluation    Evalution result for a single run of one algorithm, one scenario, one iteration.
      */
     void addEvaluationResult(PerformanceEvaluation evaluation) {
-<span class="fc" id="L26">        Result result = evaluation.result;</span>
-<span class="fc" id="L27">        int algorithm = evaluation.algorithm;</span>
-<span class="fc" id="L28">        numberOfEvaluations[algorithm]++;</span>
-<span class="fc" id="L29">        executionTime[algorithm] += result.duration;</span>
-<span class="pc bpc" id="L30" title="1 of 2 branches missed.">        if(result.success) {</span>
-<span class="fc" id="L31">            success[algorithm]++;</span>
-<span class="fc" id="L32">        } else {</span>
-<span class="nc" id="L33">            failures[algorithm]++;</span>
+<span class="fc" id="L27">        PathfindingResult result = evaluation.result;</span>
+<span class="fc" id="L28">        int algorithm = evaluation.algorithm;</span>
+<span class="fc" id="L29">        numberOfEvaluations[algorithm]++;</span>
+<span class="fc" id="L30">        executionTime[algorithm] += result.pathfindingDuration;</span>
+<span class="pc bpc" id="L31" title="1 of 2 branches missed.">        if(result.goalFound) {</span>
+<span class="fc" id="L32">            success[algorithm]++;</span>
+<span class="fc" id="L33">        } else {</span>
+<span class="nc" id="L34">            failures[algorithm]++;</span>
         }
-<span class="pc bpc" id="L35" title="1 of 2 branches missed.">        if(evaluation.correctDistance) {</span>
-<span class="fc" id="L36">            correctDistance[algorithm]++;</span>
-<span class="fc" id="L37">        } else {</span>
-<span class="nc" id="L38">            correctDistance[algorithm]++;</span>
+<span class="pc bpc" id="L36" title="1 of 2 branches missed.">        if(evaluation.correctDistance) {</span>
+<span class="fc" id="L37">            correctDistance[algorithm]++;</span>
+<span class="fc" id="L38">        } else {</span>
+<span class="nc" id="L39">            correctDistance[algorithm]++;</span>
         }        
-<span class="fc" id="L40">        evaluatedNodes[algorithm] += result.numeOfEvaluatedNodes;</span>
-<span class="fc" id="L41">        pathNodes[algorithm] += result.numOfPathNodes;</span>
-<span class="fc" id="L42">        evaluations.add(evaluation);</span>
-<span class="fc" id="L43">    }</span>
+<span class="fc" id="L41">        evaluatedNodes[algorithm] += result.nodesEvaluated;</span>
+<span class="fc" id="L42">        pathNodes[algorithm] += result.numberOfPathNodes;</span>
+<span class="fc" id="L43">        evaluations.add(evaluation);</span>
+<span class="fc" id="L44">    }</span>
 
     /**
      * Construct a string representation for a single algorithm covering all scenarios and iterations.
      */
     private String algoritmResultString(int algorithm, String name) {
-<span class="fc" id="L49">        return &quot;\n\nAlgorithm: &quot; + name + &quot; (&quot; + algorithm + &quot;)&quot; +</span>
-<span class="fc" id="L50">        &quot;\n evaluations: &quot; + numberOfEvaluations[algorithm] + </span>
-<span class="fc" id="L51">        &quot;\n success: &quot; + success[algorithm] + </span>
-<span class="fc" id="L52">        &quot;\n failures: &quot; + failures[algorithm] + </span>
-<span class="fc" id="L53">        &quot;\n correct distance: &quot; + correctDistance[algorithm] + </span>
-<span class="fc" id="L54">        &quot;\n total execution time: &quot; + executionTime[algorithm]  + </span>
-<span class="fc" id="L55">        &quot;\n average time: &quot; + executionTime[algorithm] / numberOfEvaluations[algorithm] + </span>
-<span class="fc" id="L56">        &quot;\n avg. evaluated nodes: &quot; + evaluatedNodes[algorithm] / numberOfEvaluations[algorithm] + </span>
-<span class="fc" id="L57">        &quot;\n avg. path nodes: &quot; + pathNodes[algorithm] / numberOfEvaluations[algorithm];        </span>
+<span class="fc" id="L50">        return &quot;\n\nAlgorithm: &quot; + name + &quot; (&quot; + algorithm + &quot;)&quot; +</span>
+<span class="fc" id="L51">        &quot;\n evaluations: &quot; + numberOfEvaluations[algorithm] + </span>
+<span class="fc" id="L52">        &quot;\n success: &quot; + success[algorithm] + </span>
+<span class="fc" id="L53">        &quot;\n failures: &quot; + failures[algorithm] + </span>
+<span class="fc" id="L54">        &quot;\n correct distance: &quot; + correctDistance[algorithm] + </span>
+<span class="fc" id="L55">        &quot;\n total execution time: &quot; + executionTime[algorithm]  + </span>
+<span class="fc" id="L56">        &quot;\n average time: &quot; + executionTime[algorithm] / numberOfEvaluations[algorithm] + </span>
+<span class="fc" id="L57">        &quot;\n avg. evaluated nodes: &quot; + (evaluatedNodes[algorithm] / numberOfEvaluations[algorithm]) + </span>
+<span class="fc" id="L58">        &quot;\n avg. path nodes: &quot; + (pathNodes[algorithm] / numberOfEvaluations[algorithm]);        </span>
     }
 
     /** 
      * Construct a string representation of one evaluation session including all algorithms, scenarios and iterations.
     */
     public String toString() {
-<span class="fc" id="L64">        String result = &quot;\nEvaluation Results Summary:&quot;;</span>
+<span class="fc" id="L65">        String result = &quot;\nEvaluation Results Summary:&quot;;</span>
 
-<span class="pc bpc" id="L66" title="1 of 2 branches missed.">        if(numberOfEvaluations[MapUtils.ALGORITHM_DIJKSTRA] &gt; 0) {</span>
-<span class="fc" id="L67">            result += algoritmResultString(MapUtils.ALGORITHM_DIJKSTRA, &quot;Dijkstra&quot;);    </span>
+<span class="pc bpc" id="L67" title="1 of 2 branches missed.">        if(numberOfEvaluations[MapUtils.ALGORITHM_DIJKSTRA] &gt; 0) {</span>
+<span class="fc" id="L68">            result += algoritmResultString(MapUtils.ALGORITHM_DIJKSTRA, &quot;Dijkstra&quot;);    </span>
         } 
 
-<span class="pc bpc" id="L70" title="1 of 2 branches missed.">        if(numberOfEvaluations[MapUtils.ALGORITHM_ASTAR] &gt; 0) {</span>
-<span class="fc" id="L71">            result += algoritmResultString(MapUtils.ALGORITHM_ASTAR, &quot;A*&quot;);</span>
+<span class="pc bpc" id="L71" title="1 of 2 branches missed.">        if(numberOfEvaluations[MapUtils.ALGORITHM_ASTAR] &gt; 0) {</span>
+<span class="fc" id="L72">            result += algoritmResultString(MapUtils.ALGORITHM_ASTAR, &quot;A*&quot;);</span>
         }
 
-<span class="pc bpc" id="L74" title="1 of 2 branches missed.">        if(numberOfEvaluations[MapUtils.ALGORITHM_JPS] &gt; 0) {</span>
-<span class="fc" id="L75">            result += algoritmResultString(MapUtils.ALGORITHM_JPS, &quot;JPS&quot;);</span>
+<span class="pc bpc" id="L75" title="1 of 2 branches missed.">        if(numberOfEvaluations[MapUtils.ALGORITHM_JPS] &gt; 0) {</span>
+<span class="fc" id="L76">            result += algoritmResultString(MapUtils.ALGORITHM_JPS, &quot;JPS&quot;);</span>
         }
-<span class="fc" id="L77">        return result;</span>
+<span class="fc" id="L78">        return result;</span>
     }
+
+    /**
+     * Get a line of a single algorithm for the summary CSV.
+     * 
+     */
+     private String getSummaryCSVline(int algorithm, String algorithmName) {
+<span class="fc" id="L86">        return MapUtils.ALGORITHM_NAMES[algorithm] + ',' + </span>
+<span class="fc" id="L87">            numberOfEvaluations[algorithm] + ',' + </span>
+<span class="fc" id="L88">            success[algorithm] + ',' + </span>
+<span class="fc" id="L89">            correctDistance[algorithm] + ',' + </span>
+<span class="fc" id="L90">            executionTime[algorithm] + ',' + </span>
+<span class="fc" id="L91">            executionTime[algorithm] / numberOfEvaluations[algorithm] + ',' + </span>
+<span class="fc" id="L92">            pathNodes[algorithm] / numberOfEvaluations[algorithm] + ',' + </span>
+<span class="fc" id="L93">            evaluatedNodes[algorithm] / numberOfEvaluations[algorithm] + '\n';</span>
+    }
+
+    private String toSummaryCSVString() {
+
+<span class="fc" id="L98">        StringBuffer sb = new StringBuffer(500);</span>
+<span class="fc" id="L99">        sb.append(&quot;Algorith,Evaluations,Success,Correct Distance,Total Time,Average Time,Avg. Path Nodes,Avg. Eval. Nodes\n&quot;);        </span>
+<span class="pc bpc" id="L100" title="1 of 2 branches missed.">        if(numberOfEvaluations[MapUtils.ALGORITHM_DIJKSTRA] &gt; 0) </span>
+<span class="fc" id="L101">            sb.append(getSummaryCSVline(MapUtils.ALGORITHM_DIJKSTRA, MapUtils.ALGORITHM_NAMES[MapUtils.ALGORITHM_DIJKSTRA]));            </span>
+<span class="pc bpc" id="L102" title="1 of 2 branches missed.">        if(numberOfEvaluations[MapUtils.ALGORITHM_ASTAR] &gt; 0) </span>
+<span class="fc" id="L103">            sb.append(getSummaryCSVline(MapUtils.ALGORITHM_ASTAR, MapUtils.ALGORITHM_NAMES[MapUtils.ALGORITHM_ASTAR]));            </span>
+<span class="pc bpc" id="L104" title="1 of 2 branches missed.">        if(numberOfEvaluations[MapUtils.ALGORITHM_JPS] &gt; 0) </span>
+<span class="fc" id="L105">            sb.append(getSummaryCSVline(MapUtils.ALGORITHM_JPS, MapUtils.ALGORITHM_NAMES[MapUtils.ALGORITHM_JPS]));            </span>
+<span class="fc" id="L106">        return new String(sb);</span>
+
+    }
+
+    private String toDetailsCSVString() {
+<span class="fc" id="L111">        StringBuffer sb = new StringBuffer(5000000);</span>
+<span class="fc" id="L112">        sb.append(&quot;Time,Duration,Algorithm,Distance,Success,Correct Distance,Path Nodes,Eval. Nodes\n&quot;);</span>
+<span class="fc bfc" id="L113" title="All 2 branches covered.">        for(PerformanceEvaluation evaluation : evaluations) {</span>
+<span class="fc" id="L114">            sb.append(evaluation.toCsvString() + &quot;\n&quot;);</span>
+        }
+<span class="fc" id="L116">        return new String(sb);</span>
+    }
+
+    /**
+     * Save the evaluation results to a CSV files to be used further, for example, in Excel.
+     */
+    void saveToCSV() {
+        
+        // Write detailed results of all evaluations to be used, for example, in Excel.
+<span class="fc" id="L125">        try (FileWriter writer = new FileWriter(&quot;evaluation_details.csv&quot;)) {</span>
+<span class="fc" id="L126">            writer.write(toDetailsCSVString());</span>
+<span class="nc" id="L127">        } catch (Exception e) {</span>
+<span class="nc" id="L128">            e.printStackTrace();</span>
+        }
+
+        // Write summary lines for each algorithm to a file.
+<span class="fc" id="L132">        try (FileWriter writer = new FileWriter(&quot;evaluation_summary.csv&quot;)) {</span>
+<span class="fc" id="L133">            writer.write(toSummaryCSVString());</span>
+<span class="nc" id="L134">        } catch (Exception e) {</span>
+<span class="nc" id="L135">            e.printStackTrace();</span>
+        }        
+<span class="fc" id="L137">    }  </span>
 
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

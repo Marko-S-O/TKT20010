@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PerformanceEvaluator.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">pathfinder-app</a> &gt; <a href="index.source.html" class="el_package">com.orasaari</a> &gt; <span class="el_source">PerformanceEvaluator.java</span></div><h1>PerformanceEvaluator.java</h1><pre class="source lang-java linenums">package com.orasaari;
 
-import java.awt.Point;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.ArrayList;
@@ -11,9 +10,9 @@ import java.util.Map;
 /**
  * A class to execute performance evaluations. Can be run in the command line or from the UI.
  */
-<span class="fc" id="L14">public class PerformanceEvaluator {</span>
+<span class="fc" id="L13">public class PerformanceEvaluator {</span>
     
-<span class="fc" id="L16">    private Map&lt;String, GridMap&gt; mapMap = new HashMap&lt;String, GridMap&gt;();</span>
+<span class="fc" id="L15">    private Map&lt;String, GridMap&gt; mapMap = new HashMap&lt;String, GridMap&gt;();</span>
 
     /** 
      * A private class representing a scenario that is used in performance evaluation. 
@@ -21,16 +20,20 @@ import java.util.Map;
     */
     private static class Scenario {
         GridMap map;
-        Point start;
-        Point goal;
+        int startX;
+        int startY;
+        int goalX;
+        int goalY;
         double distance;
 
-<span class="fc" id="L28">        Scenario(int scenarioIndex, GridMap map, int startX, int startY, int goalX, int goalY, double distance) {</span>
-<span class="fc" id="L29">            this.map = map;</span>
-<span class="fc" id="L30">            this.start = new Point(startX, startY);</span>
-<span class="fc" id="L31">            this.goal = new Point(goalX, goalY);</span>
-<span class="fc" id="L32">            this.distance = distance;            </span>
-<span class="fc" id="L33">        }   </span>
+<span class="fc" id="L29">        Scenario(int scenarioIndex, GridMap map, int startX, int startY, int goalX, int goalY, double distance) {</span>
+<span class="fc" id="L30">            this.map = map;</span>
+<span class="fc" id="L31">            this.startX = startX;</span>
+<span class="fc" id="L32">            this.startY = startY;</span>
+<span class="fc" id="L33">            this.goalX = goalX;</span>
+<span class="fc" id="L34">            this.goalY = goalY;</span>
+<span class="fc" id="L35">            this.distance = distance;            </span>
+<span class="fc" id="L36">        }   </span>
     }
 
     /**
@@ -43,42 +46,42 @@ import java.util.Map;
      */
     private List&lt;Scenario&gt; loadScenarios(String filename) {
         
-<span class="fc" id="L46">        List&lt;Scenario&gt; scenarioList = new ArrayList&lt;Scenario&gt;();</span>
+<span class="fc" id="L49">        List&lt;Scenario&gt; scenarioList = new ArrayList&lt;Scenario&gt;();</span>
         
-<span class="fc" id="L48">        try (BufferedReader reader = new BufferedReader(new FileReader(filename))) { </span>
+<span class="fc" id="L51">        try (BufferedReader reader = new BufferedReader(new FileReader(filename))) { </span>
             String line;
-<span class="fc" id="L50">            boolean firstLine = true;</span>
-<span class="fc" id="L51">            int scenarioIndex = 0;</span>
-<span class="fc bfc" id="L52" title="All 2 branches covered.">            while((line = reader.readLine()) != null) {</span>
-<span class="fc" id="L53">                System.out.println(line);</span>
-<span class="fc bfc" id="L54" title="All 2 branches covered.">                if(firstLine) {</span>
+<span class="fc" id="L53">            boolean firstLine = true;</span>
+<span class="fc" id="L54">            int scenarioIndex = 0;</span>
+<span class="fc bfc" id="L55" title="All 2 branches covered.">            while((line = reader.readLine()) != null) {</span>
+<span class="fc" id="L56">                System.out.println(line);</span>
+<span class="fc bfc" id="L57" title="All 2 branches covered.">                if(firstLine) {</span>
                     // skep the first line &quot;version...&quot; 
-<span class="fc" id="L56">                    firstLine = false;</span>
-<span class="fc" id="L57">                    continue;</span>
+<span class="fc" id="L59">                    firstLine = false;</span>
+<span class="fc" id="L60">                    continue;</span>
                 }   
-<span class="fc" id="L59">                String[] fields = line.split(&quot;\\t+&quot;);</span>
-<span class="fc" id="L60">                GridMap map = mapMap.get(fields[1]);</span>
+<span class="fc" id="L62">                String[] fields = line.split(&quot;\\t+&quot;);</span>
+<span class="fc" id="L63">                GridMap map = mapMap.get(fields[1]);</span>
 
                 // Maps are taking a lot of heap. Load each map only once and store it in the map map.
-<span class="fc bfc" id="L63" title="All 2 branches covered.">                if(map == null) {</span>
-<span class="fc" id="L64">                    String mapFilename = MapUtils.STREET_MAP_DIRECTORY + fields[1];</span>
-<span class="fc" id="L65">                    map = MapUtils.loadMap(mapFilename);</span>
-<span class="fc" id="L66">                    mapMap.put(fields[1], map);</span>
+<span class="fc bfc" id="L66" title="All 2 branches covered.">                if(map == null) {</span>
+<span class="fc" id="L67">                    String mapFilename = MapUtils.STREET_MAP_DIRECTORY + fields[1];</span>
+<span class="fc" id="L68">                    map = new GridMap(mapFilename);</span>
+<span class="fc" id="L69">                    mapMap.put(fields[1], map);</span>
                 }                 
-<span class="fc" id="L68">                int startX = Integer.parseInt(fields[4]);</span>
-<span class="fc" id="L69">                int startY = Integer.parseInt(fields[5]);</span>
-<span class="fc" id="L70">                int goalX = Integer.parseInt(fields[6]);</span>
-<span class="fc" id="L71">                int goalY = Integer.parseInt(fields[7]);</span>
-<span class="fc" id="L72">                double distance = Double.parseDouble(fields[8]);</span>
-<span class="fc" id="L73">                scenarioIndex++;</span>
-<span class="fc" id="L74">                Scenario scenario = new Scenario(scenarioIndex, map, startX, startY, goalX, goalY, distance);</span>
-<span class="fc" id="L75">                scenarioList.add(scenario);                </span>
+<span class="fc" id="L71">                int startX = Integer.parseInt(fields[4]);</span>
+<span class="fc" id="L72">                int startY = Integer.parseInt(fields[5]);</span>
+<span class="fc" id="L73">                int goalX = Integer.parseInt(fields[6]);</span>
+<span class="fc" id="L74">                int goalY = Integer.parseInt(fields[7]);</span>
+<span class="fc" id="L75">                double distance = Double.parseDouble(fields[8]);</span>
+<span class="fc" id="L76">                scenarioIndex++;</span>
+<span class="fc" id="L77">                Scenario scenario = new Scenario(scenarioIndex, map, startX, startY, goalX, goalY, distance);</span>
+<span class="fc" id="L78">                scenarioList.add(scenario);                </span>
             }
-<span class="nc" id="L77">        } catch(Exception e) {</span>
-<span class="nc" id="L78">            System.out.println(&quot;Error reading scenario file: &quot; + filename);</span>
-<span class="nc" id="L79">            e.printStackTrace();</span>
+<span class="nc" id="L80">        } catch(Exception e) {</span>
+<span class="nc" id="L81">            System.out.println(&quot;Error reading scenario file: &quot; + filename);</span>
+<span class="nc" id="L82">            e.printStackTrace();</span>
         } 
-<span class="fc" id="L81">        return scenarioList;</span>
+<span class="fc" id="L84">        return scenarioList;</span>
     }
 
     /**
@@ -89,18 +92,18 @@ import java.util.Map;
      * @return  A map of pathfinders: the key is the algorithm code Mapping to MapUtil.ALGORITHM_* and the value is the Pathfinder object.
     */
     private Map&lt;Integer, Pathfinder&gt; getPatfinders(List&lt;Integer&gt; algorithms) {
-<span class="fc" id="L92">        Map&lt;Integer, Pathfinder&gt; map = new HashMap&lt;Integer, Pathfinder&gt;(3);</span>
-<span class="fc bfc" id="L93" title="All 2 branches covered.">        for(int i=0; i&lt;algorithms.size(); i++) {</span>
-<span class="fc" id="L94">            int algorithm = algorithms.get(i);</span>
-<span class="fc bfc" id="L95" title="All 2 branches covered.">            if(algorithm == MapUtils.ALGORITHM_DIJKSTRA) {</span>
-<span class="fc" id="L96">                map.put(algorithm, new DijkstraPathfinder());</span>
-<span class="fc bfc" id="L97" title="All 2 branches covered.">            } else if(algorithm == MapUtils.ALGORITHM_ASTAR) {</span>
-<span class="fc" id="L98">                map.put(algorithm, new AStarPathfinder());</span>
-<span class="fc" id="L99">            } else {</span>
-<span class="fc" id="L100">                map.put(algorithm, new JPSPathfinder());</span>
+<span class="fc" id="L95">        Map&lt;Integer, Pathfinder&gt; map = new HashMap&lt;Integer, Pathfinder&gt;(3);</span>
+<span class="fc bfc" id="L96" title="All 2 branches covered.">        for(int i=0; i&lt;algorithms.size(); i++) {</span>
+<span class="fc" id="L97">            int algorithm = algorithms.get(i);</span>
+<span class="fc bfc" id="L98" title="All 2 branches covered.">            if(algorithm == MapUtils.ALGORITHM_DIJKSTRA) {</span>
+<span class="fc" id="L99">                map.put(algorithm, new DijkstraPathfinder());</span>
+<span class="fc bfc" id="L100" title="All 2 branches covered.">            } else if(algorithm == MapUtils.ALGORITHM_ASTAR) {</span>
+<span class="fc" id="L101">                map.put(algorithm, new AStarPathfinder());</span>
+<span class="fc" id="L102">            } else {</span>
+<span class="fc" id="L103">                map.put(algorithm, new JPSPathfinder());</span>
             }
         }
-<span class="fc" id="L103">        return map;</span>
+<span class="fc" id="L106">        return map;</span>
     }
 
     /**
@@ -111,12 +114,12 @@ import java.util.Map;
      * @return  composed results of evaluations
     */
     private PerformanceEvaluationResults collectEvaluateResults(List&lt;PerformanceEvaluation&gt; evaluationList) {
-<span class="fc" id="L114">        PerformanceEvaluationResults performanceResults = new PerformanceEvaluationResults();</span>
-<span class="fc bfc" id="L115" title="All 2 branches covered.">        for(int i=0; i&lt;evaluationList.size(); i++) {</span>
-<span class="fc" id="L116">            PerformanceEvaluation evaluation = evaluationList.get(i);</span>
-<span class="fc" id="L117">            performanceResults.addEvaluationResult(evaluation);</span>
+<span class="fc" id="L117">        PerformanceEvaluationResults performanceResults = new PerformanceEvaluationResults();</span>
+<span class="fc bfc" id="L118" title="All 2 branches covered.">        for(int i=0; i&lt;evaluationList.size(); i++) {</span>
+<span class="fc" id="L119">            PerformanceEvaluation evaluation = evaluationList.get(i);</span>
+<span class="fc" id="L120">            performanceResults.addEvaluationResult(evaluation);</span>
         }
-<span class="fc" id="L119">        return performanceResults;</span>
+<span class="fc" id="L122">        return performanceResults;</span>
     }
 
     /* 
@@ -130,42 +133,39 @@ import java.util.Map;
     */  
     PerformanceEvaluationResults runEvaluation(int iterations, String filename, List&lt;Integer&gt; algorithms) {
 
-<span class="fc" id="L133">        Map&lt;Integer, Pathfinder&gt; pathfinderMap = getPatfinders(algorithms);</span>
-<span class="fc" id="L134">        List&lt;Scenario&gt; scenarioList = loadScenarios(filename);</span>
-<span class="fc" id="L135">        List&lt;PerformanceEvaluation&gt; evaluationList = new ArrayList&lt;PerformanceEvaluation&gt;(iterations * algorithms.size() * scenarioList.size());</span>
+<span class="fc" id="L136">        Map&lt;Integer, Pathfinder&gt; pathfinderMap = getPatfinders(algorithms);</span>
+<span class="fc" id="L137">        List&lt;Scenario&gt; scenarioList = loadScenarios(filename);</span>
+<span class="fc" id="L138">        List&lt;PerformanceEvaluation&gt; evaluationList = new ArrayList&lt;PerformanceEvaluation&gt;(iterations * algorithms.size() * scenarioList.size());</span>
 
-<span class="fc bfc" id="L137" title="All 2 branches covered.">        for(int i=0; i&lt;scenarioList.size(); i++) {</span>
-<span class="fc" id="L138">            System.out.println(&quot;Running scenario: &quot; + i);</span>
-<span class="fc" id="L139">            Scenario scenario = scenarioList.get(i);</span>
+<span class="fc bfc" id="L140" title="All 2 branches covered.">        for(int i=0; i&lt;scenarioList.size(); i++) {</span>
+<span class="fc" id="L141">            System.out.println(&quot;Running scenario: &quot; + i);</span>
+<span class="fc" id="L142">            Scenario scenario = scenarioList.get(i);</span>
 
-<span class="fc bfc" id="L141" title="All 2 branches covered.">            for(int j=0; j&lt;iterations; j++) {</span>
-<span class="fc bfc" id="L142" title="All 2 branches covered.">                for(int k=0; k&lt;algorithms.size(); k++) {</span>
+<span class="fc bfc" id="L144" title="All 2 branches covered.">            for(int j=0; j&lt;iterations; j++) {</span>
+<span class="fc bfc" id="L145" title="All 2 branches covered.">                for(int k=0; k&lt;algorithms.size(); k++) {</span>
 
                     // swap the order of algorithms in each iteration to minimize the noise in the results
-<span class="fc" id="L145">                    int algorithmIndex = (j + k) % algorithms.size();</span>
-<span class="fc" id="L146">                    int algorithm = algorithms.get(algorithmIndex); </span>
-<span class="fc" id="L147">                    Pathfinder pathfinder = pathfinderMap.get(algorithm);</span>
-<span class="fc" id="L148">                    PerformanceEvaluation evaluation = new PerformanceEvaluation();</span>
-<span class="fc" id="L149">                    evaluation.algorithm = algorithm;</span>
-<span class="fc" id="L150">                    evaluation.startTime = System.currentTimeMillis();</span>
-<span class="fc" id="L151">                    evaluation.result = pathfinder.navigate(scenario.map, scenario.start, scenario.goal);</span>
-<span class="fc" id="L152">                    evaluation.finishTime = System.currentTimeMillis();</span>
-<span class="pc bpc" id="L153" title="1 of 2 branches missed.">                    evaluation.correctDistance = Math.abs(evaluation.result.distance - scenario.distance) &lt; 0.01;</span>
-<span class="fc" id="L154">                    evaluationList.add(evaluation);</span>
+<span class="fc" id="L148">                    int algorithmIndex = (j + k) % algorithms.size();</span>
+<span class="fc" id="L149">                    int algorithm = algorithms.get(algorithmIndex); </span>
+<span class="fc" id="L150">                    Pathfinder pathfinder = pathfinderMap.get(algorithm);                    </span>
+<span class="fc" id="L151">                    PerformanceEvaluation evaluation = new PerformanceEvaluation();</span>
+<span class="fc" id="L152">                    evaluation.algorithm = algorithm;</span>
+<span class="fc" id="L153">                    evaluation.startTime = System.currentTimeMillis();</span>
+<span class="fc" id="L154">                    evaluation.result = pathfinder.findPath(scenario.map, scenario.startX, scenario.startY, scenario.goalX, scenario.goalY);</span>
+<span class="fc" id="L155">                    evaluation.finishTime = System.currentTimeMillis();</span>
+<span class="pc bpc" id="L156" title="1 of 2 branches missed.">                    evaluation.correctDistance = Math.abs(evaluation.result.distance - scenario.distance) &lt; 0.01;</span>
+<span class="fc" id="L157">                    evaluationList.add(evaluation);</span>
                 }
             }
         }
 
-<span class="fc" id="L159">        PerformanceEvaluationResults performanceResults = collectEvaluateResults(evaluationList);</span>
-<span class="fc" id="L160">        return performanceResults;</span>
+<span class="fc" id="L162">        PerformanceEvaluationResults performanceResults = collectEvaluateResults(evaluationList);</span>
+<span class="fc" id="L163">        return performanceResults;</span>
     }
-
-
-
 
     /**
      * The entry point for cases we want to execute from the command line instead of UI.
-     * When run from the command line, there is no option to save the results in CSV files.
+     * When run from the command line, the results are always saved to CSV files.
      * 
      * @param args  No args are used, prepare run options directly to the main method code.
      */
@@ -175,10 +175,9 @@ import java.util.Map;
 <span class="nc" id="L175">        algorithms.add(MapUtils.ALGORITHM_ASTAR);</span>
 <span class="nc" id="L176">        algorithms.add(MapUtils.ALGORITHM_JPS);</span>
 <span class="nc" id="L177">        PerformanceEvaluator p = new PerformanceEvaluator();</span>
-<span class="nc" id="L178">        PerformanceEvaluationResults results = p.runEvaluation(9, MapUtils.SCENARIO_DIRECTORY + &quot;test-1.scen&quot;, algorithms);</span>
+<span class="nc" id="L178">        PerformanceEvaluationResults results = p.runEvaluation(9, MapUtils.SCENARIO_DIRECTORY + &quot;performance-evaluation.scen&quot;, algorithms);</span>
 <span class="nc" id="L179">        System.out.println(results);</span>
-<span class="nc" id="L180">        MapUtils.saveToCsv(results);</span>
-<span class="nc" id="L181">    }   </span>
-    
+<span class="nc" id="L180">        results.saveToCSV();</span>
+<span class="nc" id="L181">    }       </span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

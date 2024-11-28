@@ -3,14 +3,14 @@
 import java.text.SimpleDateFormat;
 
 /* 
-    * A wrapper class for results of a single evaluation: one scenario, one algorithm, one iteration.
-    */
+* A wrapper class for results of a single evaluation: one scenario, one algorithm, one iteration.
+*/
 <span class="fc" id="L8">class PerformanceEvaluation {</span>
 
 <span class="fc" id="L10">    private static final SimpleDateFormat TIMESTAMP_FORMAT = new SimpleDateFormat(&quot;yyyy-MM-dd HH:mm:ss&quot;);</span>
 
     int algorithm;
-    Result result;
+    PathfindingResult result;
     long startTime;
     long finishTime;    
     boolean correctDistance;
@@ -23,13 +23,13 @@ import java.text.SimpleDateFormat;
     String toCsvString() {
 <span class="fc" id="L24">        return(</span>
 <span class="fc" id="L25">            TIMESTAMP_FORMAT.format(result.startTime) + &quot;,&quot; +</span>
-<span class="fc" id="L26">            result.duration + &quot;,&quot; + </span>
-<span class="fc" id="L27">            result.algorithm + &quot;,&quot; + </span>
+<span class="fc" id="L26">            result.pathfindingDuration + &quot;,&quot; + </span>
+<span class="fc" id="L27">            result.algorithmCode + &quot;,&quot; + </span>
 <span class="fc" id="L28">            result.distance + &quot;,&quot; + </span>
-<span class="fc" id="L29">            result.success + &quot;,&quot; + </span>
+<span class="fc" id="L29">            result.goalFound + &quot;,&quot; + </span>
 <span class="fc" id="L30">            correctDistance + &quot;,&quot; +</span>
-<span class="fc" id="L31">            result.numOfPathNodes + &quot;,&quot; + </span>
-<span class="fc" id="L32">            result.numeOfEvaluatedNodes</span>
+<span class="fc" id="L31">            result.numberOfPathNodes + &quot;,&quot; + </span>
+<span class="fc" id="L32">            result.nodesEvaluated</span>
         );    
     }
 }

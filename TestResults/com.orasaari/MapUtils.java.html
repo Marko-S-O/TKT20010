@@ -1,24 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MapUtils.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">pathfinder-app</a> &gt; <a href="index.source.html" class="el_package">com.orasaari</a> &gt; <span class="el_source">MapUtils.java</span></div><h1>MapUtils.java</h1><pre class="source lang-java linenums">package com.orasaari;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.List;
-import java.util.ArrayList;
-
 /** 
- * A static util class to implement utility methods and store global constants.
+ * A static utility class to implement util methods and store global constants.
  */
-<span class="nc" id="L14">class MapUtils {</span>
+<span class="nc" id="L6">class MapUtils {</span>
 
-    // Define some constants for convienience and code readability.
-<span class="fc" id="L17">    static final double SQRT2 = Math.sqrt(2.0);</span>
+<span class="fc" id="L8">    static final double SQRT2 = Math.sqrt(2.0);</span>
     static final int ALGORITHM_DIJKSTRA = 0;
     static final int ALGORITHM_ASTAR = 1;
     static final int ALGORITHM_JPS = 2;
-<span class="fc" id="L21">    static final String[] ALGORITHM_NAMES = {&quot;Dijkstra&quot;, &quot;A-Star&quot;, &quot;JPS&quot;};</span>
+<span class="fc" id="L12">    static final String[] ALGORITHM_NAMES = {&quot;Dijkstra&quot;, &quot;A-Star&quot;, &quot;JPS&quot;};</span>
     static final int GRID_BLOCKED = 0;
     static final int LEFT = 0;
     static final int RIGHT = 1;
@@ -29,269 +20,52 @@ import java.util.ArrayList;
     static final int LEFT_DOWN = 6;
     static final int RIGHT_UP = 7;
 
-    // Directories of the used files. If deploying the code to another environment, these need to be adjusted.
+    // Directories of the used files. If deploying the code to another environment, these need to be adjusted accordingly.
     static final String MAP_DIRECTORY = &quot;c:/users/ext/TKT20010/pathfinder-app/data/&quot;;
     static final String SCENARIO_DIRECTORY = &quot;c:/users/ext/TKT20010/pathfinder-app/data/test/&quot;;    
     static final String STREET_MAP_DIRECTORY = &quot;c:/users/ext/TKT20010/pathfinder-app/data/street-map/&quot;; 
 
     /** Possible moving directions in the 2D grid. Intended to simplify code and make algorithms faster. Used by A* and Dijkstra */
-<span class="fc" id="L38">    static final int[][] MOVES = {{-1,0}, {1,0}, {0,-1}, {0,1}, {-1,-1}, {1,1}, {-1,1}, {1,-1}};</span>
+<span class="fc" id="L29">    static final int[][] MOVES = {{-1,0}, {1,0}, {0,-1}, {0,1}, {-1,-1}, {1,1}, {-1,1}, {1,-1}};</span>
 
     /** Distances of corresponding MOVES. Intended to simplify code and make algorithms faster. Used by A* and Dijkstra */
-<span class="fc" id="L41">    static final double[] WEIGHTS = {1, 1, 1, 1, MapUtils.SQRT2, MapUtils.SQRT2, MapUtils.SQRT2, MapUtils.SQRT2};</span>
+<span class="fc" id="L32">    static final double[] WEIGHTS = {1, 1, 1, 1, MapUtils.SQRT2, MapUtils.SQRT2, MapUtils.SQRT2, MapUtils.SQRT2};</span>
 
-    /** Moving directions are running around the clock from north-east to north. These are used by JPS but the order is the same as A* and mapping to the traversabilty table indices. */
-<span class="fc" id="L44">    static final Move[] MOVE_DIRECTIONS = {</span>
-<span class="fc" id="L45">        new Move(-1,0),  // left</span>
-<span class="fc" id="L46">        new Move(1,0),   // right</span>
-<span class="fc" id="L47">        new Move(0,-1),  // up   </span>
-<span class="fc" id="L48">        new Move(0,1),   // right</span>
-<span class="fc" id="L49">        new Move(-1,-1), // left-up</span>
-<span class="fc" id="L50">        new Move(1,1),  // right-down</span>
-<span class="fc" id="L51">        new Move(-1,1), // left-down</span>
-<span class="fc" id="L52">        new Move(1,-1)   // right-up</span>
+    /** Moving directions are running around the clock from north-east to north. These are used by JPS but the order is the same as A* and mapping to the GridMap traversabilty table indices. */
+<span class="fc" id="L35">    static final Move[] MOVE_DIRECTIONS = {</span>
+        new Move(-1,0),  // left
+        new Move(1,0),   // right
+        new Move(0,-1),  // up   
+        new Move(0,1),   // right
+        new Move(-1,-1), // left-up
+        new Move(1,1),  // right-down
+        new Move(-1,1), // left-down
+        new Move(1,-1)   // right-up
     };
 
     /** Get the vertical components of the diagonal paths. For example, for right-down return down. */
-<span class="fc" id="L56">    static final int[] VERTICAL_ONLY_PATHS = {</span>
-<span class="fc" id="L57">        -1,</span>
-<span class="fc" id="L58">        -1,</span>
-<span class="fc" id="L59">        -1,</span>
-<span class="fc" id="L60">        -1,</span>
-<span class="fc" id="L61">        UP,</span>
-<span class="fc" id="L62">        DOWN,</span>
-<span class="fc" id="L63">        DOWN,</span>
-<span class="fc" id="L64">        UP</span>
+<span class="fc" id="L47">    static final int[] VERTICAL_ONLY_COMPONENT = {</span>
+        -1,
+        -1,
+        -1,
+        -1,
+        UP,
+        DOWN,
+        DOWN,
+        UP
     };
 
     /** Get the horizontal components of the diagonal paths. For example, for right-down return right. */
-<span class="fc" id="L68">    static final int[] HORIZONTAL_ONLY_PATHS = {</span>
-<span class="fc" id="L69">        -1,</span>
-<span class="fc" id="L70">        -1,</span>
-<span class="fc" id="L71">        -1,</span>
-<span class="fc" id="L72">        -1,</span>
+<span class="fc" id="L59">    static final int[] HORIZONTAL_ONLY_COMPONENT = {</span>
+        -1,
+        -1,
+        -1,
+        -1,
         LEFT,
-<span class="fc" id="L74">        RIGHT,</span>
+        RIGHT,
         LEFT,
-<span class="fc" id="L76">        RIGHT,</span>
-<span class="fc" id="L77">    };</span>
-
-    /**
-     * Map direction given in coordinates to the numeric direction code mapping to the traversability array indices. 
-     * 
-     * @see GridMap.getTravellability().
-     * 
-     * @param directionX    x component of the movement (-1, 0, 1)
-     * @param directionY    y component of the movement (-1, 0, 1)
-     * 
-     * @return  The numeric direction code mapping the the traversability matrix.
-     */
-    static int getDirection(int directionX, int directionY) {
-
-<span class="fc bfc" id="L91" title="All 2 branches covered.">        if(directionX == -1) {</span>
-<span class="fc bfc" id="L92" title="All 2 branches covered.">            if(directionY == -1) {</span>
-<span class="fc" id="L93">                return LEFT_UP;</span>
-<span class="fc bfc" id="L94" title="All 2 branches covered.">            } else if(directionY == 0) {</span>
-<span class="fc" id="L95">                return LEFT;</span>
-            } else {
-<span class="fc" id="L97">                return LEFT_DOWN;</span>
-            }
-<span class="fc bfc" id="L99" title="All 2 branches covered.">        } else if(directionX == 0) {</span>
-<span class="fc bfc" id="L100" title="All 2 branches covered.">            if(directionY == -1) {</span>
-<span class="fc" id="L101">                return UP;</span>
-            } else {
-<span class="fc" id="L103">                return DOWN;</span>
-            }
-<span class="pc bpc" id="L105" title="1 of 2 branches missed.">        } else if(directionX == 1) {</span>
-<span class="fc bfc" id="L106" title="All 2 branches covered.">            if(directionY == -1) {</span>
-<span class="fc" id="L107">                return RIGHT_UP;</span>
-<span class="fc bfc" id="L108" title="All 2 branches covered.">            } else if(directionY == 0) {</span>
-<span class="fc" id="L109">                return RIGHT;</span>
-            } else {
-<span class="fc" id="L111">                return RIGHT_DOWN;</span>
-            }
-        } else {
-<span class="nc" id="L114">            return -1;</span>
-        }
-    }
- 
-    /** 
-     * Read a Movin AI Lab .map file from the disc and convert it to two-dimensional boolean array format.
-     *
-     *@see https://www.movingai.com/benchmarks/grids.html 
-     */
-    static GridMap loadMap(String filename) {
-<span class="fc" id="L124">        File file = new File(filename);</span>
-<span class="fc" id="L125">        String filenameSuffix = filename.substring(filename.lastIndexOf('.'));</span>
-<span class="pc bpc" id="L126" title="1 of 2 branches missed.">        if(filenameSuffix.equals(&quot;.map&quot;)) {</span>
-<span class="fc" id="L127">            GridMap map = loadMapFile(file);</span>
-<span class="fc" id="L128">            return map;</span>
-        } else {
-<span class="nc" id="L130">            throw new IllegalArgumentException(&quot;Currently, only .map files from Moving AI Lab are supported.&quot;);</span>
-        }
-    }
-
-    /** 
-     * Load a .map type file. 
-     * 
-     * @param   file    The file in the local file system.
-     * 
-     * @return  The GridMap object representing the map, or null in case of any error.
-    */
-    private static GridMap loadMapFile(File file) {
-
-<span class="fc" id="L143">        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {</span>
-<span class="fc" id="L144">            reader.readLine(); // Skip the type (&quot;octile&quot;)</span>
-<span class="fc" id="L145">            String line2 = reader.readLine();</span>
-<span class="fc" id="L146">            int height = Integer.parseInt(line2.substring(line2.indexOf(' ')+1));</span>
-<span class="fc" id="L147">            String line3 = reader.readLine();</span>
-<span class="fc" id="L148">            int width = Integer.parseInt(line3.substring(line3.indexOf(' ')+1));</span>
-<span class="fc" id="L149">            reader.readLine(); // skip the map header (&quot;map&quot;)</span>
-
-<span class="fc" id="L151">            boolean[][] grid = new boolean[width][height];</span>
-            String line;
-<span class="fc" id="L153">            int j = 0;</span>
-<span class="fc bfc" id="L154" title="All 2 branches covered.">            while((line = reader.readLine()) != null) {</span>
-<span class="fc bfc" id="L155" title="All 2 branches covered.">                for(int i=0; i&lt;line.length(); i++) {</span>
-<span class="fc bfc" id="L156" title="All 2 branches covered.">                    grid[i][j] = line.charAt(i) == '.';</span>
-                }
-<span class="fc" id="L158">                j++;</span>
-            }
-                        
-<span class="fc" id="L161">            return new GridMap(grid);</span>
-
-<span class="nc" id="L163">        } catch(Exception e) {</span>
-<span class="nc" id="L164">            e.printStackTrace();</span>
-<span class="nc" id="L165">            return null;</span>
-        }
-    }
-
-    /**
-     * Collect the result of pathfinding. For JPS, fill the jumped parts of the grid are filled with jump passthrough nodes for visualization purposes.
-     * 
-     * @param   goalNode                The found end node, or the last evaluated node if the goal was not found.
-     * @param   startTime               Start time of pathfinding (ms).
-     * @param   finishTime              End time of pathfinding for performance evaluation (ms)
-     * @param   numOfEvaluatedNodes     Number of nodes that the algorithm handled during pathfinding (dirrerent from the number of nodes in the path).
-     * @param   algorithm               Numeric code of the algorithm, codes defined in class MapUtil.
-     * @param   success                 True if the pathfinder reached the goal node, false if there was no route.
-     * 
-     * @return  Collected results to be used by UI and performance evaluation.
-     */
-    static Result collectResults(Node goalNode, long startTime, long finishTime, int numeOfEvaluatedNodes, int algorithm, boolean success) {
-
-<span class="fc" id="L183">        Result result = new Result();</span>
-
-<span class="fc" id="L185">        List&lt;Node&gt; path = new ArrayList&lt;Node&gt;();</span>
-<span class="fc" id="L186">        path.add(goalNode);</span>
-<span class="fc" id="L187">        int numOfPathNodes = 1;</span>
-<span class="fc" id="L188">        double distance = goalNode.distance;</span>
-<span class="fc" id="L189">        Node nextNode = goalNode;</span>
-<span class="fc" id="L190">        Node previousNode = goalNode.previous;</span>
-
-<span class="fc bfc" id="L192" title="All 2 branches covered.">        while(previousNode != null) {</span>
-<span class="fc" id="L193">            numOfPathNodes += 1;</span>
-
-            // Check if there is a jump created by JPS on the path
-<span class="fc" id="L196">            int deltaX = nextNode.x - previousNode.x;</span>
-<span class="fc" id="L197">            int deltaY = nextNode.y - previousNode.y;</span>
-<span class="fc bfc" id="L198" title="All 4 branches covered.">            if(Math.abs(deltaX) &gt; 1 || Math.abs(deltaY) &gt; 1) {</span>
-
-                // fill the nodes between the jump end and start points with jump passthrough nodes
-<span class="fc bfc" id="L201" title="All 4 branches covered.">                int directionX = deltaX &gt; 0 ? -1: (deltaX == 0 ? 0 : 1);</span>
-<span class="fc bfc" id="L202" title="All 4 branches covered.">                int directiony = deltaY &gt; 0 ? -1 : (deltaY == 0 ? 0 : 1);</span>
-<span class="fc" id="L203">                int middleNodeX = nextNode.x + directionX;</span>
-<span class="fc" id="L204">                int middleNodeY  = nextNode.y + directiony;</span>
-<span class="fc bfc" id="L205" title="All 4 branches covered.">                while(! (middleNodeX==previousNode.x &amp;&amp; middleNodeY==previousNode.y) ) {</span>
-<span class="fc" id="L206">                    Node middleNode = new Node(middleNodeX, middleNodeY);</span>
-<span class="fc" id="L207">                    middleNode.jumpPassthrough = true;</span>
-<span class="fc" id="L208">                    middleNodeX = middleNodeX + directionX;</span>
-<span class="fc" id="L209">                    middleNodeY  = middleNodeY + directiony;</span>
-<span class="fc" id="L210">                    path.add(middleNode);</span>
-                }
-            }
-            
-<span class="fc" id="L214">            path.add(previousNode);</span>
-<span class="fc" id="L215">            nextNode = previousNode;</span>
-<span class="fc" id="L216">            previousNode = previousNode.previous;</span>
-        }
-<span class="fc" id="L218">        path = path.reversed(); // path was collected from goal to start -&gt; reverse</span>
-
-<span class="fc" id="L220">        result.path = path;</span>
-<span class="fc" id="L221">        result.numOfPathNodes = numOfPathNodes;</span>
-<span class="fc" id="L222">        result.startTime = startTime;</span>
-<span class="fc" id="L223">        result.finishTime = finishTime;</span>
-<span class="fc" id="L224">        result.duration = finishTime - startTime;</span>
-<span class="fc" id="L225">        result.numeOfEvaluatedNodes = numeOfEvaluatedNodes;</span>
-<span class="fc" id="L226">        result.algorithm = algorithm;</span>
-<span class="fc" id="L227">        result.distance = distance;</span>
-<span class="fc" id="L228">        result.success = success;</span>
-        
-<span class="fc" id="L230">        return result;</span>
-    }
-
-    /**
-     * Calculate octile distance between points (x0, y0) and (x1, y1).
-     */
-    static double octileDistance(int x0, int y0, int x1, int y1) {
-<span class="fc" id="L237">        int deltaX = Math.abs(x0 - x1);</span>
-<span class="fc" id="L238">        int deltaY = Math.abs(y0 - y1);</span>
-<span class="fc" id="L239">        double octileDistance = Math.min(deltaX, deltaY) * MapUtils.SQRT2 + Math.abs(deltaX - deltaY);</span>
-<span class="fc" id="L240">        return octileDistance;</span>
-    }
-
-    /**
-     * Write a summary line for a single algorithm to the summary CSV file.
-     * 
-     * @param writer        The file to be used.
-     * @param algorithm     The algorithm id, mapping to MapUtil.ALGORITHM_*
-     * @param algorithmName Name of the algorithm to be written to the file.
-     * @throws IOException  Thrown automatically in case of I/O errors.
-     */
-
-     private static void writeSummaryLine(FileWriter writer, int algorithm, String algorithmName, PerformanceEvaluationResults results) throws IOException {
-<span class="fc" id="L253">        writer.write(&quot;algorithmName,&quot; + </span>
-<span class="fc" id="L254">            results.numberOfEvaluations[algorithm] + ',' + </span>
-<span class="fc" id="L255">            results.success[algorithm] + ',' + </span>
-<span class="fc" id="L256">            results.correctDistance[algorithm] + ',' + </span>
-<span class="fc" id="L257">            results.executionTime[algorithm] + ',' + </span>
-<span class="fc" id="L258">            results.executionTime[algorithm] / results.numberOfEvaluations[algorithm] + ',' + </span>
-<span class="fc" id="L259">            results.pathNodes[algorithm] + ',' + </span>
-<span class="fc" id="L260">            results.evaluatedNodes[algorithm] + '\n'); </span>
-<span class="fc" id="L261">    }</span>
-
-    /**
-     * Save the performance evaluation results to a CSV files to be used further, for example, in Excel.
-     */
-    static void saveToCsv(PerformanceEvaluationResults results) {
-        
-        // Write detailed results of all evaluations to be used, for example, in Excel.
-<span class="fc" id="L269">        try (FileWriter writer = new FileWriter(&quot;evaluation_details.csv&quot;)) {</span>
-<span class="fc" id="L270">            writer.write(&quot;Timestamp,Duration,Algorithm,Distance,Success,CorrectDistance,PathNodes,EvaluatedNodes\n&quot;);</span>
-<span class="fc bfc" id="L271" title="All 2 branches covered.">            for(PerformanceEvaluation evaluation : results.evaluations) {</span>
-<span class="fc" id="L272">                writer.write(evaluation.toCsvString() + &quot;\n&quot;);</span>
-            }
-<span class="nc" id="L274">        } catch (Exception e) {</span>
-<span class="nc" id="L275">            e.printStackTrace();</span>
-        }
-
-        // Write summary lines for each algorithms to another file.
-<span class="fc" id="L279">        try (FileWriter writer = new FileWriter(&quot;evaluation_summary.csv&quot;)) {</span>
-<span class="fc" id="L280">            writer.write(&quot;Algorithm,NumberOfEvaluations,Success,CorrectDistance,TotalTime,AverageTime,AveragePathNodes,AverageEvaluatedNodes\n&quot;);</span>
-<span class="pc bpc" id="L281" title="1 of 2 branches missed.">            if(results.numberOfEvaluations[MapUtils.ALGORITHM_DIJKSTRA] &gt; 0) {</span>
-<span class="fc" id="L282">                writeSummaryLine(writer, MapUtils.ALGORITHM_DIJKSTRA, &quot;Dijkstra&quot;, results);</span>
-            } 
-<span class="pc bpc" id="L284" title="1 of 2 branches missed.">            if(results.numberOfEvaluations[MapUtils.ALGORITHM_ASTAR] &gt; 0) {</span>
-<span class="fc" id="L285">                writeSummaryLine(writer, MapUtils.ALGORITHM_ASTAR, &quot;A*&quot;, results);</span>
-            }
-<span class="pc bpc" id="L287" title="1 of 2 branches missed.">            if(results.numberOfEvaluations[MapUtils.ALGORITHM_JPS] &gt; 0) {</span>
-<span class="fc" id="L288">                writeSummaryLine(writer, MapUtils.ALGORITHM_JPS, &quot;JPS&quot;, results);</span>
-            }
-<span class="nc" id="L290">        } catch (Exception e) {</span>
-<span class="nc" id="L291">            e.printStackTrace();</span>
-        }        
-
-<span class="fc" id="L294">    }</span>
-     
+        RIGHT,
+    };
+    
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

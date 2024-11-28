@@ -1,102 +1,236 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GridMap.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">pathfinder-app</a> &gt; <a href="index.source.html" class="el_package">com.orasaari</a> &gt; <span class="el_source">GridMap.java</span></div><h1>GridMap.java</h1><pre class="source lang-java linenums">package com.orasaari;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+
 /**
-* A  representation class for a 2D grid map. To maximize peformance of the pathfinding,
-* boolean array is used for representation.
+* The 2D grid map representation class.
 */
 public class GridMap {
 
     private boolean[][] grid;
-<span class="fc" id="L10">    private int width = -1;</span>
-<span class="fc" id="L11">    private int height = -1;</span>
+<span class="fc" id="L13">    private int width = -1;</span>
+<span class="fc" id="L14">    private int height = -1;</span>
     boolean[][][] traversability;
 
-<span class="fc" id="L14">    GridMap(int width, int height) {</span>
-<span class="fc" id="L15">        grid = new boolean[width][height];</span>
-<span class="fc" id="L16">        this.width = width;</span>
-<span class="fc" id="L17">        this.height = height;</span>
-<span class="fc" id="L18">    }</span>
+    /*
+     * Initialize a randomized map for testing purposes.
+     * 
+     * @param   width   width of the map 
+     * @param   height  height of the map
+     */
+<span class="fc" id="L23">    GridMap(int width, int height, double blockProb) {</span>
+<span class="fc" id="L24">        grid = new boolean[width][height];</span>
+<span class="fc" id="L25">        this.width = width;</span>
+<span class="fc" id="L26">        this.height = height;</span>
+<span class="pc bpc" id="L27" title="1 of 2 branches missed.">        if(blockProb &lt; 100.0) </span>
+<span class="fc bfc" id="L28" title="All 2 branches covered.">            for(int i=0; i&lt;width; i++) </span>
+<span class="fc bfc" id="L29" title="All 2 branches covered.">                for(int j=0; j&lt;height; j++) </span>
+<span class="pc bpc" id="L30" title="1 of 2 branches missed.">                    grid[i][j] = (Math.random() &lt; blockProb ? false : true);</span>
+<span class="fc" id="L31">        calculateTraversability();</span>
+<span class="fc" id="L32">    }</span>
 
-<span class="fc" id="L20">    GridMap(boolean[][] grid) {</span>
-<span class="fc" id="L21">        this.grid = grid;</span>
-<span class="fc" id="L22">        this.width = grid.length;</span>
-<span class="fc" id="L23">        this.height = grid[0].length;</span>
-<span class="fc" id="L24">    }</span>
+    /**
+     * Intialize a map from a file.
+     * 
+     * @param filename  name of the .map file
+     */
+<span class="fc" id="L39">    GridMap(String filename) {</span>
+<span class="fc" id="L40">        this.grid = loadMapFile(filename);</span>
+<span class="fc" id="L41">        this.width = grid.length;</span>
+<span class="fc" id="L42">        this.height = grid[0].length;</span>
+<span class="fc" id="L43">        calculateTraversability();</span>
+<span class="fc" id="L44">    }</span>
  
+    
     /** 
-     * Get the array representation of the map 
+     * Get the array representation of the map.
     */
     boolean[][] getGrid() {
-<span class="fc" id="L30">        return this.grid;</span>
+<span class="nc" id="L51">        return this.grid;</span>
     }
 
     /**
-     * To be able to efficiently utilize Moving AI Lab 2D grid maps, we need to adjust travellaibility rule: If we are not allowed to 
-     * cut corners, we need to check that the diagonal move is free in the both sides even if the next diagonal node is free.
-     * 
-     * @see https://www.movingai.com/benchmarks/street/index.html
-     * 
-     * @param   cutCorners  If true, the diagonal move is allowed only if the vertical and horizontal nodes towards the moving direction are free.
-     * 
-     * @return  TEraversability: a 3D array of boolean values indicating travellability to a direction from a node. Directions are defined im MapUtil.MOVES.
+     * Calculate traversability to the neighbourg nodes. Only thight cornering rules are allowed anymore. 
     */
-    boolean[][][] getTraversability(boolean cutCorners) {
-<span class="fc bfc" id="L44" title="All 2 branches covered.">        if(traversability == null) {</span>
-<span class="fc" id="L45">            boolean[][][] traversability = new boolean[width][height][8];</span>
-<span class="fc bfc" id="L46" title="All 2 branches covered.">            for(int i=0; i&lt;width; i++) {</span>
-<span class="fc bfc" id="L47" title="All 2 branches covered.">                for(int j=0; j&lt;height; j++) {</span>
-<span class="fc bfc" id="L48" title="All 2 branches covered.">                    if(grid[i][j]) {</span>
-<span class="fc bfc" id="L49" title="All 2 branches covered.">                        for(int k=0; k&lt;8; k++) {</span>
-<span class="fc" id="L50">                            int directionX = MapUtils.MOVES[k][0];</span>
-<span class="fc" id="L51">                            int directionY = MapUtils.MOVES[k][1];</span>
-<span class="fc" id="L52">                            int nextNodeX = i + directionX;</span>
-<span class="fc" id="L53">                            int nextNodeY = j + directionY;</span>
-<span class="fc bfc" id="L54" title="All 8 branches covered.">                            if(nextNodeX &lt; 0 || nextNodeY &lt; 0 || nextNodeX &gt;= width || nextNodeY &gt;= height) {                               </span>
-<span class="fc" id="L55">                                traversability[i][j][k] = false;  // The node is outside the map -&gt; false</span>
-<span class="fc bfc" id="L56" title="All 2 branches covered.">                            } else if(!grid[nextNodeX][nextNodeY]) {                                </span>
-<span class="fc" id="L57">                                traversability[i][j][k] = false; // The node is blocked -&gt; always false</span>
-<span class="pc bpc" id="L58" title="1 of 6 branches missed.">                            } else if(directionX == 0 || directionY == 0 || cutCorners) {</span>
-<span class="fc" id="L59">                                traversability[i][j][k] = true; // cutting corners</span>
-<span class="fc" id="L60">                            } else {</span>
+    private void calculateTraversability() {
+<span class="pc bpc" id="L58" title="1 of 2 branches missed.">        if(traversability == null) {</span>
+<span class="fc" id="L59">            boolean[][][] traversability = new boolean[width][height][8];</span>
+<span class="fc bfc" id="L60" title="All 2 branches covered.">            for(int i=0; i&lt;width; i++) {</span>
+<span class="fc bfc" id="L61" title="All 2 branches covered.">                for(int j=0; j&lt;height; j++) {</span>
+<span class="fc bfc" id="L62" title="All 2 branches covered.">                    if(grid[i][j]) {</span>
+<span class="fc bfc" id="L63" title="All 2 branches covered.">                        for(int k=0; k&lt;8; k++) {</span>
+<span class="fc" id="L64">                            int directionX = MapUtils.MOVES[k][0];</span>
+<span class="fc" id="L65">                            int directionY = MapUtils.MOVES[k][1];</span>
+<span class="fc" id="L66">                            int nextNodeX = i + directionX;</span>
+<span class="fc" id="L67">                            int nextNodeY = j + directionY;</span>
+<span class="fc bfc" id="L68" title="All 8 branches covered.">                            if(nextNodeX &lt; 0 || nextNodeY &lt; 0 || nextNodeX &gt;= width || nextNodeY &gt;= height) {                               </span>
+<span class="fc" id="L69">                                traversability[i][j][k] = false;  // The node is outside the map -&gt; false</span>
+<span class="fc bfc" id="L70" title="All 2 branches covered.">                            } else if(!grid[nextNodeX][nextNodeY]) {                                </span>
+<span class="fc" id="L71">                                traversability[i][j][k] = false; // The node is blocked -&gt; always false</span>
+<span class="fc" id="L72">                            } else {</span>
                                 // Cutting corners is not allowed -&gt; either of the two adjacent nodes towards the moving direction can block the movement
-<span class="fc bfc" id="L62" title="All 4 branches covered.">                                traversability[i][j][k] = grid[i+directionX][j] &amp;&amp; grid[i][j+directionY]; </span>
+<span class="fc bfc" id="L74" title="All 4 branches covered.">                                traversability[i][j][k] = grid[i+directionX][j] &amp;&amp; grid[i][j+directionY]; </span>
                             }
                         }
                     }
                 }  
-            }
-            // save the traversability so that it does not have to be calculated again in perforamnce evaluation
-<span class="fc" id="L69">            this.traversability = traversability; </span>
+            }            
+<span class="fc" id="L80">            this.traversability = traversability; </span>
         }
-<span class="fc" id="L71">        return traversability;</span>
-    }
+<span class="fc" id="L82">    }</span>
 
 
     /**
      * @return  The width of the map, or -1 if the map is not initialized.
      */
     int getWidth() {
-<span class="fc" id="L79">        return this.width;</span>
+<span class="fc" id="L89">        return this.width;</span>
     }
 
     /**
      * @return  The height of the map, or -1 if the map is not initialized.
      */
     int getHeight() {
-<span class="fc" id="L86">        return this.height;</span>
+<span class="fc" id="L96">        return this.height;</span>
     }
 
     /** 
-     * An utility method to create a random map. Used only to test visualization. 
+     * An utility method to create a random map. Used for testing. 
      * 
      * @param blockProb     The probability of a node being blocked in randomization.
      */
     void randomize(double blockProb) {
-<span class="fc bfc" id="L95" title="All 2 branches covered.">        for(int i=0; i&lt;width; i++) </span>
-<span class="fc bfc" id="L96" title="All 2 branches covered.">            for(int j=0; j&lt;height; j++) {</span>
-<span class="pc bpc" id="L97" title="1 of 2 branches missed.">                grid[i][j] = (Math.random() &lt; blockProb ? false : true);</span>
+<span class="nc bnc" id="L105" title="All 2 branches missed.">        for(int i=0; i&lt;width; i++) </span>
+<span class="nc bnc" id="L106" title="All 2 branches missed.">            for(int j=0; j&lt;height; j++) </span>
+<span class="nc bnc" id="L107" title="All 2 branches missed.">                grid[i][j] = (Math.random() &lt; blockProb ? false : true);</span>
+    
+<span class="nc" id="L109">        calculateTraversability();</span>
+<span class="nc" id="L110">    }</span>
+
+    /**
+     * Evaluate if the map is traversable to the diection (directionX, directionY). 
+     * Only applicable only for neighbourg nodes.
+     * 
+     * @param x             x coordinate of the node
+     * @param y             y coordinate of the node
+     * @param directionX    x component of the movement (-1, 0, 1)
+     * @param directionYy   component of the movement (-1, 0, 1)
+     * @return
+     */
+    boolean isTraversable(int x, int y, int directionX, int directionY) {        
+<span class="fc" id="L123">        int directionCode = getDirection(directionX, directionY); </span>
+<span class="pc bpc" id="L124" title="4 of 8 branches missed.">        boolean inGrid = x&gt;=0 &amp;&amp; x&lt;width &amp;&amp; y&gt;=0 &amp;&amp; y&lt;height;</span>
+<span class="pc bpc" id="L125" title="1 of 2 branches missed.">        if(inGrid) {</span>
+<span class="fc" id="L126">            return traversability[x][y][directionCode];</span>
+        } else {
+<span class="nc" id="L128">            return false;</span>
+        }        
+    }
+
+     /**
+     * Evaluate if the map is traversable to the direction code that is mapping to the traversability matrix. 
+     * This method is applicable only for the adjacent nodes.
+     * 
+     * @param x             x coordinate of the node
+     * @param y             y coordinate of the node
+     * @param directionCode direction code in traversability matrix
+     * @return
+     */
+    boolean isTraversable(int x, int y, int directionCode) {        
+<span class="pc bpc" id="L142" title="4 of 8 branches missed.">        boolean inGrid = x&gt;=0 &amp;&amp; x&lt;width &amp;&amp; y&gt;=0 &amp;&amp; y&lt;height;</span>
+<span class="pc bpc" id="L143" title="1 of 2 branches missed.">        if(inGrid) {</span>
+<span class="fc" id="L144">            return traversability[x][y][directionCode];</span>
+        } else {
+<span class="nc" id="L146">            return false;</span>
+        }        
+    }
+
+    /**
+     * Return information if the grid in the map is blocked or outside grid
+     * 
+     * @param x the x coordinate in the grid    
+     * @param y the y coordinate in the grid
+     * 
+     * @return  true, if (x,y) is outside the grid or blocked
+     */
+    boolean isBlocked(int x, int y) {
+<span class="fc bfc" id="L159" title="All 10 branches covered.">        return x&lt;0 || x&gt;=width || y&lt;0 || y&gt;=height || !grid[x][y];</span>
+    }
+
+    /**
+     * Map direction given in coordinates to the numeric direction code mapping to the traversability array indices. 
+     * 
+     * @param directionX    x component of the movement (-1, 0, 1)
+     * @param directionY    y component of the movement (-1, 0, 1)
+     * 
+     * @return  The numeric direction code mapping to the traversability matrix.
+     */
+    int getDirection(int directionX, int directionY) {
+
+<span class="fc bfc" id="L172" title="All 2 branches covered.">        if(directionX == -1) {</span>
+<span class="fc bfc" id="L173" title="All 2 branches covered.">            if(directionY == -1) {</span>
+<span class="fc" id="L174">                return MapUtils.LEFT_UP;</span>
+<span class="fc bfc" id="L175" title="All 2 branches covered.">            } else if(directionY == 0) {</span>
+<span class="fc" id="L176">                return MapUtils.LEFT;</span>
+            } else {
+<span class="fc" id="L178">                return MapUtils.LEFT_DOWN;</span>
             }
-<span class="fc" id="L99">    }</span>
+<span class="fc bfc" id="L180" title="All 2 branches covered.">        } else if(directionX == 0) {</span>
+<span class="fc bfc" id="L181" title="All 2 branches covered.">            if(directionY == -1) {</span>
+<span class="fc" id="L182">                return MapUtils.UP;</span>
+            } else {
+<span class="fc" id="L184">                return MapUtils.DOWN;</span>
+            }
+<span class="pc bpc" id="L186" title="1 of 2 branches missed.">        } else if(directionX == 1) {</span>
+<span class="fc bfc" id="L187" title="All 2 branches covered.">            if(directionY == -1) {</span>
+<span class="fc" id="L188">                return MapUtils.RIGHT_UP;</span>
+<span class="fc bfc" id="L189" title="All 2 branches covered.">            } else if(directionY == 0) {</span>
+<span class="fc" id="L190">                return MapUtils.RIGHT;</span>
+            } else {
+<span class="fc" id="L192">                return MapUtils.RIGHT_DOWN;</span>
+            }
+        } else {
+<span class="nc" id="L195">            return -1;</span>
+        }
+    }
+
+    /** 
+     * Load a a file from a disc. Only Moving AI lab .map files are supported. 
+     * 
+     * @param   file    The file in the local file system.
+     * 
+     * @return  The GridMap object representing the map, or null in case of any error.
+    */
+    private boolean[][] loadMapFile(String filename) {
+
+<span class="fc" id="L208">        File file = new File(filename);</span>
+<span class="fc" id="L209">        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {</span>
+<span class="fc" id="L210">            reader.readLine(); // Skip the type (&quot;octile&quot;)</span>
+<span class="fc" id="L211">            String line2 = reader.readLine();</span>
+<span class="fc" id="L212">            int height = Integer.parseInt(line2.substring(line2.indexOf(' ')+1));</span>
+<span class="fc" id="L213">            String line3 = reader.readLine();</span>
+<span class="fc" id="L214">            int width = Integer.parseInt(line3.substring(line3.indexOf(' ')+1));</span>
+<span class="fc" id="L215">            reader.readLine(); // skip the map header (&quot;map&quot;)</span>
+
+<span class="fc" id="L217">            boolean[][] grid = new boolean[width][height];</span>
+            String line;
+<span class="fc" id="L219">            int j = 0;</span>
+<span class="fc bfc" id="L220" title="All 2 branches covered.">            while((line = reader.readLine()) != null) {</span>
+<span class="fc bfc" id="L221" title="All 2 branches covered.">                for(int i=0; i&lt;line.length(); i++) {</span>
+<span class="fc bfc" id="L222" title="All 2 branches covered.">                    grid[i][j] = line.charAt(i) == '.';</span>
+                }
+<span class="fc" id="L224">                j++;</span>
+            }
+                        
+<span class="fc" id="L227">            return grid;</span>
+
+<span class="nc" id="L229">        } catch(Exception e) {</span>
+<span class="nc" id="L230">            e.printStackTrace();</span>
+<span class="nc" id="L231">            return null;</span>
+        }
+    }
 
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

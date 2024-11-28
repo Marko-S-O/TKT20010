@@ -1,10 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>JPSPathfinder.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">pathfinder-app</a> &gt; <a href="index.source.html" class="el_package">com.orasaari</a> &gt; <span class="el_source">JPSPathfinder.java</span></div><h1>JPSPathfinder.java</h1><pre class="source lang-java linenums">package com.orasaari;
 
-import java.awt.Point;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
-import java.util.PriorityQueue;
 
 /**
  * Implementation of the JPS algorith.  
@@ -12,319 +9,246 @@ import java.util.PriorityQueue;
  * For the decription of the algorigthm, see the original paper:
  * @see https://users.cecs.anu.edu.au/~dharabor/data/papers/harabor-grastien-aaai11.pdf
  */
-<span class="fc" id="L15">class JPSPathfinder implements Pathfinder {</span>
+<span class="fc" id="L12">class JPSPathfinder extends Pathfinder {</span>
 
-    private int width, height;
-    private boolean[][] grid;
-    boolean[][] closed;
-    boolean[][][] traversability;
-    PriorityQueue&lt;Node&gt; openList;
-
-     /** 
-     * Internal class to decide the order of two nodes in the priority queue.  
-     * The priority is the distance of the node from the starting point + heuristic function (octile distance to the goal)
-    */
-    private static class NodeComparator implements Comparator&lt;Node&gt; {
-        @Override
-        public int compare(Node n1, Node n2) {
-<span class="fc" id="L30">            return Double.compare(n1.priority, n2.priority);</span>
-        }
-    }
-
-    /* 
-     * Check if the node is blocked or outside the map. Required by the forced neighbour evaluation.
-    */
-    private boolean isBlocked(int x, int y) {
-<span class="fc bfc" id="L38" title="All 10 branches covered.">        return x&lt;0 || x&gt;=width || y&lt;0 || y&gt;=height || !grid[x][y];</span>
-    }
-
-    /* 
-     * Check if the node is inside the map and traversable. Required by the forced neighbour evaluation and neighbour pruning.
-    */
-    private boolean isTraversable(int x, int y, int directionX, int directionY) {        
-<span class="fc" id="L45">        int direction = MapUtils.getDirection(directionX, directionY); // Map (dx, dy) movement directions to the integer code representing one of the 8 directions.</span>
-<span class="pc bpc" id="L46" title="4 of 8 branches missed.">        boolean inGrid = x&gt;=0 &amp;&amp; x&lt;width &amp;&amp; y&gt;=0 &amp;&amp; y&lt;height;</span>
-<span class="pc bpc" id="L47" title="1 of 2 branches missed.">        if(inGrid) {</span>
-<span class="fc" id="L48">            return traversability[x][y][direction];</span>
-        } else {
-<span class="nc" id="L50">            return false;</span>
-        }
-        
-    }
-
+    // some data structures kept in instance level for convienience
+    private GridMap map;
+    boolean[][] closedNodes;
+    PriorityHeap openList;
 
     /**
-     * neighbours(x) ← prune(x, neighbours(x))
+     * &quot;neighbours(x) ← prune(x, neighbours(x))&quot;
      * 
-     * Identify potential successors of a node by pruning the neighbours. To minimize overhead, we only identify 
-     * directions to evaluate further here and create actual node objects later as needed.
+     * Identify the neighbours of the node that need to be handled by pruning. To minimize overhead, we only identify 
+     * directions to evaluate further and create actual node objects later as needed.
      * 
-     * Note: the vertical movement code is split to more cases than would be (in code level) mandatory to keep the 
+     * Enforcing stric cornering rules makes diagonal movement simpler: we don't have to check the nodes 90 degrees towards 
+     * our movement directions since they are not possible successors anymore.
+     * 
+     * The vertical movement code is split to more cases than would be technically necessary to keep the 
      * code more readable and understandable.
      * 
-     * @param   arrivalDirection    Direction from which the node was arrvived from, value mapping to MapUtil.MOVES.
+     * @param   movingDirection    Direction from which the node was arrvived from, value mapping to MapUtil.MOVES.
      * @param   currentNode         The node whose neighbours are evaluated.
      * 
      * @return  successors          List of prunded neighbours that needs to be evaluated to extend the path.
      */
     private List&lt;Integer&gt; pruneNeighbours(Node node) {
 
-<span class="fc" id="L72">        List&lt;Integer&gt; neighbours = new ArrayList&lt;Integer&gt;(8);</span>
+<span class="fc" id="L38">        List&lt;Integer&gt; neighbours = new ArrayList&lt;Integer&gt;(8);</span>
 
-<span class="fc bfc" id="L74" title="All 2 branches covered.">        if(node.arrivalDirection &lt; 0) { // No direction, add all neighbours       </span>
-<span class="fc bfc" id="L75" title="All 2 branches covered.">            for(int i=0; i&lt;8; i++) {</span>
-<span class="fc bfc" id="L76" title="All 2 branches covered.">                if(traversability[node.x][node.y][i]) {</span>
-<span class="fc" id="L77">                    neighbours.add(Integer.valueOf(i));</span>
+<span class="fc bfc" id="L40" title="All 2 branches covered.">        if(node.movingDirection &lt; 0) { // No direction, add all neighbours       </span>
+<span class="fc bfc" id="L41" title="All 2 branches covered.">            for(int i=0; i&lt;8; i++) {</span>
+<span class="fc bfc" id="L42" title="All 2 branches covered.">                if(map.isTraversable(node.x, node.y, i)) {</span>
+<span class="fc" id="L43">                    neighbours.add(Integer.valueOf(i));</span>
                 }
             }
-<span class="fc" id="L80">        } else { </span>
+<span class="fc" id="L46">        } else { </span>
             // we have a direction from which the node was arrived to -&gt; prune neighbours based on the direction
-<span class="fc" id="L82">            int direction = node.arrivalDirection;</span>
-<span class="fc" id="L83">            int directionX = MapUtils.MOVE_DIRECTIONS[direction].directionX;</span>
-<span class="fc" id="L84">            int directionY = MapUtils.MOVE_DIRECTIONS[direction].directionY;</span>
+<span class="fc" id="L48">            int direction = node.movingDirection;</span>
+<span class="fc" id="L49">            int directionX = MapUtils.MOVE_DIRECTIONS[direction].directionX;</span>
+<span class="fc" id="L50">            int directionY = MapUtils.MOVE_DIRECTIONS[direction].directionY;</span>
 
             // Add the arrival direction if can continue straight.
-<span class="fc bfc" id="L87" title="All 2 branches covered.">            if(traversability[node.x][node.y][direction]) { </span>
-<span class="fc" id="L88">                neighbours.add(Integer.valueOf(direction));</span>
+<span class="fc bfc" id="L53" title="All 2 branches covered.">            if(map.isTraversable(node.x, node.y, direction)) { </span>
+<span class="fc" id="L54">                neighbours.add(Integer.valueOf(direction));</span>
             }
 
             // Handle forced neighbours. Vertical paths are checked first.
-<span class="fc bfc" id="L92" title="All 4 branches covered.">            if(directionX == 1 &amp;&amp; directionY == 1) { // moving down-right</span>
-                //System.out.println(&quot;prune diagonal&quot;);
-<span class="fc bfc" id="L94" title="All 2 branches covered.">                if(traversability[node.x][node.y][MapUtils.RIGHT]) // right open, need to add it as well</span>
-<span class="fc" id="L95">                    neighbours.add(Integer.valueOf(MapUtils.RIGHT));</span>
-<span class="fc bfc" id="L96" title="All 2 branches covered.">                if(traversability[node.x][node.y][MapUtils.DOWN]) // down open, need to add it as well</span>
-<span class="fc" id="L97">                    neighbours.add(Integer.valueOf(MapUtils.DOWN));</span>
-                //if(!traversability[node.x][node.y][MapUtils.RIGHT] &amp;&amp; traversability[node.x][node.y][MapUtils.RIGHT_UP]) // right blocked, check up-right
-                //    neighbours.add(Integer.valueOf(MapUtils.RIGHT_UP));
-                //if(!traversability[node.x][node.y][MapUtils.DOWN] &amp;&amp; traversability[node.x][node.y][MapUtils.LEFT_DOWN]) // down blocked, check down-left
-                //    neighbours.add(Integer.valueOf(MapUtils.LEFT_DOWN));
+<span class="fc bfc" id="L58" title="All 4 branches covered.">            if(directionX == 1 &amp;&amp; directionY == 1) { // moving down-right</span>
+<span class="fc bfc" id="L59" title="All 2 branches covered.">                if(map.isTraversable(node.x, node.y, MapUtils.RIGHT)) // right open, need to add it as well</span>
+<span class="fc" id="L60">                    neighbours.add(Integer.valueOf(MapUtils.RIGHT));</span>
+<span class="fc bfc" id="L61" title="All 2 branches covered.">                if(map.isTraversable(node.x, node.y, MapUtils.DOWN)) // down open, need to add it as well</span>
+<span class="fc" id="L62">                    neighbours.add(Integer.valueOf(MapUtils.DOWN));</span>
 
-<span class="fc bfc" id="L103" title="All 4 branches covered.">            } else if(directionX == 1 &amp;&amp; directionY == -1) { // moving up-right</span>
-<span class="fc bfc" id="L104" title="All 2 branches covered.">                if(traversability[node.x][node.y][MapUtils.RIGHT]) </span>
-<span class="fc" id="L105">                    neighbours.add(Integer.valueOf(MapUtils.RIGHT));</span>
-<span class="fc bfc" id="L106" title="All 2 branches covered.">                if(traversability[node.x][node.y][MapUtils.UP]) // </span>
-<span class="fc" id="L107">                    neighbours.add(Integer.valueOf(MapUtils.UP));</span>
-                //if(!traversability[node.x][node.y][MapUtils.RIGHT] &amp;&amp; traversability[node.x][node.y][MapUtils.RIGHT_UP]) // 
-                //    neighbours.add(Integer.valueOf(MapUtils.RIGHT_UP));
-                //if(!traversability[node.x][node.y][MapUtils.DOWN] &amp;&amp; traversability[node.x][node.y][MapUtils.LEFT_DOWN]) // 
-                //    neighbours.add(Integer.valueOf(MapUtils.LEFT_DOWN));
+<span class="fc bfc" id="L64" title="All 4 branches covered.">            } else if(directionX == 1 &amp;&amp; directionY == -1) { // moving up-right</span>
+<span class="fc bfc" id="L65" title="All 2 branches covered.">                if(map.isTraversable(node.x, node.y, MapUtils.RIGHT)) </span>
+<span class="fc" id="L66">                    neighbours.add(Integer.valueOf(MapUtils.RIGHT));</span>
+<span class="fc bfc" id="L67" title="All 2 branches covered.">                if(map.isTraversable(node.x, node.y, MapUtils.UP)) // </span>
+<span class="fc" id="L68">                    neighbours.add(Integer.valueOf(MapUtils.UP));</span>
 
-<span class="fc bfc" id="L113" title="All 4 branches covered.">            } else if(directionX == -1 &amp;&amp; directionY == 1) { // moving down-left</span>
-<span class="fc bfc" id="L114" title="All 2 branches covered.">                if(traversability[node.x][node.y][MapUtils.DOWN]) </span>
-<span class="fc" id="L115">                    neighbours.add(Integer.valueOf(MapUtils.DOWN));</span>
-<span class="fc bfc" id="L116" title="All 2 branches covered.">                if(traversability[node.x][node.y][MapUtils.LEFT]) </span>
-<span class="fc" id="L117">                    neighbours.add(Integer.valueOf(MapUtils.LEFT));</span>
-                //if(!traversability[node.x][node.y][MapUtils.RIGHT] &amp;&amp; traversability[node.x][node.y][MapUtils.RIGHT_DOWN]) // 
-                //    neighbours.add(Integer.valueOf(MapUtils.RIGHT_DOWN));
-                //if(!traversability[node.x][node.y][MapUtils.LEFT] &amp;&amp; traversability[node.x][node.y][MapUtils.LEFT_UP]) // 
-                //    neighbours.add(Integer.valueOf(MapUtils.LEFT_UP));                
+<span class="fc bfc" id="L70" title="All 4 branches covered.">            } else if(directionX == -1 &amp;&amp; directionY == 1) { // moving down-left</span>
+<span class="fc bfc" id="L71" title="All 2 branches covered.">                if(map.isTraversable(node.x, node.y, MapUtils.DOWN)) </span>
+<span class="fc" id="L72">                    neighbours.add(Integer.valueOf(MapUtils.DOWN));</span>
+<span class="fc bfc" id="L73" title="All 2 branches covered.">                if(map.isTraversable(node.x, node.y, MapUtils.LEFT)) </span>
+<span class="fc" id="L74">                    neighbours.add(Integer.valueOf(MapUtils.LEFT));</span>
 
-<span class="fc bfc" id="L123" title="All 4 branches covered.">            } else if(directionX == -1 &amp;&amp; directionY == -1) { // moving up-left</span>
-<span class="fc bfc" id="L124" title="All 2 branches covered.">                if(traversability[node.x][node.y][MapUtils.UP])  </span>
-<span class="fc" id="L125">                    neighbours.add(Integer.valueOf(MapUtils.UP));</span>
-<span class="fc bfc" id="L126" title="All 2 branches covered.">                if(traversability[node.x][node.y][MapUtils.LEFT])  </span>
-<span class="fc" id="L127">                    neighbours.add(Integer.valueOf(MapUtils.LEFT));</span>
-                //if(!traversability[node.x][node.y][MapUtils.RIGHT] &amp;&amp; traversability[node.x][node.y][MapUtils.RIGHT_DOWN]) // 
-                //    neighbours.add(Integer.valueOf(MapUtils.RIGHT_DOWN));
-                //if(!traversability[node.x][node.y][MapUtils.LEFT] &amp;&amp; traversability[node.x][node.y][MapUtils.LEFT_UP]) // 
-                //    neighbours.add(Integer.valueOf(MapUtils.LEFT_UP));                      
+<span class="fc bfc" id="L76" title="All 4 branches covered.">            } else if(directionX == -1 &amp;&amp; directionY == -1) { // moving up-left</span>
+<span class="fc bfc" id="L77" title="All 2 branches covered.">                if(map.isTraversable(node.x, node.y, MapUtils.UP))  </span>
+<span class="fc" id="L78">                    neighbours.add(Integer.valueOf(MapUtils.UP));</span>
+<span class="fc bfc" id="L79" title="All 2 branches covered.">                if(map.isTraversable(node.x, node.y, MapUtils.LEFT))  </span>
+<span class="fc" id="L80">                    neighbours.add(Integer.valueOf(MapUtils.LEFT));</span>
 
-<span class="fc bfc" id="L133" title="All 2 branches covered.">            } else if(directionX != 0) { // moving horizontally</span>
+<span class="fc bfc" id="L82" title="All 2 branches covered.">            } else if(directionX != 0) { // moving horizontally</span>
 
-                // with stricter cornering rules, we also need to: 1) allow 90 degree turns 2) instead of the current node, check one node backwards for forced neighbours
-<span class="fc bfc" id="L136" title="All 2 branches covered.">                boolean previousUpBlocked = !traversability[node.x-directionX][node.y][MapUtils.UP];</span>
-<span class="fc bfc" id="L137" title="All 4 branches covered.">                if(previousUpBlocked &amp;&amp; isTraversable(node.x, node.y, directionX, -1)) // previous node up blocked, check up + arrival direction</span>
-<span class="fc" id="L138">                    neighbours.add(Integer.valueOf(MapUtils.getDirection(directionX, -1)));</span>
-<span class="fc bfc" id="L139" title="All 4 branches covered.">                if(previousUpBlocked &amp;&amp; traversability[node.x][node.y][MapUtils.UP]) // previous node up blocked, check 90 degree turn up</span>
-<span class="fc" id="L140">                    neighbours.add(Integer.valueOf(MapUtils.UP));</span>
+                // with stricter cornering rules, we also need to: 
+                // 1) allow 90 degree turns 2) instead of the current node, check one node backwards for forced neighbours
+<span class="fc bfc" id="L86" title="All 2 branches covered.">                boolean previousUpBlocked = !map.isTraversable(node.x-directionX, node.y, MapUtils.UP);</span>
+<span class="fc bfc" id="L87" title="All 4 branches covered.">                if(previousUpBlocked &amp;&amp; map.isTraversable(node.x, node.y, directionX, -1)) // previous node up blocked, check up + arrival direction</span>
+<span class="fc" id="L88">                    neighbours.add(Integer.valueOf(map.getDirection(directionX, -1)));</span>
+<span class="fc bfc" id="L89" title="All 4 branches covered.">                if(previousUpBlocked &amp;&amp; map.isTraversable(node.x, node.y, MapUtils.UP)) // previous node up blocked, check 90 degree turn up</span>
+<span class="fc" id="L90">                    neighbours.add(Integer.valueOf(MapUtils.UP));</span>
 
-<span class="fc bfc" id="L142" title="All 2 branches covered.">                boolean previousDownBlocked = !traversability[node.x-directionX][node.y][MapUtils.DOWN];</span>
-<span class="fc bfc" id="L143" title="All 4 branches covered.">                if(previousDownBlocked &amp;&amp; isTraversable(node.x, node.y, directionX, 1)) // previous node down blocked, check down + moving direction</span>
-<span class="fc" id="L144">                    neighbours.add(Integer.valueOf(MapUtils.getDirection(directionX, 1)));</span>
-<span class="fc bfc" id="L145" title="All 4 branches covered.">                if(previousDownBlocked &amp;&amp; traversability[node.x][node.y][MapUtils.DOWN]) //  previous node up blocked, check 90 degree turn down</span>
-<span class="fc" id="L146">                    neighbours.add(Integer.valueOf(MapUtils.DOWN));                    </span>
+<span class="fc bfc" id="L92" title="All 2 branches covered.">                boolean previousDownBlocked = !map.isTraversable(node.x-directionX, node.y, MapUtils.DOWN);</span>
+<span class="fc bfc" id="L93" title="All 4 branches covered.">                if(previousDownBlocked &amp;&amp; map.isTraversable(node.x, node.y, directionX, 1)) // previous node down blocked, check down + moving direction</span>
+<span class="fc" id="L94">                    neighbours.add(Integer.valueOf(map.getDirection(directionX, 1)));</span>
+<span class="fc bfc" id="L95" title="All 4 branches covered.">                if(previousDownBlocked &amp;&amp; map.isTraversable(node.x, node.y, MapUtils.DOWN)) //  previous node up blocked, check 90 degree turn down</span>
+<span class="fc" id="L96">                    neighbours.add(Integer.valueOf(MapUtils.DOWN));                    </span>
                     
-<span class="fc" id="L148">            } else { // moving vertically</span>
+<span class="fc" id="L98">            } else { // moving vertically</span>
             
-<span class="fc bfc" id="L150" title="All 2 branches covered.">                boolean previousRightBlocked = !traversability[node.x][node.y-directionY][MapUtils.RIGHT];</span>
-<span class="fc bfc" id="L151" title="All 4 branches covered.">                if(previousRightBlocked &amp;&amp; isTraversable(node.x, node.y, 1, directionY)) // previous node right blocked, check right + moving direction</span>
-<span class="fc" id="L152">                    neighbours.add(Integer.valueOf(MapUtils.getDirection(1, directionY)));</span>
-<span class="fc bfc" id="L153" title="All 4 branches covered.">                if(previousRightBlocked &amp;&amp; traversability[node.x][node.y][MapUtils.RIGHT]) // previous node right blocked, check 90 degrees right</span>
-<span class="fc" id="L154">                    neighbours.add(Integer.valueOf(MapUtils.RIGHT));</span>
+<span class="fc bfc" id="L100" title="All 2 branches covered.">                boolean previousRightBlocked = !map.isTraversable(node.x, node.y-directionY, MapUtils.RIGHT);</span>
+<span class="fc bfc" id="L101" title="All 4 branches covered.">                if(previousRightBlocked &amp;&amp; map.isTraversable(node.x, node.y, 1, directionY)) // previous node right blocked, check right + moving direction</span>
+<span class="fc" id="L102">                    neighbours.add(Integer.valueOf(map.getDirection(1, directionY)));</span>
+<span class="fc bfc" id="L103" title="All 4 branches covered.">                if(previousRightBlocked &amp;&amp; map.isTraversable(node.x, node.y, MapUtils.RIGHT)) // previous node right blocked, check 90 degrees right</span>
+<span class="fc" id="L104">                    neighbours.add(Integer.valueOf(MapUtils.RIGHT));</span>
 
-<span class="fc bfc" id="L156" title="All 2 branches covered.">                boolean previousLeftBlocked = !traversability[node.x][node.y-directionY][MapUtils.LEFT];</span>
-<span class="fc bfc" id="L157" title="All 4 branches covered.">                if(previousLeftBlocked &amp;&amp; isTraversable(node.x, node.y, -1, directionY)) // previous node left blocked, check left + moving direction</span>
-<span class="fc" id="L158">                    neighbours.add(Integer.valueOf(MapUtils.getDirection(-1, directionY)));</span>
-<span class="fc bfc" id="L159" title="All 4 branches covered.">                if(previousLeftBlocked &amp;&amp; traversability[node.x][node.y][MapUtils.LEFT]) // previous node left blocked, check 90 degrees left</span>
-<span class="fc" id="L160">                    neighbours.add(Integer.valueOf(MapUtils.LEFT));</span>
-    
+<span class="fc bfc" id="L106" title="All 2 branches covered.">                boolean previousLeftBlocked = !map.isTraversable(node.x, node.y-directionY, MapUtils.LEFT);</span>
+<span class="fc bfc" id="L107" title="All 4 branches covered.">                if(previousLeftBlocked &amp;&amp; map.isTraversable(node.x, node.y, -1, directionY)) // previous node left blocked, check left + moving direction</span>
+<span class="fc" id="L108">                    neighbours.add(Integer.valueOf(map.getDirection(-1, directionY)));</span>
+<span class="fc bfc" id="L109" title="All 4 branches covered.">                if(previousLeftBlocked &amp;&amp; map.isTraversable(node.x, node.y, MapUtils.LEFT)) // previous node left blocked, check 90 degrees left</span>
+<span class="fc" id="L110">                    neighbours.add(Integer.valueOf(MapUtils.LEFT));</span>
             }
         }
-<span class="fc" id="L164">        return neighbours;</span>
+<span class="fc" id="L113">        return neighbours;</span>
     }
 
     /**  
-     * Algorithm 1 Identify Successors
-     * Require: x: current node, s: start, g: goal
+     * &quot;Algorithm 1 Identify Successors
+     * Require: x: current node, s: start, g: goal&quot;
      * 
      * Implement the part of the algorithm that is labelled as &quot;Identify Successors&quot; in the original paper. 
     */
-    private void identifySuccessors(Node currentNode, Point start, Point goal) {
+    private void identifySuccessors(Node currentNode, int goalX, int goalY) {
 
         // successors(x) ← ∅        
         // neighbours(x) ← prune(x, neighbours(x))
-<span class="fc" id="L177">        List&lt;Integer&gt; neighbourgs = pruneNeighbours(currentNode);</span>
+<span class="fc" id="L126">        List&lt;Integer&gt; neighbourgs = pruneNeighbours(currentNode);</span>
         
         // for all n ∈ neighbours(x) do
-<span class="fc bfc" id="L180" title="All 2 branches covered.">        for(int i=0; i&lt;neighbourgs.size(); i++) {            </span>
-<span class="fc" id="L181">            int direction = neighbourgs.get(i);</span>
+<span class="fc bfc" id="L129" title="All 2 branches covered.">        for(int i=0; i&lt;neighbourgs.size(); i++) {            </span>
+<span class="fc" id="L130">            int direction = neighbourgs.get(i);</span>
 
             // n ← jump(x, direction(x, n), s, g)
-<span class="fc" id="L184">            Node jumpNode = jump(currentNode, direction, start, goal);</span>
+<span class="fc" id="L133">            Node jumpNode = jump(currentNode, direction, goalX, goalY);</span>
 
-<span class="fc bfc" id="L186" title="All 4 branches covered.">            if(jumpNode != null &amp;&amp; !closed[jumpNode.x][jumpNode.y]) {</span>
-<span class="fc" id="L187">                jumpNode.arrivalDirection = direction; // keep the track of the moving direction for neighbour pruning</span>
-<span class="fc" id="L188">                jumpNode.previous = currentNode; // maintain the links to be able to backtrace &amp; collect the path after the goal is found</span>
-<span class="fc" id="L189">                jumpNode.distance = currentNode.distance + MapUtils.octileDistance(currentNode.x, currentNode.y, jumpNode.x, jumpNode.y);</span>
-<span class="fc" id="L190">                jumpNode.heuristic = MapUtils.octileDistance(jumpNode.x, jumpNode.y, goal.x, goal.y);</span>
-<span class="fc" id="L191">                jumpNode.priority = jumpNode.distance + jumpNode.heuristic;</span>
-<span class="fc" id="L192">                openList.add(jumpNode);    </span>
+<span class="fc bfc" id="L135" title="All 4 branches covered.">            if(jumpNode != null &amp;&amp; !closedNodes[jumpNode.x][jumpNode.y]) {</span>
+<span class="fc" id="L136">                jumpNode.movingDirection = direction; // keep the track of the moving direction for neighbour pruning</span>
+<span class="fc" id="L137">                jumpNode.previousNode = currentNode; </span>
+<span class="fc" id="L138">                jumpNode.distanceFromStart = currentNode.distanceFromStart + octileDistance(currentNode.x, currentNode.y, jumpNode.x, jumpNode.y);</span>
+<span class="fc" id="L139">                jumpNode.heuristic = octileDistance(jumpNode.x, jumpNode.y, goalX, goalY);</span>
+<span class="fc" id="L140">                jumpNode.priority = jumpNode.distanceFromStart + jumpNode.heuristic;</span>
+<span class="fc" id="L141">                openList.add(jumpNode);    </span>
             }
         }
-<span class="fc" id="L195">    }</span>
+<span class="fc" id="L144">    }</span>
 
     /**
-     * Algorithm 2 Function jump
-     * Require: x: initial node, ~d: direction, s: start, g: goal
+     * &quot;Algorithm 2 Function jump
+     * Require: x: initial node, ~d: direction, s: start, g: goal&quot;
      * 
      * Implement the most critical part of JPS: the jump function. The recursive function searches the next
      * jump point according to the rules described in the original paper.
     */
-    private Node jump(Node currentNode, int arrivalDirection, Point start, Point goal) {
+    private Node jump(Node currentNode, int arrivalDirection, int goalX, int goalY) {
 
-<span class="fc" id="L206">        Move move = MapUtils.MOVE_DIRECTIONS[arrivalDirection];</span>
+<span class="fc" id="L155">        Move move = MapUtils.MOVE_DIRECTIONS[arrivalDirection];</span>
 
-        // n ← step(x, ~d)
-        // if n is an obstacle or is outside the grid then return null
-<span class="pc bpc" id="L210" title="2 of 6 branches missed.">        if(currentNode==null || isBlocked(currentNode.x, currentNode.y) || !isTraversable(currentNode.x, currentNode.y, move.directionX, move.directionY)) {</span>
-<span class="fc" id="L211">            return null;</span>
+        // &quot;n ← step(x, ~d)
+        // if n is an obstacle or is outside the grid then return null&quot;
+<span class="pc bpc" id="L159" title="2 of 6 branches missed.">        if(currentNode==null || map.isBlocked(currentNode.x, currentNode.y) || !map.isTraversable(currentNode.x, currentNode.y, move.directionX, move.directionY)) {</span>
+<span class="fc" id="L160">            return null;</span>
         } 
 
-<span class="fc" id="L214">        int jumpX = currentNode.x + move.directionX;</span>
-<span class="fc" id="L215">        int jumpY = currentNode.y + move.directionY;</span>
-<span class="fc" id="L216">        int directionX = move.directionX;</span>
-<span class="fc" id="L217">        int directionY = move.directionY;</span>
+<span class="fc" id="L163">        int jumpX = currentNode.x + move.directionX;</span>
+<span class="fc" id="L164">        int jumpY = currentNode.y + move.directionY;</span>
+<span class="fc" id="L165">        int directionX = move.directionX;</span>
+<span class="fc" id="L166">        int directionY = move.directionY;</span>
 
-<span class="fc" id="L219">        Node newNode = new Node(jumpX, jumpY);</span>
-<span class="fc" id="L220">        newNode.arrivalDirection = arrivalDirection;</span>
+<span class="fc" id="L168">        Node newNode = new Node(jumpX, jumpY);</span>
+<span class="fc" id="L169">        newNode.movingDirection = arrivalDirection;</span>
 
-        // if n = g then return n
-<span class="fc bfc" id="L223" title="All 4 branches covered.">        if(jumpX == goal.x &amp;&amp; jumpY == goal.y) {</span>
-<span class="fc" id="L224">            return newNode;</span>
+        // &quot;if n = g then return n&quot;
+<span class="fc bfc" id="L172" title="All 4 branches covered.">        if(jumpX == goalX &amp;&amp; jumpY == goalY) {</span>
+<span class="fc" id="L173">            return newNode;</span>
         }
 
         // if ∃ n′ ∈ neighbours(n) s.t. n′ is forced then return n
         // Check for forced neighbours to see if we have found a jump point and neet to stop the search for now.
-<span class="fc bfc" id="L229" title="All 4 branches covered.">        if (move.directionX != 0 &amp;&amp; move.directionY != 0) { // Diagonal move</span>
-<span class="fc bfc" id="L230" title="All 4 branches covered.">            if ((isBlocked(jumpX + move.directionX, jumpY) &amp;&amp; isTraversable(jumpX, jumpY, 0, move.directionY)) || </span>
-<span class="fc bfc" id="L231" title="All 4 branches covered.">                (isBlocked(jumpX, jumpY + move.directionY) &amp;&amp; isTraversable(jumpX, jumpY, move.directionX, 0)) || </span>
-<span class="pc bpc" id="L232" title="3 of 4 branches missed.">                (isBlocked(jumpX - move.directionX, jumpY) &amp;&amp; isTraversable(jumpX, jumpY, 0, - move.directionY)) || </span>
-<span class="pc bpc" id="L233" title="3 of 4 branches missed.">                (isBlocked(jumpX, jumpY - move.directionY) &amp;&amp; isTraversable(jumpX, jumpY, move.directionX, 0))) {</span>
-<span class="fc" id="L234">                return newNode;</span>
-            }
-<span class="fc bfc" id="L236" title="All 2 branches covered.">        } else if (move.directionX != 0) { // Horizontal move</span>
+<span class="fc bfc" id="L178" title="All 4 branches covered.">        if (directionX != 0 &amp;&amp; directionY != 0) { // Diagonal move</span>
+            // Like in neigbour pruning, diagonal jump gets simpler with strict cornering rules: 
+            // we only need to check a vertical or horizontal adjacent node towards the moving direction
+<span class="fc bfc" id="L181" title="All 4 branches covered.">            if ((map.isBlocked(jumpX + directionX, jumpY) &amp;&amp; map.isTraversable(jumpX, jumpY, 0, directionY))  || </span>
+<span class="fc bfc" id="L182" title="All 4 branches covered.">                (map.isBlocked(jumpX, jumpY + directionY) &amp;&amp; map.isTraversable(jumpX, jumpY, directionX, 0)))</span>
+<span class="fc" id="L183">                return newNode;</span>
+<span class="fc bfc" id="L184" title="All 2 branches covered.">        } else if (directionX != 0) { // Horizontal move</span>
             // We are applying strict cornering rules here: both adjacent nodes must be free to allow diagonal move.            
             // This implies that we need to allow 90 degree turns after a blocking node as well when moving horizontally or vertically.
-<span class="fc bfc" id="L239" title="All 4 branches covered.">            if((isBlocked(currentNode.x, jumpY + 1) &amp;&amp; (isTraversable(jumpX, jumpY, 0, 1 )) ||                 </span>
-<span class="fc bfc" id="L240" title="All 4 branches covered.">                isBlocked(currentNode.x, jumpY - 1) &amp;&amp; isTraversable(jumpX, jumpY, 0, -1))) {            </span>
-<span class="fc" id="L241">                return newNode;                </span>
-            }
+<span class="fc bfc" id="L187" title="All 4 branches covered.">            if((map.isBlocked(currentNode.x, jumpY + 1) &amp;&amp; map.isTraversable(jumpX, jumpY, 0, 1 )) ||                 </span>
+<span class="fc bfc" id="L188" title="All 4 branches covered.">               (map.isBlocked(currentNode.x, jumpY - 1) &amp;&amp; map.isTraversable(jumpX, jumpY, 0, -1)))            </span>
+<span class="fc" id="L189">                return newNode;                </span>
         } else { // Vertical move
-<span class="fc bfc" id="L244" title="All 4 branches covered.">            if((isBlocked(currentNode.x+1, currentNode.y) &amp;&amp; (isTraversable(jumpX, jumpY, 1, 0 )) ||                 </span>
-<span class="fc bfc" id="L245" title="All 4 branches covered.">                isBlocked(currentNode.x-1, currentNode.y) &amp;&amp; isTraversable(jumpX, jumpY, -1, 0))) {            </span>
-<span class="fc" id="L246">                return newNode;                </span>
-            }
+<span class="fc bfc" id="L191" title="All 4 branches covered.">            if((map.isBlocked(currentNode.x + 1, currentNode.y) &amp;&amp; map.isTraversable(jumpX, jumpY, 1, 0 )) ||                 </span>
+<span class="fc bfc" id="L192" title="All 4 branches covered.">               (map.isBlocked(currentNode.x - 1, currentNode.y) &amp;&amp; map.isTraversable(jumpX, jumpY, -1, 0)))             </span>
+<span class="fc" id="L193">                return newNode;                </span>
         }   
 
-        // if ~d is diagonal then for all i ∈ {1, 2} do if jump(n, ~di, s, g) is not null then return n
-        // When moving diagonally, we need to check if we have horizaontal or vertical paths available. If yes, we need to stop jumping and evaluate them as well.
-<span class="fc bfc" id="L252" title="All 4 branches covered.">        if(directionX != 0 &amp;&amp; directionY != 0) {</span>
-<span class="fc" id="L253">            int verticalOnlyDirection = MapUtils.VERTICAL_ONLY_PATHS[arrivalDirection]; // map diagonal path to its vertical component only direction</span>
-<span class="fc" id="L254">            int horizontalOnlyDirection = MapUtils.HORIZONTAL_ONLY_PATHS[arrivalDirection]; // map diagonal path to its horizontal component only direction</span>
-<span class="fc bfc" id="L255" title="All 4 branches covered.">            if(jump(newNode, verticalOnlyDirection, start, goal) != null || jump(newNode, horizontalOnlyDirection, start, goal) != null) {</span>
-<span class="fc" id="L256">                return newNode;</span>
+        // &quot;if ~d is diagonal then for all i ∈ {1, 2} do if jump(n, ~di, s, g) is not null then return n&quot;
+        // When moving diagonally, we need to check if we have horizontal or vertical paths available. If yes, we need to stop jumping and evaluate them as well.
+<span class="fc bfc" id="L198" title="All 4 branches covered.">        if(directionX != 0 &amp;&amp; directionY != 0) {</span>
+<span class="fc" id="L199">            int verticalOnlyDirection = MapUtils.VERTICAL_ONLY_COMPONENT[arrivalDirection]; // map diagonal path to its vertical component only direction</span>
+<span class="fc" id="L200">            int horizontalOnlyDirection = MapUtils.HORIZONTAL_ONLY_COMPONENT[arrivalDirection]; // map diagonal path to its horizontal component only direction</span>
+<span class="fc bfc" id="L201" title="All 4 branches covered.">            if(jump(newNode, verticalOnlyDirection, goalX, goalY) != null || jump(newNode, horizontalOnlyDirection, goalX, goalY) != null) {</span>
+<span class="fc" id="L202">                return newNode;</span>
             }
         }
 
-        // return jump(n, ~d, s, g)
+        // &quot;return jump(n, ~d, s, g)&quot;&quot;
         // If there was no blocker or forced neighbour, continue the jump recursively.
-<span class="fc" id="L262">        return jump(newNode, arrivalDirection, start, goal);</span>
-    }
-
-    /* 
-     * @see com.orasaari.JPSPathfinder#navigate(com.orasaari.GridMap, java.awt.Point, java.awt.Point, boolean)
-    */
-    public Result navigate(GridMap map, Point start, Point g) {
-<span class="fc" id="L269">        return navigate(map, start, g, false);</span>
+<span class="fc" id="L208">        return jump(newNode, arrivalDirection, goalX, goalY);</span>
     }
 
     /**
      * Implement the JPS pathfinding.
      * 
-     * @param map           The 2D grid map where the path is searched.
-     * @param start         The starting point of the path.
-     * @param goal          The finishing point of the path.
-     * @param cutCorners    If false, diagonal movement is allowed only if both of the adjacent nodes (vertical and horizontal neighbors 
-     *                      towards the moving direction) are traversable. Currently, this JPS implementation supporse only using false value.
-     *                      The parameter is included to have compatible method signatures with the other pathfinding algorithms.
-     * 
-     * @return              the Result object wrapping the pathfinding results
+     * @see Pathfinder.findpath(GridMap map, int startX, int startY, int goalX, int goalY)
     */
-    public Result navigate(GridMap map, Point start, Point goal, boolean cutCorners) {
+    public PathfindingResult findPath(GridMap map, int startX, int startY, int goalX, int goalY) {
 
-        // save necessary data to instance variables to be used in jump calcuations
-<span class="fc" id="L287">        this.grid = map.getGrid(); </span>
-<span class="fc" id="L288">        this.width = grid.length;</span>
-<span class="fc" id="L289">        this.height = grid[0].length;</span>
-<span class="fc" id="L290">        this.traversability = map.getTraversability(false); // pre-calculated traversability to the adjacent nodes</span>
-<span class="fc" id="L291">        this.closed = new boolean[width][height];</span>
-<span class="fc" id="L292">        Node[][] nodes = new Node[width][height];</span>
+        // Initialize the data structures
+<span class="fc" id="L219">        long startTime = System.currentTimeMillis();</span>
+<span class="fc" id="L220">        this.map = map;</span>
+<span class="fc" id="L221">        this.closedNodes = new boolean[map.getWidth()][map.getHeight()];</span>
+<span class="fc" id="L222">        Node[][] nodes = new Node[map.getWidth()][map.getHeight()];</span>
+<span class="fc" id="L223">        openList = new PriorityHeap();</span>
 
-<span class="fc" id="L294">        long startTime = System.currentTimeMillis();</span>
+        // Initialize the priority heap (open list) with the starting node
+<span class="fc" id="L226">        Node startNode = new Node(startX, startY);</span>
+<span class="fc" id="L227">        startNode.distanceFromStart = 0;</span>
+<span class="fc" id="L228">        startNode.heuristic = octileDistance(startX, startY, goalX, goalY); </span>
+<span class="fc" id="L229">        startNode.priority = startNode.heuristic;</span>
+<span class="fc" id="L230">        startNode.movingDirection = -1; // -1 = no direction, handle all neighbours</span>
+<span class="fc" id="L231">        openList.add(startNode);    </span>
+<span class="fc" id="L232">        nodes[startNode.x][startNode.y] = startNode;     </span>
 
-        // Initialize the priority heap, for JPS usually called open list.
-<span class="fc" id="L297">        openList = new PriorityQueue&lt;Node&gt;(new NodeComparator());</span>
-
-        // Initialize the priority heap with the starting node
-<span class="fc" id="L300">        Node startNode = new Node(start.x, start.y);</span>
-<span class="fc" id="L301">        startNode.distance = 0;</span>
-<span class="fc" id="L302">        startNode.heuristic = MapUtils.octileDistance(start.x, start.y, goal.x, goal.y); </span>
-<span class="fc" id="L303">        startNode.priority = startNode.heuristic;</span>
-<span class="fc" id="L304">        startNode.arrivalDirection = -1; // -1 = no direction, handle all neighbours</span>
-<span class="fc" id="L305">        openList.add(startNode);    </span>
-<span class="fc" id="L306">        nodes[startNode.x][startNode.y] = startNode;     </span>
-<span class="fc" id="L307">        int numOfEvaluatedNodes = 0;   </span>
-
-<span class="fc" id="L309">        Node node = null;</span>
-
-        // loop the priority queue until the goal is found or we run out of nodes
-<span class="pc bpc" id="L312" title="1 of 2 branches missed.">        while(!openList.isEmpty()) {</span>
-
-<span class="fc" id="L314">            node = openList.poll();</span>
-<span class="fc" id="L315">            numOfEvaluatedNodes++;</span>
-<span class="fc bfc" id="L316" title="All 4 branches covered.">            if(node.x==goal.x &amp;&amp; node.y==goal.y) {</span>
-<span class="fc" id="L317">                break; // goal met</span>
+        // Run the pathfinding
+<span class="fc" id="L235">        int evaluatedNodes = 0;   </span>
+<span class="fc" id="L236">        Node node = null;</span>
+<span class="fc" id="L237">        boolean goalFound = false;</span>
+<span class="pc bpc" id="L238" title="1 of 2 branches missed.">        while(!openList.isEmpty()) {</span>
+<span class="fc" id="L239">            node = openList.poll();</span>
+<span class="fc" id="L240">            evaluatedNodes++;</span>
+<span class="fc bfc" id="L241" title="All 4 branches covered.">            if(node.x==goalX &amp;&amp; node.y==goalY) {</span>
+<span class="fc" id="L242">                goalFound = true;</span>
+<span class="fc" id="L243">                break; </span>
             }
-<span class="fc" id="L319">            closed[node.x][node.y] = true;</span>
-<span class="fc" id="L320">            identifySuccessors(node, start, goal);</span>
+<span class="fc" id="L245">            closedNodes[node.x][node.y] = true;</span>
+<span class="fc" id="L246">            identifySuccessors(node, goalX, goalY);</span>
         }
 
         // Iteration finished, collect results and return
-<span class="fc" id="L324">        long finishTime = System.currentTimeMillis();</span>
-<span class="pc bpc" id="L325" title="2 of 4 branches missed.">        boolean success = node.x == goal.x &amp;&amp; node.y == goal.y;</span>
-<span class="fc" id="L326">        Result result = MapUtils.collectResults(node, startTime, finishTime, numOfEvaluatedNodes, MapUtils.ALGORITHM_JPS, success);</span>
-<span class="fc" id="L327">        return result;</span>
+<span class="fc" id="L250">        PathfindingResult result = collectResults(node, startTime, evaluatedNodes, MapUtils.ALGORITHM_JPS, goalFound);</span>
+<span class="fc" id="L251">        return result;</span>
     }  
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

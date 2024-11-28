@@ -68,14 +68,14 @@ class ResultPanel extends JPanel {
      * 
      * @param result    Result of a single pathfinding run
      */
-    void showResult(Result result) {
+    void showResult(PathfindingResult result) {
 <span class="nc bnc" id="L72" title="All 2 branches missed.">        if(result != null) {</span>
-<span class="nc bnc" id="L73" title="All 2 branches missed.">            lblStatus.setText(result.success ? &quot;Success&quot; : &quot;Failed&quot;);</span>
+<span class="nc bnc" id="L73" title="All 2 branches missed.">            lblStatus.setText(result.goalFound ? &quot;Success&quot; : &quot;Failed&quot;);</span>
 <span class="nc" id="L74">            lblStartTime.setText(TIMESTAMP_FORMAT.format(new Date(result.startTime)));</span>
-<span class="nc" id="L75">            lblFinishTime.setText(TIMESTAMP_FORMAT.format(new Date(result.finishTime)));</span>
-<span class="nc" id="L76">            lblDuration.setText(result.duration + &quot; ms&quot;);        </span>
+<span class="nc" id="L75">            lblFinishTime.setText(TIMESTAMP_FORMAT.format(new Date(result.goalTime)));</span>
+<span class="nc" id="L76">            lblDuration.setText(result.pathfindingDuration + &quot; ms&quot;);        </span>
 <span class="nc" id="L77">            lblPathLenght.setText(String.format(&quot;%,.2f&quot;, result.distance));</span>
-<span class="nc" id="L78">            lblNodesEvaluated.setText(&quot;&quot; + result.numeOfEvaluatedNodes);</span>
+<span class="nc" id="L78">            lblNodesEvaluated.setText(&quot;&quot; + result.nodesEvaluated);</span>
 <span class="nc" id="L79">        } else {</span>
 <span class="nc" id="L80">            System.out.println(&quot;showResult() can't view result: result is null&quot;);</span>
         }

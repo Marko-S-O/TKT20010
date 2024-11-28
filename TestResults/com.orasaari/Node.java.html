@@ -1,57 +1,47 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Node.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">pathfinder-app</a> &gt; <a href="index.source.html" class="el_package">com.orasaari</a> &gt; <span class="el_source">Node.java</span></div><h1>Node.java</h1><pre class="source lang-java linenums">package com.orasaari;
 
 /** 
- * A data wrapper class to collect necessary information of an individual node
- * when it is handled by the pathfinders.
+ * A data wrapper class without functionality to collect necessary information 
+ * of an individual node when it is handled by the pathfinders.
 */
 public class Node {
 
-    /** x coordinate in the 2D grid. X coordinates run from left to right. */
+    /** X coordinate of the node. */
     int x;  
 
-    /** y coordinate in the 2D grid. Y coordinates run FROM TOP to bottom. */
+    /** Y coordinate of the node. */
     int y;  
 
-    /** A flag indicating if the pathfinder has already evaluated this node. */
+    /** Information if the node has been handled. */
 <span class="fc" id="L16">    boolean handled = false;</span>
 
     /** A link to the previous node to allow collecting the route once the goal has been found. */
-<span class="fc" id="L19">    Node previous = null;</span>
+<span class="fc" id="L19">    Node previousNode = null;</span>
 
-    /** Distance from the start point. */
-<span class="fc" id="L22">    double distance = Double.MAX_VALUE;        </span>
+    /** Distance from the start node on the evaluated route. */
+<span class="fc" id="L22">    double distanceFromStart = Double.MAX_VALUE;        </span>
 
-    /** 
-     * Value of the heuristic function for the node. Heuristic = octile distance from the node to the goal. 
-     */
+    /** Heuristic function value for the node. */
     double heuristic;
 
-    /** Priority in the open list (priority heap). For A and JPS, priority = distance + heuristic */
+    /** Priority in the queue for the node (distanceFromStart + heuristic) */
     double priority;
 
-    /** If true, a node is a true path node but a node on the grid passed by a JPS jump. Needed for visualization purposes. */
-<span class="fc" id="L33">    boolean jumpPassthrough = false;</span>
+    /** If true, a node is not a true path node but a pixel on the grid passed by a JPS jump. Needed for visualization purposes. */
+<span class="fc" id="L31">    boolean jumpPassthrough = false;</span>
 
-    /** Arrival direction to the node. Needed by JPS neighbour pruning. Value is mapping to MapUtils.MOVE_DIRECTIONS.*/
-    int arrivalDirection;
+    /** Moving direction to the node in pathfinding (JPS). */
+    int movingDirection;
 
     /* 
      * Init.
      * 
-     * @param   x   x coordinate in the 2D grid. X coordinates run from left to right.
-     * @param   y   y coordinate in the 2D grid. Y coordinates run from top to bottom.
+     * @param   x   x coordinate in the map.
+     * @param   y   y coordinate in the map.
     */
-<span class="fc" id="L44">    Node(int x, int y) {</span>
-<span class="fc" id="L45">        this.x = x;</span>
-<span class="fc" id="L46">        this.y = y;</span>
-<span class="fc" id="L47">    }</span>
-
-    /** 
-     * String representation for debugging purposes 
-    */
-    //public String toString() {
-    //    String s = &quot;Node:: x: &quot; + x + &quot;, y: &quot; + y + &quot;, d: &quot; + distance + &quot;, h: &quot; + heuristic + &quot;, p: &quot; + priority;
-    //    return s;
-    //}
+<span class="fc" id="L42">    Node(int x, int y) {</span>
+<span class="fc" id="L43">        this.x = x;</span>
+<span class="fc" id="L44">        this.y = y;</span>
+<span class="fc" id="L45">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
