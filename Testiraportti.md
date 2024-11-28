@@ -26,7 +26,7 @@ Algoritmien testit on toteutettu valittuja Moving AI Labin skennarioita vastaan 
 3.  Maalipisteet kartan kulmissa ja reunoilla
 4.  Erikoistapaukset kuten tyhjä kartta sekä vierekkäiset ja samat maali- ja lähtöpisteet.
 
-Skenaariot on listattu seuraavassa taulukossa:
+Testitapaukset on listattu seuraavassa taulukossa:
 
 | **ID**                                   | **Selitys** | **Kartta**         | **X(0)**                             | **Y(0)** | **X(g)** | **Y(g)** | **Etäisyys** |
 |------------------------------------------|-------------|--------------------|--------------------------------------|----------|----------|----------|--------------|
@@ -70,13 +70,13 @@ Skenaariot on listattu seuraavassa taulukossa:
 
 ## Testitulokset
 
-Kaikki edellisen kappaleen testit ja apumetodien testit suoritettiin onnistuneesti. Lisäksi kaikki suorituskykytestauksen 300 skenaariota suoritettiin onnistuneesti (maali löytyi ja laskettu matka oikea).
+Kaikki edellisen kappaleen testit ja apumetodien testit suoritettiin onnistuneesti. Lisäksi kaikki suorituskykytestauksen 300 skenaariota suoritettiin toiminnallisessa mielessä onnistuneesti (maali löytyi ja laskettu matka oikea).
 
 ## Testauksen kattavuus
 
-Testauksen kattavuus reitinhakualgoritmeille on 97-99% ja brancheille 85-90%. Tarkemmat tiedot ovat alla olevassa taulukossa ja yksityiskohtaiset kattavuusraportit hakemistossa TestResults.
+Testauksen kattavuus reitinhakualgoritmeille on 100% ja brancheille 93-97%. Tarkemmat tiedot ovat alla olevassa taulukossa ja yksityiskohtaiset kattavuusraportit hakemistossa TestResults. Oletus on, että käytetyt apuluokat- ja metodit tulevat testatuksi kattavasti algoritmien kautta, kun algoritmeja testataan sadoilla monimutkaisilla skenaarioilla.
 
-![Coverage result](https://github.com/Marko-S-O/TKT20010/blob/main/coverage.jpg)
+![Coverage result](https://github.com/Marko-S-O/TKT20010/blob/main/TestResults/coverage.jpg)
 
 # Suorituskykytestaus
 
@@ -88,12 +88,14 @@ Suorituskykytestaus tehtiin Movin AI Labin valmiilla skenaarioilla
 -   Skenaariot: 10 viimeistä (käytännössä pisintä) skenaariota kunkin kaupungin skenaariotiedostossa
 -   Iteraatiot: 9 iteraatiota per skenaario ja algoritmi, mikä tekee yhteensä 2700 evaluaatiota. Jokaiseen iteraatiokierrokseen vaihdettiin algoritmien suoritusjärjestys.
 
+Testien toteutuskoodi löytyy [GitHubin hakemistosta](https://github.com/Marko-S-O/TKT20010/tree/main/pathfinder-app/src/test/java/com/orasaari).
+
 ## Testitulokset
 
-Tarkat testitulokset ovat hakemistossa TestResults tiedostoissa evaluation_details.csv ja evaluation_summary.csv. Alla yhteenveto. Tuloksista on helppo havaita, että kaupunkikartoilla JPS on täysin ylivoimainen.
+Tarkat testitulokset ovat hakemistossa [TestResults](https://github.com/Marko-S-O/TKT20010/tree/main/TestResults) tiedostoissa evaluation_details.csv ja evaluation_summary.csv. Alla yhteenveto. Tuloksista on helppo havaita, että kaupunkikartoilla JPS on täysin ylivoimainen.
 
-| **Algorithm** | **Number Of Evaluations** | **Success** | **Correct Distance** | **Total Time** | **Average Time** | **Average Path Nodes** | **Average Evaluated Nodes** |
-|---------------|---------------------------|-------------|----------------------|----------------|------------------|------------------------|-----------------------------|
-| Dijkstra      | 900                       | 900         | 900                  | 116923         | 129              | 1106667                | 678003264                   |
-| A\*           | 900                       | 900         | 900                  | 54525          | 60               | 1106667                | 164500038                   |
-| JPS           | 900                       | 900         | 900                  | 7145           | 7                | 85797                  | 387693                      |
+| **Algoritmi** | **Evalu-aatiot** | **Maali löytyi** | **Oikea reitin pituus** | **Aika yhteensä (ms)** | **Keskim. aika / iteraatio** | **Keskim. reitin pituus** | **Keskim. eval. solmuja** |
+|---------------|------------------|------------------|-------------------------|------------------------|------------------------------|---------------------------|---------------------------|
+| Dijkstra      | 2700             | 2700             | 2700                    | 336021                 | 124                          | 1192                      | 784871                    |
+| A-Star        | 2700             | 2700             | 2700                    | 232686                 | 86                           | 1192                      | 242253                    |
+| JPS           | 2700             | 2700             | 2700                    | 52225                  | 19                           | 148                       | 1452                      |
