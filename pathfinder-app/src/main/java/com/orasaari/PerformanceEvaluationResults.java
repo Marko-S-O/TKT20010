@@ -1,9 +1,10 @@
 package com.orasaari;
 
+import java.io.FileWriter;
 import java.util.ArrayList;
 
 /**
- * A data class for results of a single evaluation session, including 1-3 algorithms, 
+ * A class for results of an evaluation session, including 1-3 algorithms, 
  * 1-n scenarios and 1-n iterations for each algorith and scenario.
  */
 class PerformanceEvaluationResults {
@@ -15,7 +16,7 @@ class PerformanceEvaluationResults {
     int[] failures = new int[3];
     int[] evaluatedNodes = new int[3];
     int[] pathNodes = new int[3];
-    ArrayList<PerformanceEvaluation> evaluations = new ArrayList<PerformanceEvaluation>(500);
+    ArrayList<PerformanceEvaluation> evaluations = new ArrayList<PerformanceEvaluation>(8100);
 
     /**
      * Add a single evaluation to the results
@@ -23,11 +24,11 @@ class PerformanceEvaluationResults {
      * @param evaluation    Evalution result for a single run of one algorithm, one scenario, one iteration.
      */
     void addEvaluationResult(PerformanceEvaluation evaluation) {
-        Result result = evaluation.result;
+        PathfindingResult result = evaluation.result;
         int algorithm = evaluation.algorithm;
         numberOfEvaluations[algorithm]++;
-        executionTime[algorithm] += result.duration;
-        if(result.success) {
+        executionTime[algorithm] += result.seachDuration;
+        if(result.goalFound) {
             success[algorithm]++;
         } else {
             failures[algorithm]++;
@@ -37,8 +38,8 @@ class PerformanceEvaluationResults {
         } else {
             correctDistance[algorithm]++;
         }        
-        evaluatedNodes[algorithm] += result.numeOfEvaluatedNodes;
-        pathNodes[algorithm] += result.numOfPathNodes;
+        evaluatedNodes[algorithm] += result.nodesEvaluated;
+        pathNodes[algorithm] += result.numberOfPathNodes;
         evaluations.add(evaluation);
     }
 
@@ -53,8 +54,8 @@ class PerformanceEvaluationResults {
         "\n correct distance: " + correctDistance[algorithm] + 
         "\n total execution time: " + executionTime[algorithm]  + 
         "\n average time: " + executionTime[algorithm] / numberOfEvaluations[algorithm] + 
-        "\n avg. evaluated nodes: " + evaluatedNodes[algorithm] / numberOfEvaluations[algorithm] + 
-        "\n avg. path nodes: " + pathNodes[algorithm] / numberOfEvaluations[algorithm];        
+        "\n avg. evaluated nodes: " + (evaluatedNodes[algorithm] / numberOfEvaluations[algorithm]) + 
+        "\n avg. path nodes: " + (pathNodes[algorithm] / numberOfEvaluations[algorithm]);        
     }
 
     /** 
@@ -76,5 +77,63 @@ class PerformanceEvaluationResults {
         }
         return result;
     }
+
+    /**
+     * Get a line of a single algorithm for the summary CSV.
+     * 
+     */
+     private String getSummaryCSVline(int algorithm, String algorithmName) {
+        return MapUtils.ALGORITHM_NAMES[algorithm] + ',' + 
+            numberOfEvaluations[algorithm] + ',' + 
+            success[algorithm] + ',' + 
+            correctDistance[algorithm] + ',' + 
+            executionTime[algorithm] + ',' + 
+            executionTime[algorithm] / numberOfEvaluations[algorithm] + ',' + 
+            pathNodes[algorithm] / numberOfEvaluations[algorithm] + ',' + 
+            evaluatedNodes[algorithm] / numberOfEvaluations[algorithm] + '\n';
+    }
+
+    private String toSummaryCSVString() {
+
+        StringBuffer sb = new StringBuffer(500);
+        sb.append("Algorith,Evaluations,Success,Correct Distance,Total Time,Average Time,Avg. Path Nodes,Avg. Eval. Nodes\n");        
+        if(numberOfEvaluations[MapUtils.ALGORITHM_DIJKSTRA] > 0) 
+            sb.append(getSummaryCSVline(MapUtils.ALGORITHM_DIJKSTRA, MapUtils.ALGORITHM_NAMES[MapUtils.ALGORITHM_DIJKSTRA]));            
+        if(numberOfEvaluations[MapUtils.ALGORITHM_ASTAR] > 0) 
+            sb.append(getSummaryCSVline(MapUtils.ALGORITHM_ASTAR, MapUtils.ALGORITHM_NAMES[MapUtils.ALGORITHM_ASTAR]));            
+        if(numberOfEvaluations[MapUtils.ALGORITHM_JPS] > 0) 
+            sb.append(getSummaryCSVline(MapUtils.ALGORITHM_JPS, MapUtils.ALGORITHM_NAMES[MapUtils.ALGORITHM_JPS]));            
+        return new String(sb);
+
+    }
+
+    private String toDetailsCSVString() {
+        StringBuffer sb = new StringBuffer(5000000);
+        sb.append("Time,Duration,Algorithm,Distance,Success,Correct Distance,Path Nodes,Eval. Nodes\n");
+        for(PerformanceEvaluation evaluation : evaluations) {
+            sb.append(evaluation.toCsvString() + "\n");
+        }
+        return new String(sb);
+    }
+
+    /**
+     * Save the evaluation results to a CSV files to be used further, for example, in Excel.
+     */
+    void saveToCSV() {
+        
+        // Write detailed results of all evaluations to be used, for example, in Excel.
+        try (FileWriter writer = new FileWriter("evaluation_details.csv")) {
+            writer.write(toDetailsCSVString());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        // Write summary lines for each algorithm to a file.
+        try (FileWriter writer = new FileWriter("evaluation_summary.csv")) {
+            writer.write(toSummaryCSVString());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }        
+    }  
 
 }

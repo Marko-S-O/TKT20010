@@ -64,7 +64,7 @@ public class PerformanceEvaluationDialog extends JDialog implements ActionListen
     }
 
     /**
-     * Show the results of a performance evaluation run.
+     * Show the results summary of a performance evaluation run.
      * 
      * @param results   Results from a single performance evaluation run which can consist multiple algorithms, iterations and scenarios.
     */
@@ -77,7 +77,7 @@ public class PerformanceEvaluationDialog extends JDialog implements ActionListen
      * Save results to two CSV files: one for all individual evaluations and one for the summary per algorihm.
      */
     void saveToCsv() {
-        MapUtils.saveToCsv(results);
+        results.saveToCSV();
         JOptionPane.showConfirmDialog(
             this,
             "CSV files evaluations.csv and evaluation_summary.csv have been saved to the current folder.",

@@ -1,6 +1,5 @@
 package com.orasaari;
 
-import java.awt.Point;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.ArrayList;
@@ -21,14 +20,18 @@ public class PerformanceEvaluator {
     */
     private static class Scenario {
         GridMap map;
-        Point start;
-        Point goal;
+        int startX;
+        int startY;
+        int goalX;
+        int goalY;
         double distance;
 
         Scenario(int scenarioIndex, GridMap map, int startX, int startY, int goalX, int goalY, double distance) {
             this.map = map;
-            this.start = new Point(startX, startY);
-            this.goal = new Point(goalX, goalY);
+            this.startX = startX;
+            this.startY = startY;
+            this.goalX = goalX;
+            this.goalY = goalY;
             this.distance = distance;            
         }   
     }
@@ -62,7 +65,7 @@ public class PerformanceEvaluator {
                 // Maps are taking a lot of heap. Load each map only once and store it in the map map.
                 if(map == null) {
                     String mapFilename = MapUtils.STREET_MAP_DIRECTORY + fields[1];
-                    map = MapUtils.loadMap(mapFilename);
+                    map = new GridMap(mapFilename);
                     mapMap.put(fields[1], map);
                 }                 
                 int startX = Integer.parseInt(fields[4]);
@@ -144,11 +147,11 @@ public class PerformanceEvaluator {
                     // swap the order of algorithms in each iteration to minimize the noise in the results
                     int algorithmIndex = (j + k) % algorithms.size();
                     int algorithm = algorithms.get(algorithmIndex); 
-                    Pathfinder pathfinder = pathfinderMap.get(algorithm);
+                    Pathfinder pathfinder = pathfinderMap.get(algorithm);                    
                     PerformanceEvaluation evaluation = new PerformanceEvaluation();
                     evaluation.algorithm = algorithm;
                     evaluation.startTime = System.currentTimeMillis();
-                    evaluation.result = pathfinder.navigate(scenario.map, scenario.start, scenario.goal);
+                    evaluation.result = pathfinder.findPath(scenario.map, scenario.startX, scenario.startY, scenario.goalX, scenario.goalY);
                     evaluation.finishTime = System.currentTimeMillis();
                     evaluation.correctDistance = Math.abs(evaluation.result.distance - scenario.distance) < 0.01;
                     evaluationList.add(evaluation);
@@ -159,9 +162,6 @@ public class PerformanceEvaluator {
         PerformanceEvaluationResults performanceResults = collectEvaluateResults(evaluationList);
         return performanceResults;
     }
-
-
-
 
     /**
      * The entry point for cases we want to execute from the command line instead of UI.
@@ -175,9 +175,8 @@ public class PerformanceEvaluator {
         algorithms.add(MapUtils.ALGORITHM_ASTAR);
         algorithms.add(MapUtils.ALGORITHM_JPS);
         PerformanceEvaluator p = new PerformanceEvaluator();
-        PerformanceEvaluationResults results = p.runEvaluation(9, MapUtils.SCENARIO_DIRECTORY + "test-1.scen", algorithms);
+        PerformanceEvaluationResults results = p.runEvaluation(9, MapUtils.SCENARIO_DIRECTORY + "performance-evaluation.scen", algorithms);
         System.out.println(results);
-        MapUtils.saveToCsv(results);
-    }   
-    
+        results.saveToCSV();
+    }       
 }

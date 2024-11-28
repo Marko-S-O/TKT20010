@@ -4,7 +4,6 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridLayout;
-import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -37,11 +36,11 @@ public class PathfinderUI extends JFrame implements ActionListener {
     private ResultPanel pnlResultsDisjkstra, pnlResultsAstar, pnlResultsJPS;
  
     /** 
-     * Initialize the UI.
+     * Initialize the UI. 
     */
     PathfinderUI() {
         setLayout(new BorderLayout());
-        view = new GridMapView(new GridMap(1024, 1024));
+        view = new GridMapView(new GridMap(1024, 1024, 100.0));
 
         JScrollPane scp = new JScrollPane(view);
         Dimension d = new Dimension(1200, 800);
@@ -59,7 +58,7 @@ public class PathfinderUI extends JFrame implements ActionListener {
     }
 
     /**
-     * Construct the UI main panel that contains all other components but the actual grid map.
+     * Construct the panel below the map including the control components.
     */
     private JPanel getControlPanel() {
         JPanel pnlControl = new JPanel(new GridLayout(4,1));
@@ -140,16 +139,6 @@ public class PathfinderUI extends JFrame implements ActionListener {
     }
 
     /**
-     * Set the grid map to be visualized and used for pathfinding.
-     * 
-     * @param map   2D grid map to be visualized and used for pathfinding.
-     */
-    void setMap(GridMap map) {
-        this.map = map;
-        view.setMap(map);
-    }
-
-    /**
      *  Action method to select the used map file.
     */  
     private void selectMapFile() {
@@ -179,11 +168,12 @@ public class PathfinderUI extends JFrame implements ActionListener {
         }
     }
 
-    /** Load the map file using the MapUtil class. */
+    /** Load the map file using the MapUtils class. */
     private void loadMap() {
         String filename = tfMapFilename.getText();
-        GridMap map = MapUtils.loadMap(filename);
-        setMap(map);
+        GridMap map = new GridMap(filename);
+        view.setMap(map);
+        this.map = map;
     }
 
     /**
@@ -193,11 +183,8 @@ public class PathfinderUI extends JFrame implements ActionListener {
      *  
      * @return  A results object wrapping necessary information to be visualized, or null in the case of an error.
     */
-    private Result findPath(int algorith) {
+    private PathfindingResult findPath(int algorith) {
 
-        System.out.println("findPath(" + algorith + ")");
-
-        // Temporarily work with Dijkstra only while developing the algorithm
         Pathfinder finder;
         if(algorith == MapUtils.ALGORITHM_DIJKSTRA) {
             finder = new DijkstraPathfinder();
@@ -210,11 +197,9 @@ public class PathfinderUI extends JFrame implements ActionListener {
         try {
             int startX = Integer.parseInt(tfStartX.getText().trim());
             int startY = Integer.parseInt(tfStartY.getText().trim());
-            int finishX = Integer.parseInt(tfFinishX.getText().trim());
-            int finishY = Integer.parseInt(tfFinishY.getText().trim());
-            Point starPoint = new Point(startX, startY);
-            Point finishPoint = new Point(finishX, finishY);            
-            Result result = finder.navigate(this.map, starPoint, finishPoint);
+            int goalX = Integer.parseInt(tfFinishX.getText().trim());
+            int goalY = Integer.parseInt(tfFinishY.getText().trim());          
+            PathfindingResult result = finder.findPath(this.map, startX, startY, goalX, goalY);
             return result;            
         } catch(Exception ex) {
             ex.printStackTrace();
@@ -230,19 +215,19 @@ public class PathfinderUI extends JFrame implements ActionListener {
         List<List<Node>> paths = new ArrayList<>(3);
 
         if(cbDijkstra.isSelected()) {
-            Result result = findPath(MapUtils.ALGORITHM_DIJKSTRA);
+            PathfindingResult result = findPath(MapUtils.ALGORITHM_DIJKSTRA);
             pnlResultsDisjkstra.showResult(result);
             paths.add(result.path);
         }
 
         if(cbAstar.isSelected()) {
-            Result result = findPath(MapUtils.ALGORITHM_ASTAR);
+            PathfindingResult result = findPath(MapUtils.ALGORITHM_ASTAR);
             pnlResultsAstar.showResult(result);
             paths.add(result.path);
         }
 
         if(cbJPS.isSelected()) {
-            Result result = findPath(MapUtils.ALGORITHM_JPS);
+            PathfindingResult result = findPath(MapUtils.ALGORITHM_JPS);
             pnlResultsJPS.showResult(result);
             paths.add(result.path);
         }
@@ -296,7 +281,7 @@ public class PathfinderUI extends JFrame implements ActionListener {
     }
 
     /**
-     * The entry point to the application.
+     * Run the UI.
      * 
      * @param args  No args in use.
      */

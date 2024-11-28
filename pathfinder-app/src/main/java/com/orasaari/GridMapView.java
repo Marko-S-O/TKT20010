@@ -13,7 +13,7 @@ import java.util.List;
 */
 class GridMapView extends JPanel {
 
-    private static final int INITIAL_PIXEL_SIZE = 2; // number of physical pixels on the screen used to represent a pixel in a map
+    private static final int PIXEL_SIZE = 2; // number of physical pixels on the screen used to represent a pixel in a map
 
     private static final Color COLOR_BLOCKED = Color.black;
     private static final Color COLOR_FREE = Color.white;
@@ -22,7 +22,6 @@ class GridMapView extends JPanel {
 
     private boolean[][] grid; 
     private List<List<Node>> paths = null;
-    private int pixelSize = INITIAL_PIXEL_SIZE;
 
     GridMapView(GridMap map) {
         setMap(map);
@@ -34,29 +33,18 @@ class GridMapView extends JPanel {
      * @param map  The map to be visualized
      */
     void setMap(GridMap map) {
-        this.grid = map.getGrid().clone(); 
-        Dimension size = new Dimension(grid.length * pixelSize, grid[0].length * pixelSize);
+        this.grid = map.getGrid().clone(); // clone the map to prevent any potential side effects
+        Dimension size = new Dimension(grid.length * PIXEL_SIZE, grid[0].length * PIXEL_SIZE);
         setPreferredSize(size);
         setMinimumSize(size);
         setMaximumSize(size);
         setSize(size);   
-        this.pixelSize = INITIAL_PIXEL_SIZE;
         paintGrid();
 
     }
 
     /** 
-     * Set the pixel size used to visualize one map node.
-     * 
-     * @pixelSize  The number of physical pixels on the screen used to represent one map node.
-    */
-    void setPixelSize(int pixelSize) {
-        this.pixelSize = pixelSize;
-        paintGrid();
-    }
-
-    /** 
-     * Paint full grid. 
+     * Paint the full grid. 
     */
     void paintGrid() {     
         repaint();
@@ -78,22 +66,24 @@ class GridMapView extends JPanel {
     */
     @Override
     protected void paintComponent(Graphics g) {
-
         super.paintComponent(g);
+
+        // paint grid
         Graphics2D g2d = (Graphics2D) g;
         for(int i=0; i<grid.length; i++) {
             for(int j=0; j<grid[0].length; j++) {
                 g2d.setColor(grid[i][j] ? COLOR_FREE : COLOR_BLOCKED);
-                g2d.fillRect(i * pixelSize, j * pixelSize, pixelSize, pixelSize);
+                g2d.fillRect(i * PIXEL_SIZE, j * PIXEL_SIZE, PIXEL_SIZE, PIXEL_SIZE);
             }
         }
 
+        // paitn paths
         if(paths != null) {
             int i = 0;
             for(List<Node> path : paths) {
                 for(Node node : path) {   
                     g2d.setColor(node.jumpPassthrough ? COLOR_JUMP : PATH_COLORS[i]);                 
-                    g2d.fillRect(node.x * pixelSize, node.y * pixelSize, pixelSize, pixelSize);
+                    g2d.fillRect(node.x * PIXEL_SIZE, node.y * PIXEL_SIZE, PIXEL_SIZE, PIXEL_SIZE);
                 }
                 i++;
             }
@@ -105,7 +95,7 @@ class GridMapView extends JPanel {
     */
     @Override
     public Dimension getPreferredSize() {
-        return new Dimension(grid.length * pixelSize, grid[0].length * pixelSize);
+        return new Dimension(grid.length * PIXEL_SIZE, grid[0].length * PIXEL_SIZE);
     }
 
 }

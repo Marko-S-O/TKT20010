@@ -68,14 +68,14 @@ class ResultPanel extends JPanel {
      * 
      * @param result    Result of a single pathfinding run
      */
-    void showResult(Result result) {
+    void showResult(PathfindingResult result) {
         if(result != null) {
-            lblStatus.setText(result.success ? "Success" : "Failed");
+            lblStatus.setText(result.goalFound ? "Success" : "Failed");
             lblStartTime.setText(TIMESTAMP_FORMAT.format(new Date(result.startTime)));
-            lblFinishTime.setText(TIMESTAMP_FORMAT.format(new Date(result.finishTime)));
-            lblDuration.setText(result.duration + " ms");        
+            lblFinishTime.setText(TIMESTAMP_FORMAT.format(new Date(result.goalTime)));
+            lblDuration.setText(result.seachDuration + " ms");        
             lblPathLenght.setText(String.format("%,.2f", result.distance));
-            lblNodesEvaluated.setText("" + result.numeOfEvaluatedNodes);
+            lblNodesEvaluated.setText("" + result.nodesEvaluated);
         } else {
             System.out.println("showResult() can't view result: result is null");
         }

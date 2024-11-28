@@ -3,14 +3,14 @@ package com.orasaari;
 import java.text.SimpleDateFormat;
 
 /* 
-    * A wrapper class for results of a single evaluation: one scenario, one algorithm, one iteration.
-    */
+* A wrapper class for results of a single evaluation: one scenario, one algorithm, one iteration.
+*/
 class PerformanceEvaluation {
 
     private static final SimpleDateFormat TIMESTAMP_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     int algorithm;
-    Result result;
+    PathfindingResult result;
     long startTime;
     long finishTime;    
     boolean correctDistance;
@@ -23,13 +23,13 @@ class PerformanceEvaluation {
     String toCsvString() {
         return(
             TIMESTAMP_FORMAT.format(result.startTime) + "," +
-            result.duration + "," + 
-            result.algorithm + "," + 
+            result.seachDuration + "," + 
+            result.algorithmCode + "," + 
             result.distance + "," + 
-            result.success + "," + 
+            result.goalFound + "," + 
             correctDistance + "," +
-            result.numOfPathNodes + "," + 
-            result.numeOfEvaluatedNodes
+            result.numberOfPathNodes + "," + 
+            result.nodesEvaluated
         );    
     }
 }

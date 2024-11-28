@@ -1,56 +1,46 @@
 package com.orasaari;
 
 /** 
- * A data wrapper class to collect necessary information of an individual node
- * when it is handled by the pathfinders.
+ * A data wrapper class without functionality to collect necessary information 
+ * of an individual node when it is handled by the pathfinders.
 */
 public class Node {
 
-    /** x coordinate in the 2D grid. X coordinates run from left to right. */
+    /** X coordinate of the node. */
     int x;  
 
-    /** y coordinate in the 2D grid. Y coordinates run FROM TOP to bottom. */
+    /** Y coordinate of the node. */
     int y;  
 
-    /** A flag indicating if the pathfinder has already evaluated this node. */
+    /** Information if the node has been handled. */
     boolean handled = false;
 
     /** A link to the previous node to allow collecting the route once the goal has been found. */
-    Node previous = null;
+    Node previousNode = null;
 
-    /** Distance from the start point. */
-    double distance = Double.MAX_VALUE;        
+    /** Distance from the start node on the evaluated route. */
+    double distanceFromStart = Double.MAX_VALUE;        
 
-    /** 
-     * Value of the heuristic function for the node. Heuristic = octile distance from the node to the goal. 
-     */
+    /** Heuristic function value for the node. */
     double heuristic;
 
-    /** Priority in the open list (priority heap). For A and JPS, priority = distance + heuristic */
+    /** Priority in the queue for the node (distanceFromStart + heuristic) */
     double priority;
 
-    /** If true, a node is a true path node but a node on the grid passed by a JPS jump. Needed for visualization purposes. */
+    /** If true, a node is not a true path node but a pixel on the grid passed by a JPS jump. Needed for visualization purposes. */
     boolean jumpPassthrough = false;
 
-    /** Arrival direction to the node. Needed by JPS neighbour pruning. Value is mapping to MapUtils.MOVE_DIRECTIONS.*/
-    int arrivalDirection;
+    /** Moving direction to the node in pathfinding (JPS). */
+    int movingDirection;
 
     /* 
      * Init.
      * 
-     * @param   x   x coordinate in the 2D grid. X coordinates run from left to right.
-     * @param   y   y coordinate in the 2D grid. Y coordinates run from top to bottom.
+     * @param   x   x coordinate in the map.
+     * @param   y   y coordinate in the map.
     */
     Node(int x, int y) {
         this.x = x;
         this.y = y;
-    }
-
-    /** 
-     * String representation for debugging purposes 
-    */
-    public String toString() {
-        String s = "Node:: x: " + x + ", y: " + y + ", d: " + distance + ", h: " + heuristic + ", p: " + priority;
-        return s;
     }
 }
