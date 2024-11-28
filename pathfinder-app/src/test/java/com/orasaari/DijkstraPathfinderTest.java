@@ -15,14 +15,12 @@ public class DijkstraPathfinderTest {
 
     @BeforeEach
     public void setUp() {
-        System.out.println("Starting test...");
         pathfinder = new DijkstraPathfinder();
 
     }
 
     @AfterEach
     public void tearDown() {
-        System.out.println("Test finished.");
         pathfinder = null;
     }
 
@@ -79,8 +77,7 @@ public class DijkstraPathfinderTest {
     public void shouldHandleSpecialCasesCorrectly() {
 
         // create an empty map without obstacles
-        GridMap map = new GridMap(1024, 1024);
-        map.randomize(0.0);
+        GridMap map = new GridMap(1024, 1024, 0.0);
 
         assertTrue(TestUtils.testInOtherMap(pathfinder, map, 5, 5, 6, 5, 1)); // case 4.1
         assertTrue(TestUtils.testInOtherMap(pathfinder, map, 5, 5, 5, 6, 1)); // case 4.2

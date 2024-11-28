@@ -13,14 +13,12 @@ public class JPSPathfinderTest {
 
     @BeforeEach
     public void setUp() {
-        System.out.println("Starting test...");
         pathfinder = new JPSPathfinder();
 
     }
 
     @AfterEach
     public void tearDown() {
-        System.out.println("Test finished.");
         pathfinder = null;
     }
 
@@ -40,7 +38,7 @@ public class JPSPathfinderTest {
     }
 
     /* 
-     * Test starting points in different edges of the map
+     * Test starting points in different edges of the map.
     */
     @Test
     public void shouldHandleAllStartingPointsCorrectly() {        
@@ -55,7 +53,7 @@ public class JPSPathfinderTest {
     }
 
     /* 
-     * Test goals in the different edges of the map
+     * Test goals in the different edges of the map.
     */
     @Test
     public void shouldHandleAllGoalsCorrectly() {
@@ -74,11 +72,7 @@ public class JPSPathfinderTest {
     */
     @Test
     public void shouldHandleSpecialCasesCorrectly() {
-
-        // create an empty map without obstacles
-        GridMap map = new GridMap(1024, 1024);
-        map.randomize(0.0);
-
+        GridMap map = new GridMap(1024, 1024, 0.0); // create an empty map without obstacles
         assertTrue(TestUtils.testInOtherMap(pathfinder, map, 5, 5, 6, 5, 1)); // case 4.1
         assertTrue(TestUtils.testInOtherMap(pathfinder, map, 5, 5, 5, 6, 1)); // case 4.2
         assertTrue(TestUtils.testInOtherMap(pathfinder, map, 5, 5, 6, 6, MapUtils.SQRT2)); // case 4.3

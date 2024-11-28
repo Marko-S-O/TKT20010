@@ -11,14 +11,12 @@ public class AStarPathfinderTest {
 
     @BeforeEach
     public void setUp() {
-        System.out.println("Starting test...");
         pathfinder = new AStarPathfinder();
 
     }
 
     @AfterEach
     public void tearDown() {
-        System.out.println("Test finished.");
         pathfinder = null;
     }
 
@@ -57,7 +55,6 @@ public class AStarPathfinderTest {
     */
     @Test
     public void shouldHandleAllGoalsCorrectly() {
-        Pathfinder pathfinder = new AStarPathfinder();
         assertTrue(TestUtils.testInCityMap(pathfinder, "Moscow_0_256.map", 10, 188, 255, 0, 324.04372253)); // case 3.1
         assertTrue(TestUtils.testInCityMap(pathfinder, "Denver_1_256.map", 231, 115, 255, 111, 25.65685425)); // case 3.2
         assertTrue(TestUtils.testInCityMap(pathfinder, "Shanghai_0_256.map", 131, 20, 255, 255, 325.91883087)); // case 3.3
@@ -65,7 +62,7 @@ public class AStarPathfinderTest {
         assertTrue(TestUtils.testInCityMap(pathfinder, "Moscow_2_256.map", 243, 23, 0, 255, 356.08535309)); // case 3.5
         assertTrue(TestUtils.testInCityMap(pathfinder, "Boston_2_256.map", 104, 174, 0, 188, 109.79898987)); // case 3.6
         assertTrue(TestUtils.testInCityMap(pathfinder, "Paris_2_256.map", 31, 157, 0, 0, 396.27416992)); // case 3.7
-        assertTrue(TestUtils.testInCityMap(pathfinder, "NewYork_0_256.map", 70, 87, 52, 0, 94.45584412)); // case 3.8
+        assertTrue(TestUtils.testInCityMap(pathfinder, "NewYork_0_256.map", 70, 87, 52, 0, 94.45584412)); // case 3.8 
     }
 
     /* 
@@ -75,8 +72,7 @@ public class AStarPathfinderTest {
     public void shouldHandleSpecialCasesCorrectly() {
 
         // create an empty map without obstacles
-        GridMap map = new GridMap(1024, 1024);
-        map.randomize(0.0);
+        GridMap map = new GridMap(1024, 1024, 0.0);
 
         assertTrue(TestUtils.testInOtherMap(pathfinder, map, 5, 5, 6, 5, 1)); // case 4.1
         assertTrue(TestUtils.testInOtherMap(pathfinder, map, 5, 5, 5, 6, 1)); // case 4.2

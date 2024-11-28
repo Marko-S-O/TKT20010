@@ -1,9 +1,11 @@
 package com.orasaari;
 
-import java.awt.Point;
 import java.util.ArrayList;
 import java.util.List;
 
+/** 
+ * Utility methods for JUnit testing. 
+*/
 public class TestUtils {
     
     static final String TEST_DATA_DIRECTORY = "c:/users/ext/TKT20010/pathfinder-app/src/test/resources/";
@@ -24,8 +26,8 @@ public class TestUtils {
         for(int i=6; i<=500; i++) {
             distance += MapUtils.SQRT2;
             Node node = new Node(i, i);
-            node.previous = previeousNode;
-            node.distance = distance;
+            node.previousNode = previeousNode;
+            node.distanceFromStart = distance;
             path.add(node);
             previeousNode = node;
         }
@@ -34,36 +36,34 @@ public class TestUtils {
         for(int i=501; i<=1000; i++) {
             distance += 1;      
             Node node = new Node(i, 500);
-            node.previous = previeousNode;
-            node.distance = distance;
+            node.previousNode = previeousNode;
+            node.distanceFromStart = distance;
             path.add(node);
             previeousNode = node;
         }
 
-        goal.previous = previeousNode;
+        goal.previousNode = previeousNode;
         return path;
     }
 
+    /*
+     * Test a single scenario in a Moving AI Lab city map.
+     */
     static boolean testInCityMap(Pathfinder pathfinder, String mapFilename, int startX, int startY, int goalX, int goalY, double distance) {
-        GridMap map = MapUtils.loadMap(MapUtils.MAP_DIRECTORY + "street-map\\" + mapFilename);
-        Point start = new Point(startX, startY);
-        Point goal = new Point(goalX, goalY);
-        Result result = pathfinder.navigate(map, start, goal);
-        System.out.println(mapFilename + ": " + result.distance + " (" + startX + "," + startY + ") -> (" + goalX + "," + goalY + "), correct: " + distance);
-        System.out.println(result.toString());
-        boolean foundPath = result.success;
+        GridMap map = new GridMap(MapUtils.MAP_DIRECTORY + "street-map\\" + mapFilename);
+        PathfindingResult result = pathfinder.findPath(map, startX, startY, goalX, goalY);
+        boolean foundPath = result.goalFound;
         boolean correctDistance = Math.abs(result.distance - distance) < 0.01;
-        System.out.println("Found path: " + foundPath + ", correct distance: " + correctDistance);
         return foundPath && correctDistance;
     }
 
+    /**
+     * Test a pathfinding scenario in another (empty or randomized) map.
+     */
     static boolean testInOtherMap(Pathfinder pathfinder, GridMap map, int startX, int startY, int goalX, int goalY, double distance) {
-        Point start = new Point(startX, startY);
-        Point goal = new Point(goalX, goalY);
-        Result result = pathfinder.navigate(map, start, goal);
-        boolean foundPath = result.success;
+        PathfindingResult result = pathfinder.findPath(map, startX, startY, goalX, goalY);
+        boolean foundPath = result.goalFound;
         boolean correctDistance = Math.abs(result.distance - distance) < 0.01;
         return foundPath && correctDistance;
     }
-
 }
