@@ -91,7 +91,7 @@ public class DijkstraPathfinderTest {
     */
     @Test
     public void shouldHandleNoPathCorrectly() {
-        assertFalse(TestUtils.testInCityMap(pathfinder, "Berlin_0_256.map", 0, 0, 255, 200, 0)); // case 4.6
+        assertFalse(TestUtils.testInCityMap(pathfinder, "Berlin_0_256.map", 1, 1, 254, 200, 0)); // case 4.6
     }
     
 }
