@@ -76,11 +76,11 @@ import java.util.Map;
 <span class="fc" id="L76">                scenarioIndex++;</span>
 <span class="fc" id="L77">                Scenario scenario = new Scenario(scenarioIndex, map, startX, startY, goalX, goalY, distance);</span>
 <span class="fc" id="L78">                scenarioList.add(scenario);                </span>
-            }
+<span class="fc" id="L79">            }</span>
 <span class="nc" id="L80">        } catch(Exception e) {</span>
 <span class="nc" id="L81">            System.out.println(&quot;Error reading scenario file: &quot; + filename);</span>
 <span class="nc" id="L82">            e.printStackTrace();</span>
-        } 
+<span class="fc" id="L83">        } </span>
 <span class="fc" id="L84">        return scenarioList;</span>
     }
 
@@ -99,7 +99,7 @@ import java.util.Map;
 <span class="fc" id="L99">                map.put(algorithm, new DijkstraPathfinder());</span>
 <span class="fc bfc" id="L100" title="All 2 branches covered.">            } else if(algorithm == MapUtils.ALGORITHM_ASTAR) {</span>
 <span class="fc" id="L101">                map.put(algorithm, new AStarPathfinder());</span>
-<span class="fc" id="L102">            } else {</span>
+            } else {
 <span class="fc" id="L103">                map.put(algorithm, new JPSPathfinder());</span>
             }
         }
@@ -165,7 +165,7 @@ import java.util.Map;
 
     /**
      * The entry point for cases we want to execute from the command line instead of UI.
-     * When run from the command line, the results are always saved to CSV files.
+     * When run from the command line, there is no option to save the results in CSV files.
      * 
      * @param args  No args are used, prepare run options directly to the main method code.
      */

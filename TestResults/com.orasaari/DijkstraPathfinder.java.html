@@ -23,69 +23,70 @@ import java.util.PriorityQueue;
      * Implement the Dijkstra pathfinding.
      * 
      * @see Pathfinder.findpath(GridMap map, int startX, int startY, int goalX, int goalY)
+     *
     */
     public PathfindingResult findPath(GridMap map, int startX, int startY, int goalX, int goalY) {
             
         // Initialize the data structures
-<span class="fc" id="L30">        long startTime = System.currentTimeMillis();</span>
-<span class="fc" id="L31">        PriorityQueue&lt;Node&gt; heap = new PriorityQueue&lt;Node&gt;(new NodeComparator());</span>
-<span class="fc" id="L32">        Node[][] nodeList = new Node[map.getWidth()][map.getHeight()];</span>
+<span class="fc" id="L31">        long startTime = System.currentTimeMillis();</span>
+<span class="fc" id="L32">        PriorityQueue&lt;Node&gt; heap = new PriorityQueue&lt;Node&gt;(new NodeComparator());</span>
+<span class="fc" id="L33">        Node[][] nodeList = new Node[map.getWidth()][map.getHeight()];</span>
 
        // Initialize the priority heap with the starting node
-<span class="fc" id="L35">        Node startNode = new Node(startX, startY);</span>
-<span class="fc" id="L36">        nodeList[startX][startY] = startNode;</span>
-<span class="fc" id="L37">        startNode.distanceFromStart = 0;</span>
-<span class="fc" id="L38">        heap.add(startNode);           </span>
+<span class="fc" id="L36">        Node startNode = new Node(startX, startY);</span>
+<span class="fc" id="L37">        nodeList[startX][startY] = startNode;</span>
+<span class="fc" id="L38">        startNode.distanceFromStart = 0;</span>
+<span class="fc" id="L39">        heap.add(startNode);           </span>
 
         // Run the pathfinding
-<span class="fc" id="L41">        int evaluatedNodes = 0;</span>
-<span class="fc" id="L42">        Node node = null;</span>
-<span class="fc" id="L43">        boolean goalFound = false;        </span>
-<span class="pc bpc" id="L44" title="1 of 2 branches missed.">        while(!heap.isEmpty()) {</span>
-<span class="fc" id="L45">            node = heap.poll();</span>
+<span class="fc" id="L42">        int evaluatedNodes = 0;</span>
+<span class="fc" id="L43">        Node node = null;</span>
+<span class="fc" id="L44">        boolean goalFound = false;        </span>
+<span class="fc bfc" id="L45" title="All 2 branches covered.">        while(!heap.isEmpty()) {</span>
+<span class="fc" id="L46">            node = heap.poll();</span>
 
-<span class="fc bfc" id="L47" title="All 4 branches covered.">            if(node.x == goalX &amp;&amp; node.y == goalY) {</span>
-<span class="fc" id="L48">                goalFound = true;</span>
-<span class="fc" id="L49">                break; </span>
+<span class="fc bfc" id="L48" title="All 4 branches covered.">            if(node.x == goalX &amp;&amp; node.y == goalY) {</span>
+<span class="fc" id="L49">                goalFound = true;</span>
+<span class="fc" id="L50">                break; </span>
             }
-<span class="fc bfc" id="L51" title="All 2 branches covered.">            if(node.handled) {</span>
-<span class="fc" id="L52">                continue; </span>
+<span class="fc bfc" id="L52" title="All 2 branches covered.">            if(node.handled) {</span>
+<span class="fc" id="L53">                continue; </span>
             }
 
-<span class="fc" id="L55">            node.handled = true; </span>
-<span class="fc" id="L56">            evaluatedNodes++; </span>
+<span class="fc" id="L56">            node.handled = true; </span>
+<span class="fc" id="L57">            evaluatedNodes++; </span>
 
             // Evaluate all moving directions. 
-<span class="fc bfc" id="L59" title="All 2 branches covered.">            for(int i=0; i&lt;8; i++) {</span>
+<span class="fc bfc" id="L60" title="All 2 branches covered.">            for(int i=0; i&lt;8; i++) {</span>
 
-<span class="fc bfc" id="L61" title="All 2 branches covered.">                if(!map.isTraversable(node.x, node.y, i)) {</span>
-<span class="fc" id="L62">                    continue; </span>
+<span class="fc bfc" id="L62" title="All 2 branches covered.">                if(!map.isTraversable(node.x, node.y, i)) {</span>
+<span class="fc" id="L63">                    continue; </span>
                 }
 
-<span class="fc" id="L65">                int nextX = node.x + MapUtils.MOVES[i][0];</span>
-<span class="fc" id="L66">                int nextY = node.y + MapUtils.MOVES[i][1];</span>
+<span class="fc" id="L66">                int nextX = node.x + MapUtils.MOVES[i][0];</span>
+<span class="fc" id="L67">                int nextY = node.y + MapUtils.MOVES[i][1];</span>
 
                 // Only create each node once to save memory.
-<span class="fc" id="L69">                Node nextNode = nodeList[nextX][nextY];</span>
-<span class="fc bfc" id="L70" title="All 2 branches covered.">                if(nextNode == null) {</span>
-<span class="fc" id="L71">                    nextNode = new Node(nextX, nextY);</span>
-<span class="fc" id="L72">                    nodeList[nextX][nextY] = nextNode;</span>
+<span class="fc" id="L70">                Node nextNode = nodeList[nextX][nextY];</span>
+<span class="fc bfc" id="L71" title="All 2 branches covered.">                if(nextNode == null) {</span>
+<span class="fc" id="L72">                    nextNode = new Node(nextX, nextY);</span>
+<span class="fc" id="L73">                    nodeList[nextX][nextY] = nextNode;</span>
                 }
-<span class="fc" id="L74">                double weight = MapUtils.WEIGHTS[i];</span>
+<span class="fc" id="L75">                double weight = MapUtils.WEIGHTS[i];</span>
 
                 // Check if we have found a shorter path. If yes, update heap.
-<span class="fc" id="L77">                double newDistance = node.distanceFromStart + weight;</span>
-<span class="fc bfc" id="L78" title="All 2 branches covered.">                if(newDistance &lt; nextNode.distanceFromStart) {</span>
-<span class="fc" id="L79">                    nextNode.distanceFromStart = newDistance;</span>
-<span class="fc" id="L80">                    heap.add(nextNode);</span>
-<span class="fc" id="L81">                    nextNode.previousNode = node;</span>
+<span class="fc" id="L78">                double newDistance = node.distanceFromStart + weight;</span>
+<span class="fc bfc" id="L79" title="All 2 branches covered.">                if(newDistance &lt; nextNode.distanceFromStart) {</span>
+<span class="fc" id="L80">                    nextNode.distanceFromStart = newDistance;</span>
+<span class="fc" id="L81">                    heap.add(nextNode);</span>
+<span class="fc" id="L82">                    nextNode.previousNode = node;</span>
                 }                
             }
         }
 
         // Iteration finished, collect results and return
-<span class="fc" id="L87">        PathfindingResult result = collectResults(node, startTime, evaluatedNodes, MapUtils.ALGORITHM_DIJKSTRA, goalFound);</span>
-<span class="fc" id="L88">        return result;</span>
+<span class="fc" id="L88">        PathfindingResult result = collectResults(node, startTime, evaluatedNodes, MapUtils.ALGORITHM_ASTAR, goalFound);</span>
+<span class="fc" id="L89">        return result;</span>
     }  
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

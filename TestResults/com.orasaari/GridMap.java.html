@@ -69,7 +69,7 @@ public class GridMap {
 <span class="fc" id="L69">                                traversability[i][j][k] = false;  // The node is outside the map -&gt; false</span>
 <span class="fc bfc" id="L70" title="All 2 branches covered.">                            } else if(!grid[nextNodeX][nextNodeY]) {                                </span>
 <span class="fc" id="L71">                                traversability[i][j][k] = false; // The node is blocked -&gt; always false</span>
-<span class="fc" id="L72">                            } else {</span>
+                            } else {
                                 // Cutting corners is not allowed -&gt; either of the two adjacent nodes towards the moving direction can block the movement
 <span class="fc bfc" id="L74" title="All 4 branches covered.">                                traversability[i][j][k] = grid[i+directionX][j] &amp;&amp; grid[i][j+directionY]; </span>
                             }

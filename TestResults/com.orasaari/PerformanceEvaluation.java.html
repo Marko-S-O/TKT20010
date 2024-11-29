@@ -23,13 +23,13 @@ import java.text.SimpleDateFormat;
     String toCsvString() {
 <span class="fc" id="L24">        return(</span>
 <span class="fc" id="L25">            TIMESTAMP_FORMAT.format(result.startTime) + &quot;,&quot; +</span>
-<span class="fc" id="L26">            result.pathfindingDuration + &quot;,&quot; + </span>
-<span class="fc" id="L27">            result.algorithmCode + &quot;,&quot; + </span>
-<span class="fc" id="L28">            result.distance + &quot;,&quot; + </span>
-<span class="fc" id="L29">            result.goalFound + &quot;,&quot; + </span>
-<span class="fc" id="L30">            correctDistance + &quot;,&quot; +</span>
-<span class="fc" id="L31">            result.numberOfPathNodes + &quot;,&quot; + </span>
-<span class="fc" id="L32">            result.nodesEvaluated</span>
+            result.seachDuration + &quot;,&quot; + 
+            result.algorithmCode + &quot;,&quot; + 
+            result.distance + &quot;,&quot; + 
+            result.goalFound + &quot;,&quot; + 
+            correctDistance + &quot;,&quot; +
+            result.numberOfPathNodes + &quot;,&quot; + 
+            result.nodesEvaluated
         );    
     }
 }

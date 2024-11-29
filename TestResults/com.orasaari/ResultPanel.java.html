@@ -73,10 +73,10 @@ class ResultPanel extends JPanel {
 <span class="nc bnc" id="L73" title="All 2 branches missed.">            lblStatus.setText(result.goalFound ? &quot;Success&quot; : &quot;Failed&quot;);</span>
 <span class="nc" id="L74">            lblStartTime.setText(TIMESTAMP_FORMAT.format(new Date(result.startTime)));</span>
 <span class="nc" id="L75">            lblFinishTime.setText(TIMESTAMP_FORMAT.format(new Date(result.goalTime)));</span>
-<span class="nc" id="L76">            lblDuration.setText(result.pathfindingDuration + &quot; ms&quot;);        </span>
+<span class="nc" id="L76">            lblDuration.setText(result.seachDuration + &quot; ms&quot;);        </span>
 <span class="nc" id="L77">            lblPathLenght.setText(String.format(&quot;%,.2f&quot;, result.distance));</span>
 <span class="nc" id="L78">            lblNodesEvaluated.setText(&quot;&quot; + result.nodesEvaluated);</span>
-<span class="nc" id="L79">        } else {</span>
+        } else {
 <span class="nc" id="L80">            System.out.println(&quot;showResult() can't view result: result is null&quot;);</span>
         }
 <span class="nc" id="L82">    }</span>
