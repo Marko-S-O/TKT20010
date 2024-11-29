@@ -75,7 +75,7 @@ Kaikki edellisen kappaleen testit ja apumetodien testit suoritettiin onnistunees
 
 ## Testauksen kattavuus
 
-Testauksen kattavuus reitinhakualgoritmeille on 100% ja brancheille 93-97%. Tarkemmat tiedot ovat alla olevassa taulukossa ja yksityiskohtaiset kattavuusraportit hakemistossa TestResults. Oletus on, että käytetyt apuluokat- ja metodit tulevat testatuksi kattavasti algoritmien kautta, kun algoritmeja testataan sadoilla monimutkaisilla skenaarioilla.
+Testauksen kattavuus reitinhakualgoritmeille on 100% ja brancheille 97-100%. Tarkemmat tiedot ovat alla olevassa taulukossa ja yksityiskohtaiset kattavuusraportit hakemistossa TestResults. Oletus on, että käytetyt apuluokat- ja metodit tulevat testatuksi kattavasti algoritmien kautta, kun algoritmeja testataan sadoilla monimutkaisilla skenaarioilla.
 
 ![Coverage result](https://github.com/Marko-S-O/TKT20010/blob/main/TestResults/coverage.jpg)
 
