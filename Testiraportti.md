@@ -67,6 +67,7 @@ Testitapaukset on listattu seuraavassa taulukossa:
 | 4.3                                      |             | Tyhjä testikartta  | Yhden solmun liike diagonaalisesti   |          |          |          |              |
 | 4.4                                      |             | Tyhjä testikartta  | Start = goal                         |          |          |          |              |
 | 4.5                                      |             | Tyhjä testikartta  | Navigointi tyhjällä kartalla         |          |          |          |              |
+| 4.6                                      | Ei reittiä  | Berlin_0_256.map   | 1                                    | 1        | 200      | 254      |              |
 
 ## Testitulokset
 
@@ -94,8 +95,8 @@ Testien toteutuskoodi löytyy [GitHubin hakemistosta](https://github.com/Marko-S
 
 Tarkat testitulokset ovat hakemistossa [TestResults](https://github.com/Marko-S-O/TKT20010/tree/main/TestResults) tiedostoissa evaluation_details.csv ja evaluation_summary.csv. Alla yhteenveto. Tuloksista on helppo havaita, että kaupunkikartoilla JPS on täysin ylivoimainen.
 
-| **Algoritmi** | **Evalu-aatiot** | **Maali löytyi** | **Oikea reitin pituus** | **Aika yhteensä (ms)** | **Keskim. aika / iteraatio** | **Keskim. reitin pituus** | **Keskim. eval. solmuja** |
-|---------------|------------------|------------------|-------------------------|------------------------|------------------------------|---------------------------|---------------------------|
-| Dijkstra      | 2700             | 2700             | 2700                    | 336021                 | 124                          | 1192                      | 784871                    |
-| A-Star        | 2700             | 2700             | 2700                    | 232686                 | 86                           | 1192                      | 242253                    |
-| JPS           | 2700             | 2700             | 2700                    | 52225                  | 19                           | 148                       | 1452                      |
+| **Algoritmi** | **Evalu-aatiot** | **Maali löytyi** | **Oikea reitin pituus** | **Aika yhteensä (ms)** | **Keskim. aika / iteraatio** | **Keskim. solmuja reitillä** | **Keskim. avattuja solmuja** |
+|---------------|------------------|------------------|-------------------------|------------------------|------------------------------|------------------------------|------------------------------|
+| Dijkstra      | 2700             | 2700             | 2700                    | 336021                 | 124                          | 1192                         | 784871                       |
+| A-Star        | 2700             | 2700             | 2700                    | 232686                 | 86                           | 1192                         | 242253                       |
+| JPS           | 2700             | 2700             | 2700                    | 52225                  | 19                           | 148                          | 1452                         |
