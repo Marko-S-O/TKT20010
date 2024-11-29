@@ -80,5 +80,13 @@ public class AStarPathfinderTest {
         assertTrue(TestUtils.testInOtherMap(pathfinder, map, 5, 5, 5, 5, 0)); // case 4.4
         assertTrue(TestUtils.testInOtherMap(pathfinder, map, 5, 5, 1000, 500, 1200.04)); // case 4.5
     }
+
+    /* 
+    * Test when there is no path.
+    */
+    @Test
+    public void shouldHandleNoPathCorrectly() {
+        assertFalse(TestUtils.testInCityMap(pathfinder, "Berlin_0_256.map", 0, 0, 255, 200, 0)); // case 4.6
+    }
     
 }
