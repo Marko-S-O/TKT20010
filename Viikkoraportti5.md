@@ -15,6 +15,7 @@
 # Oppimisreflektio
 
 -   Ehkä oikea aika fokusoida testaukseen ensimmäisen kerran tosissaan olisi ollut heti Dijkstran toteutuksen jälkeen.
+-   Testikattavuuden käyttö oli yllättäen oikeasti hyödyllistä: ohjelmasta löytyi tarpeetonta koodia ja joku testiskenaario tuli myös lisättyä sen perusteella.
 
 # Haasteet ja avoimet kysymykset
 
