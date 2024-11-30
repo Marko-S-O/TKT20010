@@ -54,7 +54,7 @@ class JPSPathfinder extends Pathfinder {
                 neighbours.add(Integer.valueOf(direction));
             }
 
-            // Handle forced neighbours. Vertical paths are checked first.
+            // Handle forced neighbours. Diagonal paths are checked first.
             if(directionX == 1 && directionY == 1) { // moving down-right
                 if(map.isTraversable(node.x, node.y, MapUtils.RIGHT)) // right open, need to add it as well
                     neighbours.add(Integer.valueOf(MapUtils.RIGHT));
