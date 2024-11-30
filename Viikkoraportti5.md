@@ -19,8 +19,9 @@
 
 # Haasteet ja avoimet kysymykset
 
--   Mikä on testauksen riittävä taso: riittääkö testata algoritmien reitinhakurajapinta isolla määrällä skenaarioita Moving AI Labin skenaarioita vastaan ja voidaan olettaa, että apumetodit tulevat niiden kautta testatuksi, jos ne sisältyvät testikattavuuteen raportilla? Vai pitääkö tehdä keinotekoiset automaattitestit yksittäisille metodeille?
--   Demojen aikataulu: olen kauan sitten varatulle ulkomaanmatkalle 3.-12.12. Onko tässä haasteita demojen suhteen, ja jos on, miten ne ovat ratkaistavissa?
+-   En valitettavasti päässyt testausohjaukseen, joten kysyisin, mikä on testauksen riittävä taso: riittääkö testata algoritmien reitinhakurajapinta isolla määrällä (satoja) skenaarioita Moving AI Labin skenaarioita vastaan ja voidaan olettaa, että apumetodit tulevat niiden kautta testatuksi, jos ne sisältyvät testikattavuuteen raportilla? Vai pitääkö tehdä keinotekoiset automaattitestit yksittäisille metodeille?
+-   Demojen aikataulu: olen kauan sitten varatulle ulkomaanmatkalle 3.-12.12. Onko tässä haasteita demojen suhteen, ja jos on, miten ne ovat ratkaistavissa? Minulla on läppäri mukana, joten voin tarvittaessa esittää tuona aikana verkon yli.
+-   Milloin ensimmäiset katselmoinnit allokoidaan ja mitä kautta niistä tulee tieto?
 
 # Jatkosuunnitelma
 
