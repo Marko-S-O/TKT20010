@@ -23,7 +23,7 @@ class PerformanceEvaluation {
     String toCsvString() {
         return(
             TIMESTAMP_FORMAT.format(result.startTime) + "," +
-            result.seachDuration + "," + 
+            result.searchDuration + "," + 
             result.algorithmCode + "," + 
             result.distance + "," + 
             result.goalFound + "," + 

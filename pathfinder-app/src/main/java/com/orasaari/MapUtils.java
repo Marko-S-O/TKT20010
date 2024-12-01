@@ -25,13 +25,10 @@ class MapUtils {
     static final String SCENARIO_DIRECTORY = "c:/users/ext/TKT20010/pathfinder-app/data/test/";    
     static final String STREET_MAP_DIRECTORY = "c:/users/ext/TKT20010/pathfinder-app/data/street-map/"; 
 
-    /** Possible moving directions in the 2D grid. Intended to simplify code and make algorithms faster. Used by A* and Dijkstra */
-    static final int[][] MOVES = {{-1,0}, {1,0}, {0,-1}, {0,1}, {-1,-1}, {1,1}, {-1,1}, {1,-1}};
-
     /** Distances of corresponding MOVES. Intended to simplify code and make algorithms faster. Used by A* and Dijkstra */
     static final double[] WEIGHTS = {1, 1, 1, 1, MapUtils.SQRT2, MapUtils.SQRT2, MapUtils.SQRT2, MapUtils.SQRT2};
 
-    /** Moving directions are running around the clock from north-east to north. These are used by JPS but the order is the same as A* and mapping to the GridMap traversabilty table indices. */
+    /** Moving directions are running around the clock from north-east to north. Thes map to the GridMap traversabilty table indices. */
     static final Move[] MOVE_DIRECTIONS = {
         new Move(-1,0),  // left
         new Move(1,0),   // right

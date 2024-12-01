@@ -61,8 +61,8 @@ public class GridMap {
                 for(int j=0; j<height; j++) {
                     if(grid[i][j]) {
                         for(int k=0; k<8; k++) {
-                            int directionX = MapUtils.MOVES[k][0];
-                            int directionY = MapUtils.MOVES[k][1];
+                            int directionX = MapUtils.MOVE_DIRECTIONS[k].directionX;
+                            int directionY = MapUtils.MOVE_DIRECTIONS[k].directionY;
                             int nextNodeX = i + directionX;
                             int nextNodeY = j + directionY;
                             if(nextNodeX < 0 || nextNodeY < 0 || nextNodeX >= width || nextNodeY >= height) {                               

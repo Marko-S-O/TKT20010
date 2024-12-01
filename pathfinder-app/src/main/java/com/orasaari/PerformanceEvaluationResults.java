@@ -27,7 +27,7 @@ class PerformanceEvaluationResults {
         PathfindingResult result = evaluation.result;
         int algorithm = evaluation.algorithm;
         numberOfEvaluations[algorithm]++;
-        executionTime[algorithm] += result.seachDuration;
+        executionTime[algorithm] += result.searchDuration;
         if(result.goalFound) {
             success[algorithm]++;
         } else {

@@ -63,8 +63,8 @@ class DijkstraPathfinder extends Pathfinder {
                     continue; 
                 }
 
-                int nextX = node.x + MapUtils.MOVES[i][0];
-                int nextY = node.y + MapUtils.MOVES[i][1];
+                int nextX = node.x + MapUtils.MOVE_DIRECTIONS[i].directionX;
+                int nextY = node.y + MapUtils.MOVE_DIRECTIONS[i].directionY;
 
                 // Only create each node once to save memory.
                 Node nextNode = nodeList[nextX][nextY];

@@ -73,7 +73,7 @@ class ResultPanel extends JPanel {
             lblStatus.setText(result.goalFound ? "Success" : "Failed");
             lblStartTime.setText(TIMESTAMP_FORMAT.format(new Date(result.startTime)));
             lblFinishTime.setText(TIMESTAMP_FORMAT.format(new Date(result.goalTime)));
-            lblDuration.setText(result.seachDuration + " ms");        
+            lblDuration.setText(result.searchDuration + " ms");        
             lblPathLenght.setText(String.format("%,.2f", result.distance));
             lblNodesEvaluated.setText("" + result.nodesEvaluated);
         } else {

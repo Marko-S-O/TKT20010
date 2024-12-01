@@ -20,7 +20,7 @@ public class PathfindingResult {
     long goalTime;
 
     /** Duration of pathfinding, goalTime - startTime */
-    long seachDuration;
+    long searchDuration;
 
     /** Number */
     int numberOfPathNodes; 

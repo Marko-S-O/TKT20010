@@ -86,7 +86,7 @@ abstract class Pathfinder {
         result.numberOfPathNodes = numOfPathNodes;
         result.startTime = startTime;
         result.goalTime = finishTime;
-        result.seachDuration = finishTime - startTime;
+        result.searchDuration = finishTime - startTime;
         result.nodesEvaluated = evaluatedNodes;
         result.algorithmCode = algorithm;
         result.distance = distance;
