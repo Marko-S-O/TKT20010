@@ -1,0 +1,22 @@
+-encoding
+'UTF-8'
+-private
+-source
+'23'
+-sourcepath
+'C:/Users/ext/TKT20010/pathfinder-app/src/main/java'
+-bottom
+'Copyright &#169; 2024. All rights reserved.'
+-charset
+'UTF-8'
+-d
+'C:/Users/ext/TKT20010/pathfinder-app/target/site/apidocs/javadoc'
+-docencoding
+'UTF-8'
+-doctitle
+'pathfinder-app 1.0-SNAPSHOT API'
+-link
+'https://docs.oracle.com/en/java/javase/23/docs/api'
+-use
+-windowtitle
+'pathfinder-app 1.0-SNAPSHOT API'
