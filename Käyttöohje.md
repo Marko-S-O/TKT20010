@@ -12,15 +12,16 @@ Tässä dokumentissa kuvataan seuraavat toiminnot
 
 Ohjelman voi ottaa käyttöön kahdella tavalla:
 -   Asentamalla Maven-projektin omaan Java-ohjelmointiympäristöönsä, jossa on asennettuna tarpeelliset välineet Maven-projektin hallintaan ja Java-ohjelmien ajamiseen.
--   Lataamalla jar-tiedoston Githubista ja suorittamalla haluamansa luokan siitä
+-   Lataamalla jar-tiedoston Githubista ja suorittamalla haluamansa luokan siitä. 
+-   TODO: jar-tiedoston generointi, vieminen githubiin ja linkkaaminen tähän
 
 ## Maven-projektin käyttöönotto
 
-
+TODO: Maven-projektin asennusohje
 
 ## JAR-tiedoston ajaminen
 
-
+TODO: eri osien käynnistämiskomennot jar-tiedostosta
 
 # Reitinhakurajapintojen käyttö
 
@@ -35,7 +36,7 @@ Parametrin map sisältämän kartan pitää olla valmiiksi ladattu, mikä tapaht
 Käyttöliittymä käynnistetään suorittamalla luokka PathfinderUI. Käyttöliittymällä voidaan
 -   Suorittaa reitinhaku valitulla kartalla, alku- ja loppupisteillä sekä algoritmeilla ja visualisoida tulokset ja reitit
 -   Ajaa algoritmien suorituskykyvertailu valitulla skenaariotiedostolla, algoritmeilla ja iteraatiomäärällä sekä tallentaa tulokset csv-tiedostoihin
-<TODO: linkitä kuva>
+TODO: linkitä kuva käyttöliittymäst
 
 ## Yksittäisen reitin haku
 
@@ -48,7 +49,7 @@ Reitinhaku tapahtuu seuraavasti:
 
 Huomioitavaa: käyttöliittymä on tarkoitettu pelkästään toteutuksen apuvälineeksi ja siinä on rajoitetut tarkistukset virhesyötteille.
 
-## Tehokkuusvertailun suorittaminen käyttöliittymästä
+## Suorituskykyvertailun suorittaminen käyttöliittymästä
 
 Tehokkuusvertailu voidaan ajaa myös käyttöliittymällä. Tämä tapahtuu seur aavasti:
 1.  Tallenna haluamasi skenaariot esim. tekstieditorilla skenaariotiedostoon Moving AI Labin skenaarioformaatissa.
@@ -77,13 +78,13 @@ Ajaminen komentoriviltä tapahtuu seuraavasti:
 ## Ajaminen JUnit-testinä
 
 Ajaminen tapahtuu seuraavasti
-1.  Editoi käytettävät skenaariot tiedostoon performance-evaluation.scen esim. tekstieditorilla. Tiedostojen tulee olla Moving AI Labin skneaariotiedostojen formaatissa (*.map.scen) hakemistossa, johon vakio MapUtils.SCENARIO_DIRECTORY osoittaa.
-2.  Suorita ajo Maven-komennolla mvn validate -test -d... <TODO: katso komento>. 
+1.  Editoi käytettävät skenaariot tiedostoon performance-evaluation.scen esim. tekstieditorilla. Tiedostojen tulee olla Moving AI Labin skneaariotiedostojen formaatissa (*.map.scen) ja hakemistossa, johon vakio MapUtils.SCENARIO_DIRECTORY osoittaa.
+2.  Suorita ajo Maven-komennolla mvn test -Dtest=PerformanceEvaluatorTest. 
 3.  Testien tulokset tallentuvat automaattisesti tiedostoihin evaluation_summary.csv ja evaluation_details.csv, jotka tehdään maven-projektin juurihakemistoon.
 
 # JUnit-testien ajaminen
 
 Kaikki JUnit-testit suoritetaan Maven-komennolla mvn validate. 
 
-Yksittäisen testin saa suoritettua komennolla mvn validate... TODO
+Yksittäisen testin saa suoritettua komennolla mvn test -Dtest=[luokan nimi], esim. mvn -Dtest=JPSPathfinderTest 
 
