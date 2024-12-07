@@ -24,34 +24,32 @@ Myös reitinhakualgoritmeissa on pyritty maksimoimaan primitiivityyppien, tauluk
 
 ## Dijkstra
 
-Aikavaativuus O(n) (log V) - suorituskykytestauksen tulokset (?)
-
-Tilavaativuus?
+TODO: aikavaativuuden analyysi 
 
 ## A-Star (A*)
 
-Aikavaativuus: O(n) - suorituskykytestauksen tulokset?
+TODO: aikavaativuuden analyysi 
 
 ## Jump Point Search (JPS)
 
-Aikavaativuus: Sama kuin A, mutta log pienempi?
+TODO: aikavaativuuden analyysi ja vertaaminen A-Stariing
 
 # Suorituskykyvertailu: luokka PerformanceEvaluator
 
-Algoritmien suorituskykyvertailu on totetettu sitä varten itse kirjoitetulla räätäliluokalla ja sen apuluokilla. Suorituskykyvertailu on kuvattu tarkemmin erillisessa testausdokumentissa. TODO: linkki
+Algoritmien suorituskykyvertailu on totetettu sitä varten itse kirjoitetulla räätäliluokalla ja sen apuluokilla. Suorituskykyvertailu on kuvattu tarkemmin erillisessa [Testiraportissa](https://github.com/Marko-S-O/TKT20010/blob/main/Testiraportti.md).
 
 # Toiminnalliset testit: JUnit
 
-Testit on toteutettu JUnit-kirjastolla. Testaus on kuvattu tarkemmin erillisessä testausdokumentissa TODO: linkki
+Testit on toteutettu JUnit-kirjastolla. Testaus on kuvattu tarkemmin erillisessä [Testiraportissa](https://github.com/Marko-S-O/TKT20010/blob/main/Testiraportti.md)
 
 # Käyttöliittymä
 
-Käyttöliittymä on toteutettu Java Swing- ja AWD-kirjastolla ja kartan renderöinnin vaatima pikseligrafiikka Java2D-kirjastolla.
+Käyttöliittymä on toteutettu Java Swing- ja AWD-kirjastolla ja kartan renderöinnin vaatima pikseligrafiikka Java2D-kirjastolla. Käyttöliittymä on pelkästään toteutusaikainen työkalu ja lopputuotokset tuotetaan ajamalla ohjelmia suoraan komentoriviltä.
 
 # Laajojen kielimallien (LLM) käyttö:
 
 Laajoja kielimalleja on käytetty seuraaviin tarkoituksiin:
-- Toteutusvälineiden valinta: pyydetty vertailutietoa tällä hetkellä käytössä olevista Java-alueen toteutusvälineistä kuten Java- ja JDK-versiot, grafiikkakirjastot, testauskirjastot, projektin koostaminen, VSCode pluginit, UML-työkalu 
-- Ympäristön konfiguroinnin apu: VSCode Java-kehitysympäristön luominen, Maven
-- Tiedonhaku: haettu viitteitä tieteellisiin artikkeleihin ja niitä selittäviin sivustoihin
-- Selittäminen: lähdemateriaalin vaikeampien käsitteiden ja konseptien selittäminen luonnollisella kielellä
+-   Toteutusvälineiden valinta: pyydetty vertailutietoa tällä hetkellä käytössä olevista Java-alueen toteutusvälineistä kuten Java- ja JDK-versiot, grafiikkakirjastot, testauskirjastot, projektin koostaminen, VSCode pluginit, UML-työkalu 
+-   Toteutusympäristön konfiguroinnin apu: VSCode Java-kehitysympäristön luominen, Maven
+-   Tiedonhaku: haettu viitteitä tieteellisiin artikkeleihin ja niitä selittäviin sivustoihin
+-   Selittäminen: lähdemateriaalin vaikeampien käsitteiden ja konseptien selittäminen luonnollisella kielellä
