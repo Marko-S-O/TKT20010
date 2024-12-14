@@ -5,10 +5,12 @@
     -   Tehty uudelleen suorituskykytestaus ja päivitetty testiraportti
 -   Peer review 2 tehty
 -   Käyttöohjeesta ja toteutusdokumentista tehty ensimmäiset versiot
+-   Tutkin Java Flight Recorderilla JPS:n CPU-ajan käyttöä. Se arvioi, että metodi jump vie n. 95% CPU-ajasta, joten jos siitä löytyy optimoitavaa, se varmaan parantaisi tuloksia.
+    -   Optimointikandidaatteja voisi olla Node-olioiden luominen vasta, kun on luotu hyppypiste ja se palautetaan, tai täysi rekursion purkaminen, jos sen saisi toimimaan.
 
 # Ohjelman edistyminen
 
--   Ohjelmaan korjattu / optimoitu
+-   Ohjelmaa korjattu / optimoitu
 
 # Oppimisreflektio
 
@@ -28,4 +30,4 @@ Seuraavalla viikolla
 
 # Käytetty työaika
 
-n. 10 h
+n. 15 h
