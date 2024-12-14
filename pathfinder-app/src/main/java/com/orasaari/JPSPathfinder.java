@@ -131,7 +131,7 @@ class JPSPathfinder extends Pathfinder {
             int direction = neighbourgs.get(i);
 
             // n ← jump(x, direction(x, n), s, g)
-            JPSNode jumpNode = jump(currentNode, direction, goalX, goalY);
+            JPSNode jumpNode = jump(currentNode.x, currentNode.y, direction, goalX, goalY);
 
             if(jumpNode != null && !handled[jumpNode.x][jumpNode.y]) {
                 jumpNode.movingDirection = direction; // keep the track of the moving direction for neighbour pruning
@@ -150,27 +150,27 @@ class JPSPathfinder extends Pathfinder {
      * Implement the most critical part of JPS: the jump function. The recursive function searches the next
      * jump point according to the rules described in the original paper.
     */
-    private JPSNode jump(JPSNode currentNode, int arrivalDirection, int goalX, int goalY) {
+    private JPSNode jump(int currentX, int currentY, int arrivalDirection, int goalX, int goalY) {
 
         Move move = MapUtils.MOVE_DIRECTIONS[arrivalDirection];
 
         // "n ← step(x, ~d)
         // if n is an obstacle or is outside the grid then return null"
-        if(currentNode==null || map.isBlocked(currentNode.x, currentNode.y) || !map.isTraversable(currentNode.x, currentNode.y, move.directionX, move.directionY)) {
+        if(currentX<0 || currentY<0 || map.isBlocked(currentX, currentY) || !map.isTraversable(currentX, currentY, move.directionX, move.directionY)) {
             return null;
         } 
 
-        int jumpX = currentNode.x + move.directionX;
-        int jumpY = currentNode.y + move.directionY;
+        int jumpX = currentX + move.directionX;
+        int jumpY = currentY + move.directionY;
         int directionX = move.directionX;
         int directionY = move.directionY;
 
-        JPSNode newNode = new JPSNode(jumpX, jumpY);
-        newNode.movingDirection = arrivalDirection;
+        //JPSNode newNode = new JPSNode(jumpX, jumpY);
+        //newNode.movingDirection = arrivalDirection;
 
         // "if n = g then return n"
         if(jumpX == goalX && jumpY == goalY) {
-            return newNode;
+            return new JPSNode(jumpX, jumpY);
         }
 
         // if ∃ n′ ∈ neighbours(n) s.t. n′ is forced then return n
@@ -180,17 +180,17 @@ class JPSPathfinder extends Pathfinder {
             // we only need to check a vertical or horizontal adjacent node towards the moving direction
             if ((map.isBlocked(jumpX + directionX, jumpY) && map.isTraversable(jumpX, jumpY, 0, directionY))  || 
                 (map.isBlocked(jumpX, jumpY + directionY) && map.isTraversable(jumpX, jumpY, directionX, 0)))
-                return newNode;
+                return new JPSNode(jumpX, jumpY);
         } else if (directionX != 0) { // Horizontal move
             // We are applying strict cornering rules here: both adjacent nodes must be free to allow diagonal move.            
             // This implies that we need to allow 90 degree turns after a blocking node as well when moving horizontally or vertically.
-            if((map.isBlocked(currentNode.x, jumpY + 1) && map.isTraversable(jumpX, jumpY, 0, 1 )) ||                 
-               (map.isBlocked(currentNode.x, jumpY - 1) && map.isTraversable(jumpX, jumpY, 0, -1)))            
-                return newNode;                
+            if((map.isBlocked(currentX, jumpY + 1) && map.isTraversable(jumpX, jumpY, 0, 1 )) ||                 
+               (map.isBlocked(currentX, jumpY - 1) && map.isTraversable(jumpX, jumpY, 0, -1)))            
+                return new JPSNode(jumpX, jumpY);                
         } else { // Vertical move
-            if((map.isBlocked(currentNode.x + 1, currentNode.y) && map.isTraversable(jumpX, jumpY, 1, 0 )) ||                 
-               (map.isBlocked(currentNode.x - 1, currentNode.y) && map.isTraversable(jumpX, jumpY, -1, 0)))             
-                return newNode;                
+            if((map.isBlocked(currentX + 1, currentY) && map.isTraversable(jumpX, jumpY, 1, 0 )) ||                 
+               (map.isBlocked(currentX - 1, currentY) && map.isTraversable(jumpX, jumpY, -1, 0)))             
+                return new JPSNode(jumpX, jumpY);                
         }   
 
         // "if ~d is diagonal then for all i ∈ {1, 2} do if jump(n, ~di, s, g) is not null then return n"
@@ -198,14 +198,14 @@ class JPSPathfinder extends Pathfinder {
         if(directionX != 0 && directionY != 0) {
             int verticalOnlyDirection = MapUtils.VERTICAL_ONLY_COMPONENT[arrivalDirection]; // map diagonal path to its vertical component only direction
             int horizontalOnlyDirection = MapUtils.HORIZONTAL_ONLY_COMPONENT[arrivalDirection]; // map diagonal path to its horizontal component only direction
-            if(jump(newNode, verticalOnlyDirection, goalX, goalY) != null || jump(newNode, horizontalOnlyDirection, goalX, goalY) != null) {
-                return newNode;
+            if(jump(jumpX, jumpY, verticalOnlyDirection, goalX, goalY) != null || jump(jumpX, jumpY, horizontalOnlyDirection, goalX, goalY) != null) {
+                return new JPSNode(jumpX, jumpY);
             }
         }
 
         // "return jump(n, ~d, s, g)""
         // If there was no blocker or forced neighbour, continue the jump recursively.
-        return jump(newNode, arrivalDirection, goalX, goalY);
+        return jump(jumpX, jumpY, arrivalDirection, goalX, goalY);
     }
 
     /**
