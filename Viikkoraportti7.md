@@ -16,6 +16,7 @@
 
 # Haasteet ja avoimet kysymykset
 
+-   Yliopiston käyttäjätunnukseni ei toimi tuntemattomasta syystä. Tämän vuoksi en voinut ilmoittautua demoon. Yritän maanantaina aamupäivällä saada sen taas auki heldeskin avulla.
 -   Mitä ohjelmassa ja dokumenteissa vielä tarvitsee tehdä hyväksyttävään suoritukseen?
 
 # Jatkosuunnitelma
