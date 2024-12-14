@@ -19,9 +19,6 @@ public class JPSNode extends Node {
     /** If true, a node is not a true path node but a pixel on the grid passed by a JPS jump. Needed for visualization purposes. */
     boolean jumpPassthrough = false;
 
-    /** Moving direction to the node in pathfinding (JPS). */
-    int movingDirection;
-
     /* 
      * Init.
      * 
