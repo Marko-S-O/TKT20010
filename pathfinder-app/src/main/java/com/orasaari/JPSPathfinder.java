@@ -15,8 +15,7 @@ class JPSPathfinder extends Pathfinder {
     // some data structures kept in instance level for convienience
     private GridMap map;
     boolean[][] handled;
-    double[][] distances;
-    PriorityQueue<Node> openList;
+    PriorityQueue<JPSNode> openList;
 
     /**
      * "neighbours(x) ← prune(x, neighbours(x))"
@@ -35,7 +34,7 @@ class JPSPathfinder extends Pathfinder {
      * 
      * @return  successors          List of prunded neighbours that needs to be evaluated to extend the path.
      */
-    private List<Integer> pruneNeighbours(Node node) {
+    private List<Integer> pruneNeighbours(JPSNode node) {
 
         List<Integer> neighbours = new ArrayList<Integer>(8);
 
@@ -121,7 +120,7 @@ class JPSPathfinder extends Pathfinder {
      * 
      * Implement the part of the algorithm that is labelled as "Identify Successors" in the original paper. 
     */
-    private void identifySuccessors(Node currentNode, int goalX, int goalY) {
+    private void identifySuccessors(JPSNode currentNode, int goalX, int goalY) {
 
         // successors(x) ← ∅        
         // neighbours(x) ← prune(x, neighbours(x))
@@ -132,14 +131,13 @@ class JPSPathfinder extends Pathfinder {
             int direction = neighbourgs.get(i);
 
             // n ← jump(x, direction(x, n), s, g)
-            Node jumpNode = jump(currentNode, direction, goalX, goalY);
+            JPSNode jumpNode = jump(currentNode, direction, goalX, goalY);
 
             if(jumpNode != null && !handled[jumpNode.x][jumpNode.y]) {
                 jumpNode.movingDirection = direction; // keep the track of the moving direction for neighbour pruning
-                jumpNode.previousNode = currentNode; 
-                double distanceToJumpNode = distances[currentNode.x][currentNode.y] + octileDistance(currentNode.x, currentNode.y, jumpNode.x, jumpNode.y);
-                distances[jumpNode.x][jumpNode.y] = distanceToJumpNode;
-                jumpNode.priority = distanceToJumpNode + octileDistance(jumpNode.x, jumpNode.y, goalX, goalY);
+                jumpNode.previousNode = currentNode;       
+                jumpNode.distanceFromStart = currentNode.distanceFromStart + octileDistance(currentNode.x, currentNode.y, jumpNode.x, jumpNode.y);
+                jumpNode.priority = jumpNode.distanceFromStart + octileDistance(jumpNode.x, jumpNode.y, goalX, goalY);
                 openList.add(jumpNode);    
             }
         }
@@ -152,7 +150,7 @@ class JPSPathfinder extends Pathfinder {
      * Implement the most critical part of JPS: the jump function. The recursive function searches the next
      * jump point according to the rules described in the original paper.
     */
-    private Node jump(Node currentNode, int arrivalDirection, int goalX, int goalY) {
+    private JPSNode jump(JPSNode currentNode, int arrivalDirection, int goalX, int goalY) {
 
         Move move = MapUtils.MOVE_DIRECTIONS[arrivalDirection];
 
@@ -167,7 +165,7 @@ class JPSPathfinder extends Pathfinder {
         int directionX = move.directionX;
         int directionY = move.directionY;
 
-        Node newNode = new Node(jumpX, jumpY);
+        JPSNode newNode = new JPSNode(jumpX, jumpY);
         newNode.movingDirection = arrivalDirection;
 
         // "if n = g then return n"
@@ -221,40 +219,39 @@ class JPSPathfinder extends Pathfinder {
         long startTime = System.currentTimeMillis();
         this.map = map;
         this.handled = new boolean[map.getWidth()][map.getHeight()];
-        distances = new double[map.getWidth()][map.getHeight()];
-        //Node[][] nodes = new Node[map.getWidth()][map.getHeight()];
-        openList = new PriorityQueue<Node>();
+        openList = new PriorityHeap();
 
         // Initialize the priority heap (open list) with the starting node
-        Node startNode = new Node(startX, startY);
-        startNode.priority = octileDistance(startX, startY, goalX, goalY);
+        JPSNode startNode = new JPSNode(startX, startY);
+        startNode.distanceFromStart = 0;
+        startNode.priority = octileDistance(startX, startY, goalX, goalY); 
         startNode.movingDirection = -1; // -1 = no direction, handle all neighbours
         openList.add(startNode);    
-        //nodes[startNode.x][startNode.y] = startNode;     
 
         // Run the pathfinding
         int evaluatedNodes = 0;   
-        Node node = null;
+        JPSNode node = null;
         boolean goalFound = false;
         while(!openList.isEmpty()) {
+            
             node = openList.poll();
-
             if(handled[node.x][node.y]) {
                 continue;
             } else {
                 handled[node.x][node.y] = true;
                 evaluatedNodes++;
             }
-            
+
             if(node.x==goalX && node.y==goalY) {
                 goalFound = true;
                 break; 
             }
+
             identifySuccessors(node, goalX, goalY);
         }
 
         // Iteration finished, collect results and return
-        PathfindingResult result = collectResults(node, startTime, evaluatedNodes, MapUtils.ALGORITHM_JPS, goalFound, distances[node.x][node.y]);
+        PathfindingResult result = collectResults(node, startTime, evaluatedNodes, MapUtils.ALGORITHM_JPS, goalFound, node.distanceFromStart);
         return result;
     }  
 }
