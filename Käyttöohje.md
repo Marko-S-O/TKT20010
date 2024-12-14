@@ -21,17 +21,17 @@ Ohjelman ajaminen
 
 Reitinhakualgoritmien luokat ovat
 
--   com.orasaari.DijkstraPathfinder
--   com.orasaari.AStarPathfinder
--   com.orasaari.JPSPathfinder
+-   *com.orasaari.DijkstraPathfinder*
+-   *com.orasaari.AStarPathfinder*
+-   *com.orasaari.JPSPathfinder*
 
 Reitinhaku kaikilla algoritmeilla tapahtuu yhdenmukaisella rajapinnalla, joka on määritelty yliluokassa Pathfinder:
 
--   findPath(GridMap map, int startX , int startY, int goalX, int goalY);
+-   *findPath(GridMap map, int startX , int startY, int goalX, int goalY)*
 
 Rajapinnan parametrin map kartan pitää olla valmiiksi ladattu, mikä tapahtuu luomalla kartta konstruktorilla
 
--   GridMap(String filename)
+-   *GridMap(String filename)*
 
 # Käyttöliittymätoiminnot
 
@@ -44,11 +44,11 @@ Käyttöliittymä käynnistetään suorittamalla luokka PathfinderUI. Käyttöli
 
 Reitinhaku tapahtuu seuraavasti:
 
-1.  Klikkaa "Select Map File" valitaksesi karttatiedoston levyltä. Tiedoston tulee olla Moving AI Labin .map -formaatissa.
-2.  Valittuasi karttatiedoston klikkaa Load Map. Käyttöliittymä visualisoi kartan.
-3.  Kirjoita reitinhaun alku- ja maalipisteiden koordinaatit kenttiin Start X, Y ja Finish X, Y.
-4.  Valitse käytettävät algoritmit 1-3 kpl valintalaatikoista "Dijkstra", "A-Star" ja "JPS".
-5.  Klikkaa painiketta "Find Path". Käyttöliittymä käynnistää reitinhaun ja visualisoi eri algoritmien reitit eri väreillä. JPS:n hypyt visualisoidaan myös omalla värillään.
+1.  Klikkaa *Select Map File* valitaksesi karttatiedoston levyltä. Tiedoston tulee olla Moving AI Labin .map -formaatissa.
+2.  Valittuasi karttatiedoston klikkaa painiketta *Load Map*. Käyttöliittymä visualisoi kartan.
+3.  Kirjoita reitinhaun alku- ja maalipisteiden koordinaatit kenttiin *Start X, Y* ja *Finish X, Y*.
+4.  Valitse käytettävät algoritmit 1-3 kpl valintalaatikoista *Dijkstra*, *A-Star* ja *JPS*.
+5.  Klikkaa painiketta *Find Path*. Käyttöliittymä käynnistää reitinhaun ja visualisoi eri algoritmien reitit eri väreillä. JPS:n hypyt visualisoidaan myös omalla värillään.
 
 Huomioitavaa: käyttöliittymä on tarkoitettu pelkästään toteutuksen apuvälineeksi ja siinä on rajoitetut tarkistukset virhesyötteille.
 
@@ -57,13 +57,13 @@ Huomioitavaa: käyttöliittymä on tarkoitettu pelkästään toteutuksen apuväl
 Tehokkuusvertailu voidaan ajaa myös käyttöliittymällä. Tämä tapahtuu seuraavasti:
 
 1.  Tallenna haluamasi skenaariot esim. tekstieditorilla skenaariotiedostoon Moving AI Labin skenaarioformaatissa.
-2.  Klikkaa painiketta "Select Scenario File" valitaksesi skenaariotiedoston levyltä.
-3.  Kirjoita haluttu iteraatiomäärä per skenaario ja algoritmi kenttään "Iterations".
-4.  Klikkaa painiketta "Run Performance Evaluation" tehokkuusvertailun suorittamiseksi. Riippuen skenaarioista ja iteraatioiden määrästä tämä voi kestää pidempäänkin.
+2.  Klikkaa painiketta *Select Scenario File* valitaksesi skenaariotiedoston levyltä.
+3.  Kirjoita haluttu iteraatiomäärä per skenaario ja algoritmi kenttään *Iterations.*
+4.  Klikkaa painiketta *Run Performance Evaluation* tehokkuusvertailun suorittamiseksi. Riippuen skenaarioista ja iteraatioiden määrästä tämä voi kestää pidempäänkin.
 5.  Kun evaluaatio on ajettu, ohjelma avaa dialogin, jossa näytetään tulosten yhteenveto.
-6.  Dialogin painikkeella "Save to CSV File" tulokset on mahdollista tallentaa CVS-tiedostoihin. Tiedostot luodaan hakemistoon, josta ohjelma on käynnistetty. Tiedostonimet ovat
--   evaluation_summary.csv: yhteenvetotiedot
--   evaluation_details.csv: tarkat tiedot jokaisesta evaluaatiota varten suoritetusta reitinhausta
+6.  Dialogin painikkeella *Save to CSV File* tulokset on mahdollista tallentaa CVS-tiedostoihin. Tiedostot luodaan hakemistoon, josta ohjelma on käynnistetty. Tiedostonimet ovat:
+-   *evaluation_summary.csv*: yhteenvetotiedot
+-   *evaluation_details.csv*: tarkat tiedot jokaisesta evaluaatiota varten suoritetusta reitinhausta
 
 # Suorituskykyvertailun suorittaminen
 
@@ -78,8 +78,8 @@ Suorituskykyvertailu on mahdollista suorittaa kolmella tavalla:
 Ajaminen komentoriviltä tapahtuu seuraavasti:
 
 1.  Editoi käytettävät skenaariot tiedostoon esim. tekstieditorilla. Tiedostojen tulee olla Moving AI Labin skneaariotiedostojen formaatissa (\*.map.scen)
-2.  Editoi luokan PerformanceEvaluator metodiin main käytettävät algoritmit, iteraatioiden määrä ja tiedostonimi.
-3.  Testien tulokset tallentuvat automaattisesti tiedostoihin evaluation_summary.csv ja evaluation_details.csv, jotka tehdään oletushakemistoon.
+2.  Editoi luokan *PerformanceEvaluator* metodiin main käytettävät algoritmit, iteraatioiden määrä ja tiedostonimi.
+3.  Testien tulokset tallentuvat automaattisesti tiedostoihin *evaluation_summary.csv* ja *evaluation_details.csv*, jotka tehdään oletushakemistoon.
 
 ## Ajaminen JUnit-testinä
 
@@ -91,6 +91,6 @@ Ajaminen tapahtuu seuraavasti
 
 # JUnit-testien ajaminen
 
-Kaikki JUnit-testit suoritetaan Maven-komennolla mvn validate.
+Kaikki JUnit-testit suoritetaan Maven-komennolla *mvn validate*.
 
-Yksittäisen testin saa suoritettua komennolla mvn test -Dtest=[luokan nimi], esim. mvn -Dtest=JPSPathfinderTest
+Yksittäisen testin saa suoritettua komennolla *mvn test -Dtest=[luokan nimi]*, esim. *mvn -Dtest=JPSPathfinderTest*
