@@ -6,18 +6,8 @@ package com.orasaari;
 */
 public class JPSNode extends Node {
 
-
-    /** Information if the node has been handled. */
-    boolean handled = false;
-
     /** Distance from the start node on the evaluated route. */
     double distanceFromStart = Double.MAX_VALUE;        
-
-    /** Priority in the queue for the node (distanceFromStart + heuristic) */
-    double priority;
-
-    /** If true, a node is not a true path node but a pixel on the grid passed by a JPS jump. Needed for visualization purposes. */
-    boolean jumpPassthrough = false;
 
     /* 
      * Init.

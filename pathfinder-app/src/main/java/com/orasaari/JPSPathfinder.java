@@ -219,7 +219,7 @@ class JPSPathfinder extends Pathfinder {
         long startTime = System.currentTimeMillis();
         this.map = map;
         this.handled = new boolean[map.getWidth()][map.getHeight()];
-        openList = new PriorityHeap();
+        openList = new PriorityQueue<JPSNode>();
 
         // Initialize the priority heap (open list) with the starting node
         JPSNode startNode = new JPSNode(startX, startY);
