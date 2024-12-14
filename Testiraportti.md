@@ -95,8 +95,8 @@ Testien toteutuskoodi löytyy [GitHubin hakemistosta](https://github.com/Marko-S
 
 Tarkat testitulokset ovat hakemistossa [TestResults](https://github.com/Marko-S-O/TKT20010/tree/main/TestResults) tiedostoissa evaluation_details.csv ja evaluation_summary.csv. Alla yhteenveto. Tuloksista on helppo havaita, että kaupunkikartoilla JPS on täysin ylivoimainen.
 
-| **Algoritmi** | **Evalu-aatiot** | **Maali löytyi** | **Oikea reitin pituus** | **Aika yhteensä (ms)** | **Keskim. aika / reitinhaku** | **Keskim. solmuja reitillä** | **Keskim. avattuja solmuja** |
-|---------------|------------------|------------------|-------------------------|------------------------|-------------------------------|------------------------------|------------------------------|
-| Dijkstra      | 2700             | 2700             | 2700                    | 336021                 | 124                           | 1192                         | 784871                       |
-| A-Star        | 2700             | 2700             | 2700                    | 232686                 | 86                            | 1192                         | 242253                       |
-| JPS           | 2700             | 2700             | 2700                    | 52225                  | 19                            | 148                          | 1452                         |
+| **Algoritmi** | **Evalu-aatiot** | **Maali löytyi** | **Oikea reitin pituus** | **Keskim. aika / reitinhaku** | **Keskim. solmuja reitillä** | **Keskim. avattuja solmuja** |
+|---------------|------------------|------------------|-------------------------|-------------------------------|------------------------------|------------------------------|
+| Dijkstra      | 2700             | 2700             | 2700                    | 93                            | 1192                         | 784872                       |
+| A-Star        | 2700             | 2700             | 2700                    | 44                            | 1192                         | 242140                       |
+| JPS           | 2700             | 2700             | 2700                    | 14                            | 150                          | 1331                         |
