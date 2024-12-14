@@ -2,6 +2,7 @@ package com.orasaari;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.PriorityQueue;
 
 /**
  * Implementation of the JPS algorith.  
@@ -13,8 +14,9 @@ class JPSPathfinder extends Pathfinder {
 
     // some data structures kept in instance level for convienience
     private GridMap map;
-    boolean[][] closedNodes;
-    PriorityHeap openList;
+    boolean[][] handled;
+    double[][] distances;
+    PriorityQueue<Node> openList;
 
     /**
      * "neighbours(x) ← prune(x, neighbours(x))"
@@ -132,12 +134,12 @@ class JPSPathfinder extends Pathfinder {
             // n ← jump(x, direction(x, n), s, g)
             Node jumpNode = jump(currentNode, direction, goalX, goalY);
 
-            if(jumpNode != null && !closedNodes[jumpNode.x][jumpNode.y]) {
+            if(jumpNode != null && !handled[jumpNode.x][jumpNode.y]) {
                 jumpNode.movingDirection = direction; // keep the track of the moving direction for neighbour pruning
                 jumpNode.previousNode = currentNode; 
-                jumpNode.distanceFromStart = currentNode.distanceFromStart + octileDistance(currentNode.x, currentNode.y, jumpNode.x, jumpNode.y);
-                jumpNode.heuristic = octileDistance(jumpNode.x, jumpNode.y, goalX, goalY);
-                jumpNode.priority = jumpNode.distanceFromStart + jumpNode.heuristic;
+                double distanceToJumpNode = distances[currentNode.x][currentNode.y] + octileDistance(currentNode.x, currentNode.y, jumpNode.x, jumpNode.y);
+                distances[jumpNode.x][jumpNode.y] = distanceToJumpNode;
+                jumpNode.priority = distanceToJumpNode + octileDistance(jumpNode.x, jumpNode.y, goalX, goalY);
                 openList.add(jumpNode);    
             }
         }
@@ -218,18 +220,17 @@ class JPSPathfinder extends Pathfinder {
         // Initialize the data structures
         long startTime = System.currentTimeMillis();
         this.map = map;
-        this.closedNodes = new boolean[map.getWidth()][map.getHeight()];
-        Node[][] nodes = new Node[map.getWidth()][map.getHeight()];
-        openList = new PriorityHeap();
+        this.handled = new boolean[map.getWidth()][map.getHeight()];
+        distances = new double[map.getWidth()][map.getHeight()];
+        //Node[][] nodes = new Node[map.getWidth()][map.getHeight()];
+        openList = new PriorityQueue<Node>();
 
         // Initialize the priority heap (open list) with the starting node
         Node startNode = new Node(startX, startY);
-        startNode.distanceFromStart = 0;
-        startNode.heuristic = octileDistance(startX, startY, goalX, goalY); 
-        startNode.priority = startNode.heuristic;
+        startNode.priority = octileDistance(startX, startY, goalX, goalY);
         startNode.movingDirection = -1; // -1 = no direction, handle all neighbours
         openList.add(startNode);    
-        nodes[startNode.x][startNode.y] = startNode;     
+        //nodes[startNode.x][startNode.y] = startNode;     
 
         // Run the pathfinding
         int evaluatedNodes = 0;   
@@ -237,17 +238,23 @@ class JPSPathfinder extends Pathfinder {
         boolean goalFound = false;
         while(!openList.isEmpty()) {
             node = openList.poll();
-            evaluatedNodes++;
+
+            if(handled[node.x][node.y]) {
+                continue;
+            } else {
+                handled[node.x][node.y] = true;
+                evaluatedNodes++;
+            }
+            
             if(node.x==goalX && node.y==goalY) {
                 goalFound = true;
                 break; 
             }
-            closedNodes[node.x][node.y] = true;
             identifySuccessors(node, goalX, goalY);
         }
 
         // Iteration finished, collect results and return
-        PathfindingResult result = collectResults(node, startTime, evaluatedNodes, MapUtils.ALGORITHM_JPS, goalFound);
+        PathfindingResult result = collectResults(node, startTime, evaluatedNodes, MapUtils.ALGORITHM_JPS, goalFound, distances[node.x][node.y]);
         return result;
     }  
 }

@@ -43,7 +43,7 @@ abstract class Pathfinder {
      * 
      * @return  Collected results to be used by UI and performance evaluation.
      */
-    static PathfindingResult collectResults(Node goalNode, long startTime, int evaluatedNodes, int algorithm, boolean success) {
+    static PathfindingResult collectResults(Node goalNode, long startTime, int evaluatedNodes, int algorithm, boolean success, double distance) {
 
         long finishTime = System.currentTimeMillis();
         PathfindingResult result = new PathfindingResult();
@@ -51,7 +51,6 @@ abstract class Pathfinder {
         List<Node> path = new ArrayList<Node>();
         path.add(goalNode);
         int numOfPathNodes = 1;
-        double distance = goalNode.distanceFromStart;
         Node nextNode = goalNode;
         Node previousNode = goalNode.previousNode;
 

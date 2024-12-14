@@ -34,4 +34,8 @@ public class PathfindingResult {
     /** Distance between start and and goal (or last evaluated node if goal was not found) */
     double distance;
 
+    public String toString() {
+        return goalFound + "::" + distance;
+    }
+
 }

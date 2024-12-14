@@ -14,7 +14,7 @@ class PerformanceEvaluationResults {
     int[] success = new int[3];
     int[] correctDistance = new int[3];
     int[] failures = new int[3];
-    int[] evaluatedNodes = new int[3];
+    long[] evaluatedNodes = new long[3];
     int[] pathNodes = new int[3];
     ArrayList<PerformanceEvaluation> evaluations = new ArrayList<PerformanceEvaluation>(8100);
 

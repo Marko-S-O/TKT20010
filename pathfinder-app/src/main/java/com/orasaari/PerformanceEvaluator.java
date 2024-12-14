@@ -113,7 +113,7 @@ public class PerformanceEvaluator {
      * 
      * @return  composed results of evaluations
     */
-    private PerformanceEvaluationResults collectEvaluateResults(List<PerformanceEvaluation> evaluationList) {
+    private PerformanceEvaluationResults collectEvaluationResults(List<PerformanceEvaluation> evaluationList) {
         PerformanceEvaluationResults performanceResults = new PerformanceEvaluationResults();
         for(int i=0; i<evaluationList.size(); i++) {
             PerformanceEvaluation evaluation = evaluationList.get(i);
@@ -159,7 +159,7 @@ public class PerformanceEvaluator {
             }
         }
 
-        PerformanceEvaluationResults performanceResults = collectEvaluateResults(evaluationList);
+        PerformanceEvaluationResults performanceResults = collectEvaluationResults(evaluationList);
         return performanceResults;
     }
 
