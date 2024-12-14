@@ -20,24 +20,24 @@ public class TestUtils {
         Node goal = new Node(1000, 500);
         Node previeousNode = start;
         List<Node> path = new ArrayList<Node>();
-        double distance = 0;
+        //double distance = 0;
 
         // Diagonal move (5,5) -> (500,500)
         for(int i=6; i<=500; i++) {
-            distance += MapUtils.SQRT2;
+            //distance += MapUtils.SQRT2;
             Node node = new Node(i, i);
             node.previousNode = previeousNode;
-            node.distanceFromStart = distance;
+            //node.distanceFromStart = distance;
             path.add(node);
             previeousNode = node;
         }
 
         // Horizontal move (500,500) -> (1000,500)
         for(int i=501; i<=1000; i++) {
-            distance += 1;      
+            //distance += 1;      
             Node node = new Node(i, 500);
             node.previousNode = previeousNode;
-            node.distanceFromStart = distance;
+            //node.distanceFromStart = distance;
             path.add(node);
             previeousNode = node;
         }
