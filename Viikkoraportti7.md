@@ -12,7 +12,7 @@
 
 # Oppimisreflektio
 
--   Läpikäytyjen asioiden kautta Java-koodaamiseen kiinni pääseminen vuosien tauon jälkeen on varmasti hyödyllistä.
+-   Läpikäytyjen asioiden kautta Java-koodaamiseen kiinni pääsemiseksi vuosien tauon jälkeen iterointi ohjelman kanssa on varmasti hyödyksi
 
 # Haasteet ja avoimet kysymykset
 
