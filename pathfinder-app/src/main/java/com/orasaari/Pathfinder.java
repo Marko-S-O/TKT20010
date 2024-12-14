@@ -25,10 +25,11 @@ abstract class Pathfinder {
      * Calculate octile distance between points (x0, y0) and (x1, y1).
      */
     double octileDistance(int x0, int y0, int x1, int y1) {
-        int deltaX = Math.abs(x0 - x1);
-        int deltaY = Math.abs(y0 - y1);
-        double octileDistance = Math.min(deltaX, deltaY) * MapUtils.SQRT2 + Math.abs(deltaX - deltaY);
-        return octileDistance;
+        int dx = Math.abs(x0 - x1);
+        int dy = Math.abs(y0 - y1);
+        //double octileDistance = Math.min(deltaX, deltaY) * MapUtils.SQRT2 + Math.abs(deltaX - deltaY);
+        double od = Math.max(dx, dy) + MapUtils.SQRT2_1 * Math.min(dx, dy);
+        return od;
     }
 
     /**

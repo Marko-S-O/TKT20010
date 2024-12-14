@@ -6,6 +6,8 @@ package com.orasaari;
 class MapUtils {
 
     static final double SQRT2 = Math.sqrt(2.0);
+    static final double SQRT2_1 = Math.sqrt(2.0) - 1;
+
     static final int ALGORITHM_DIJKSTRA = 0;
     static final int ALGORITHM_ASTAR = 1;
     static final int ALGORITHM_JPS = 2;
