@@ -73,8 +73,8 @@ Huomioitavaa: käyttöliittymä on tarkoitettu pelkästään toteutuksen apuväl
 
 Tehokkuusvertailu voidaan ajaa myös käyttöliittymällä. Tämä tapahtuu seuraavasti:
 
-1.  Tallenna haluamasi skenaariot esim. tekstieditorilla skenaariotiedostoon Moving AI Labin skenaarioformaatissa.
-2.  Klikkaa painiketta *Select Scenario File* valitaksesi skenaariotiedoston levyltä.
+1.  Tallenna haluamasi skenaariot skenaariotiedostoon Moving AI Labin skenaarioformaatissa.
+2.  Klikkaa painiketta *Select Scenario File* valitaksesi kohdassa 1 luotu skenaariotiedoston levyltä.
 3.  Kirjoita haluttu iteraatiomäärä per skenaario ja algoritmi kenttään *Iterations.*
 4.  Klikkaa painiketta *Run Performance Evaluation* tehokkuusvertailun suorittamiseksi. Riippuen skenaarioista ja iteraatioiden määrästä tämä voi kestää pidempäänkin.
 5.  Kun evaluaatio on ajettu, ohjelma avaa dialogin, jossa näytetään tulosten yhteenveto.
