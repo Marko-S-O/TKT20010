@@ -64,16 +64,16 @@ class PerformanceEvaluationResults {
     public String toString() {
         String result = "\nEvaluation Results Summary:";
 
-        if(numberOfEvaluations[MapUtils.ALGORITHM_DIJKSTRA] > 0) {
-            result += algoritmResultString(MapUtils.ALGORITHM_DIJKSTRA, "Dijkstra");    
+        if(numberOfEvaluations[Pathfinder.ALGORITHM_DIJKSTRA] > 0) {
+            result += algoritmResultString(Pathfinder.ALGORITHM_DIJKSTRA, "Dijkstra");    
         } 
 
-        if(numberOfEvaluations[MapUtils.ALGORITHM_ASTAR] > 0) {
-            result += algoritmResultString(MapUtils.ALGORITHM_ASTAR, "A*");
+        if(numberOfEvaluations[Pathfinder.ALGORITHM_ASTAR] > 0) {
+            result += algoritmResultString(Pathfinder.ALGORITHM_ASTAR, "A*");
         }
 
-        if(numberOfEvaluations[MapUtils.ALGORITHM_JPS] > 0) {
-            result += algoritmResultString(MapUtils.ALGORITHM_JPS, "JPS");
+        if(numberOfEvaluations[Pathfinder.ALGORITHM_JPS] > 0) {
+            result += algoritmResultString(Pathfinder.ALGORITHM_JPS, "JPS");
         }
         return result;
     }
@@ -83,7 +83,7 @@ class PerformanceEvaluationResults {
      * 
      */
      private String getSummaryCSVline(int algorithm, String algorithmName) {
-        return MapUtils.ALGORITHM_NAMES[algorithm] + ',' + 
+        return Pathfinder.ALGORITHM_NAMES[algorithm] + ',' + 
             numberOfEvaluations[algorithm] + ',' + 
             success[algorithm] + ',' + 
             correctDistance[algorithm] + ',' + 
@@ -97,12 +97,12 @@ class PerformanceEvaluationResults {
 
         StringBuffer sb = new StringBuffer(500);
         sb.append("Algorith,Evaluations,Success,Correct Distance,Total Time,Average Time,Avg. Path Nodes,Avg. Eval. Nodes\n");        
-        if(numberOfEvaluations[MapUtils.ALGORITHM_DIJKSTRA] > 0) 
-            sb.append(getSummaryCSVline(MapUtils.ALGORITHM_DIJKSTRA, MapUtils.ALGORITHM_NAMES[MapUtils.ALGORITHM_DIJKSTRA]));            
-        if(numberOfEvaluations[MapUtils.ALGORITHM_ASTAR] > 0) 
-            sb.append(getSummaryCSVline(MapUtils.ALGORITHM_ASTAR, MapUtils.ALGORITHM_NAMES[MapUtils.ALGORITHM_ASTAR]));            
-        if(numberOfEvaluations[MapUtils.ALGORITHM_JPS] > 0) 
-            sb.append(getSummaryCSVline(MapUtils.ALGORITHM_JPS, MapUtils.ALGORITHM_NAMES[MapUtils.ALGORITHM_JPS]));            
+        if(numberOfEvaluations[Pathfinder.ALGORITHM_DIJKSTRA] > 0) 
+            sb.append(getSummaryCSVline(Pathfinder.ALGORITHM_DIJKSTRA, Pathfinder.ALGORITHM_NAMES[Pathfinder.ALGORITHM_DIJKSTRA]));            
+        if(numberOfEvaluations[Pathfinder.ALGORITHM_ASTAR] > 0) 
+            sb.append(getSummaryCSVline(Pathfinder.ALGORITHM_ASTAR, Pathfinder.ALGORITHM_NAMES[Pathfinder.ALGORITHM_ASTAR]));            
+        if(numberOfEvaluations[Pathfinder.ALGORITHM_JPS] > 0) 
+            sb.append(getSummaryCSVline(Pathfinder.ALGORITHM_JPS, Pathfinder.ALGORITHM_NAMES[Pathfinder.ALGORITHM_JPS]));            
         return new String(sb);
 
     }

@@ -186,9 +186,9 @@ public class PathfinderUI extends JFrame implements ActionListener {
     private PathfindingResult findPath(int algorith) {
 
         Pathfinder finder;
-        if(algorith == MapUtils.ALGORITHM_DIJKSTRA) {
+        if(algorith == Pathfinder.ALGORITHM_DIJKSTRA) {
             finder = new DijkstraPathfinder();
-        } else if(algorith == MapUtils.ALGORITHM_ASTAR) {
+        } else if(algorith == Pathfinder.ALGORITHM_ASTAR) {
             finder = new AStarPathfinder();
         } else {
             finder = new JPSPathfinder();
@@ -215,19 +215,19 @@ public class PathfinderUI extends JFrame implements ActionListener {
         List<List<Node>> paths = new ArrayList<>(3);
 
         if(cbDijkstra.isSelected()) {
-            PathfindingResult result = findPath(MapUtils.ALGORITHM_DIJKSTRA);
+            PathfindingResult result = findPath(Pathfinder.ALGORITHM_DIJKSTRA);
             pnlResultsDisjkstra.showResult(result);
             paths.add(result.path);
         }
 
         if(cbAstar.isSelected()) {
-            PathfindingResult result = findPath(MapUtils.ALGORITHM_ASTAR);
+            PathfindingResult result = findPath(Pathfinder.ALGORITHM_ASTAR);
             pnlResultsAstar.showResult(result);
             paths.add(result.path);
         }
 
         if(cbJPS.isSelected()) {
-            PathfindingResult result = findPath(MapUtils.ALGORITHM_JPS);
+            PathfindingResult result = findPath(Pathfinder.ALGORITHM_JPS);
             pnlResultsJPS.showResult(result);
             paths.add(result.path);
         }
@@ -246,13 +246,13 @@ public class PathfinderUI extends JFrame implements ActionListener {
 
         List<Integer> algorithms = new ArrayList<>(3);
         if(cbDijkstra.isSelected()) {
-            algorithms.add(MapUtils.ALGORITHM_DIJKSTRA);
+            algorithms.add(Pathfinder.ALGORITHM_DIJKSTRA);
         }
         if(cbAstar.isSelected()) {
-            algorithms.add(MapUtils.ALGORITHM_ASTAR);
+            algorithms.add(Pathfinder.ALGORITHM_ASTAR);
         }
         if(cbJPS.isSelected()) {
-            algorithms.add(MapUtils.ALGORITHM_JPS);
+            algorithms.add(Pathfinder.ALGORITHM_JPS);
         }
 
         PerformanceEvaluationDialog dialog = new PerformanceEvaluationDialog(this);

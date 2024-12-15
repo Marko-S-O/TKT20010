@@ -8,6 +8,11 @@ import java.util.List;
 */
 abstract class Pathfinder {
 
+    static final int ALGORITHM_DIJKSTRA = 0;
+    static final int ALGORITHM_ASTAR = 1;
+    static final int ALGORITHM_JPS = 2;
+    static final String[] ALGORITHM_NAMES = {"Dijkstra", "A-Star", "JPS"};
+
     /**
      * the Pathfinder interface method.
      * 

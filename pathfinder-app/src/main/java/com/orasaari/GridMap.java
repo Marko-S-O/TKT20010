@@ -61,8 +61,8 @@ public class GridMap {
                 for(int j=0; j<height; j++) {
                     if(grid[i][j]) {
                         for(int k=0; k<8; k++) {
-                            int directionX = MapUtils.MOVE_DIRECTIONS[k].directionX;
-                            int directionY = MapUtils.MOVE_DIRECTIONS[k].directionY;
+                            int directionX = Move.MOVE_DIRECTIONS[k].directionX;
+                            int directionY = Move.MOVE_DIRECTIONS[k].directionY;
                             int nextNodeX = i + directionX;
                             int nextNodeY = j + directionY;
                             if(nextNodeX < 0 || nextNodeY < 0 || nextNodeX >= width || nextNodeY >= height) {                               
@@ -171,25 +171,25 @@ public class GridMap {
 
         if(directionX == -1) {
             if(directionY == -1) {
-                return MapUtils.LEFT_UP;
+                return Move.LEFT_UP;
             } else if(directionY == 0) {
-                return MapUtils.LEFT;
+                return Move.LEFT;
             } else {
-                return MapUtils.LEFT_DOWN;
+                return Move.LEFT_DOWN;
             }
         } else if(directionX == 0) {
             if(directionY == -1) {
-                return MapUtils.UP;
+                return Move.UP;
             } else {
-                return MapUtils.DOWN;
+                return Move.DOWN;
             }
         } else if(directionX == 1) {
             if(directionY == -1) {
-                return MapUtils.RIGHT_UP;
+                return Move.RIGHT_UP;
             } else if(directionY == 0) {
-                return MapUtils.RIGHT;
+                return Move.RIGHT;
             } else {
-                return MapUtils.RIGHT_DOWN;
+                return Move.RIGHT_DOWN;
             }
         } else {
             return -1;

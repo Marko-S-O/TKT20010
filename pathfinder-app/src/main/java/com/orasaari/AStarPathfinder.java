@@ -51,9 +51,9 @@ class AStarPathfinder extends Pathfinder {
                     continue;
                 }
 
-                int nextX = node.x + MapUtils.MOVE_DIRECTIONS[i].directionX;
-                int nextY = node.y + MapUtils.MOVE_DIRECTIONS[i].directionY;
-                double distance = distances[node.x][node.y] + MapUtils.WEIGHTS[i];
+                int nextX = node.x + Move.MOVE_DIRECTIONS[i].directionX;
+                int nextY = node.y + Move.MOVE_DIRECTIONS[i].directionY;
+                double distance = distances[node.x][node.y] + Move.EDGE_WEIGHTS[i];
 
                 // Check if we have found a shorter path. If yes, update heap.
                 if(distances[nextX][nextY] == 0.0 || distance < distances[nextX][nextY]) {                    
@@ -71,7 +71,7 @@ class AStarPathfinder extends Pathfinder {
         }
 
         // Iteration finished, collect results and return
-        PathfindingResult result = collectResults(node, startTime, evaluatedNodes, MapUtils.ALGORITHM_ASTAR, goalFound, distances[node.x][node.y]);
+        PathfindingResult result = collectResults(node, startTime, evaluatedNodes, ALGORITHM_ASTAR, goalFound, distances[node.x][node.y]);
         return result;
     }  
 }

@@ -95,9 +95,9 @@ public class PerformanceEvaluator {
         Map<Integer, Pathfinder> map = new HashMap<Integer, Pathfinder>(3);
         for(int i=0; i<algorithms.size(); i++) {
             int algorithm = algorithms.get(i);
-            if(algorithm == MapUtils.ALGORITHM_DIJKSTRA) {
+            if(algorithm == Pathfinder.ALGORITHM_DIJKSTRA) {
                 map.put(algorithm, new DijkstraPathfinder());
-            } else if(algorithm == MapUtils.ALGORITHM_ASTAR) {
+            } else if(algorithm == Pathfinder.ALGORITHM_ASTAR) {
                 map.put(algorithm, new AStarPathfinder());
             } else {
                 map.put(algorithm, new JPSPathfinder());
@@ -171,9 +171,9 @@ public class PerformanceEvaluator {
      */
     public static void main(String[] args) {
         List<Integer> algorithms = new ArrayList<Integer>(3);
-        algorithms.add(MapUtils.ALGORITHM_DIJKSTRA);
-        algorithms.add(MapUtils.ALGORITHM_ASTAR);
-        algorithms.add(MapUtils.ALGORITHM_JPS);
+        algorithms.add(Pathfinder.ALGORITHM_DIJKSTRA);
+        algorithms.add(Pathfinder.ALGORITHM_ASTAR);
+        algorithms.add(Pathfinder.ALGORITHM_JPS);
         PerformanceEvaluator p = new PerformanceEvaluator();
         PerformanceEvaluationResults results = p.runEvaluation(9, MapUtils.SCENARIO_DIRECTORY + "performance-evaluation.scen", algorithms);
         System.out.println(results);
