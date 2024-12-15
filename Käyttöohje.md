@@ -10,16 +10,33 @@ Tässä dokumentissa kuvataan seuraavat toiminnot
 
 # Ohjelman käyttööntto ja ajaminen
 
-Ohjelman saa käyttöön lataamalla GitHubista jar-tiedoston [pathfinder.jar](https://github.com/Marko-S-O/TKT20010/blob/main/pathfinder-app/pathfinder.jar).
+**Ohjelman asentaminen**
 
-Ohjelman ajaminen
+Ohjelman saa käyttöön lataamalla GitHubista jar-tiedoston [pathfinder.jar](https://github.com/Marko-S-O/TKT20010/blob/main/pathfinder-app/pathfinder.jar) haluamaansa paikalliseen hakemistoon.
+
+**Karttojen lataaminen**
+
+Käytetyt kaupunkikartat ja niihin liittyvät skenaariotiedostot saa ladattua Moving AI Labin sivuilta osoitteesta <https://movingai.com/benchmarks/mapf/> .
+
+**Hakemistojen konfigurointi**
+
+Käytetyt hakemistot voi konfiguroida projektin ajohakemistossa olevaan tiedostoon config.properties. Tämä sisältää kaksi hakemistonimeä:
+
+-   MAP_DIRECTORY: hakemisto, jonka käyttöliittymän kartanlatausdialogia avaa karttojen lataamiseksi
+-   SCENARIO_DIRECTORY: kuormitustestauksen skenaariotiedoston hakemisto, käytetään sekä kuormitustestaajassa että käyttöliittymässä
+
+Esimerkkitiedosto [config.properties](https://github.com/Marko-S-O/TKT20010/blob/main/pathfinder-app/config.properties) löytyy GitHubista.
+
+**Ohjelman ajaminen**
+
+Ohjelman ajaminen edellyttää Java-versiota 23 tai uudempaa.
 
 -   Käyttöliittymän saa ajettua komennolla *java -cp pathfinder.jar com.orasaari.PathfinderUI*
 -   Suorituskykytestauksen saa ajettua komenolla *java* *-cp pathfinder.jar com.orasaari.PerformanceEvaluator*
 
 # Reitinhakurajapintojen käyttö
 
-Reitinhakualgoritmien luokat ovat
+Reitinhakualgoritmeja on mahdollista käyttää myös muista ohjelmista. Reitinhakualgoritmien luokat ovat
 
 -   *com.orasaari.DijkstraPathfinder*
 -   *com.orasaari.AStarPathfinder*
@@ -35,12 +52,12 @@ Rajapinnan parametrin map kartan pitää olla valmiiksi ladattu, mikä tapahtuu 
 
 # Käyttöliittymätoiminnot
 
-Käyttöliittymä käynnistetään suorittamalla luokka PathfinderUI. Käyttöliittymällä voidaan
+Käyttöliittymä käynnistetään suorittamalla luokka PathfinderUI (ks. luku *Ohjelman käyttöönotto ja ajaminen*). Käyttöliittymällä voidaan
 
 -   Suorittaa reitinhaku valitulla kartalla, alku- ja loppupisteillä sekä algoritmeilla ja visualisoida tulokset ja reitit
 -   Ajaa algoritmien suorituskykyvertailu valitulla skenaariotiedostolla, algoritmeilla ja iteraatiomäärällä sekä tallentaa tulokset csv-tiedostoihin
 
-![UI image]( https://github.com/Marko-S-O/TKT20010/blob/main/ui.jpg)
+![UI image](https://github.com/Marko-S-O/TKT20010/blob/main/ui.jpg)
 
 Reitinhaku tapahtuu seuraavasti:
 
@@ -77,15 +94,16 @@ Suorituskykyvertailu on mahdollista suorittaa kolmella tavalla:
 
 Ajaminen komentoriviltä tapahtuu seuraavasti:
 
-1.  Editoi käytettävät skenaariot tiedostoon esim. tekstieditorilla. Tiedostojen tulee olla Moving AI Labin skneaariotiedostojen formaatissa (\*.map.scen)
-2.  Editoi luokan *PerformanceEvaluator* metodiin main käytettävät algoritmit, iteraatioiden määrä ja tiedostonimi.
-3.  Testien tulokset tallentuvat automaattisesti tiedostoihin *evaluation_summary.csv* ja *evaluation_details.csv*, jotka tehdään oletushakemistoon.
+1.  Ks. hakemistojen konfigurointi kohdassa *Ohjelman käyttöönotto ja ajaminen.*
+2.  Editoi käytettävät skenaariot *performance-evaluation.scen* esim. tekstieditorilla. Tiedostojen tulee olla Moving AI Labin skneaariotiedostojen formaatissa (\*.map.scen). Esimerkkitiedosto löytyy GitHubista: <https://github.com/Marko-S-O/TKT20010/blob/main/pathfinder-app/data/test/performance-evaluation.scen>
+3.  Jos et halua ajaa kaikkia algoritmeja tai oletusmäärää iteraatioita, editoi luokan *PerformanceEvaluator* main-metodiin käytettävät algoritmit ja iteraatioiden määrä.
+4.  Testien tulokset tallentuvat automaattisesti tiedostoihin *evaluation_summary.csv* ja *evaluation_details.csv*, jotka tehdään oletushakemistoon.
 
 ## Ajaminen JUnit-testinä
 
 Ajaminen tapahtuu seuraavasti
 
-1.  Editoi käytettävät skenaariot tiedostoon performance-evaluation.scen esim. tekstieditorilla. Tiedostojen tulee olla Moving AI Labin skneaariotiedostojen formaatissa (\*.map.scen) ja hakemistossa, johon vakio MapUtils.SCENARIO_DIRECTORY osoittaa.
+1.  Editoi käytettävät skenaariot tiedostoon performance-evaluation.scen. Tiedostojen tulee olla Moving AI Labin skneaariotiedostojen formaatissa (\*.map.scen) ja hakemistossa, johon vakio MapUtils.SCENARIO_DIRECTORY osoittaa.
 2.  Suorita ajo Maven-komennolla mvn test -Dtest=PerformanceEvaluatorTest.
 3.  Testien tulokset tallentuvat automaattisesti tiedostoihin evaluation_summary.csv ja evaluation_details.csv, jotka tehdään maven-projektin juurihakemistoon.
 
