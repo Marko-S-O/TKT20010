@@ -20,7 +20,7 @@
 
 # Haasteet ja avoimet kysymykset
 
--   Yliopiston käyttäjätunnukseni ei toimi tuntemattomasta syystä. Tämän vuoksi en voinut ilmoittautua demoon. Yritän maanantaina aamupäivällä saada sen taas auki heldeskin avulla.
+-   Yliopiston käyttäjätunnukseni ei toimi tuntemattomasta syystä. Tämän vuoksi en voinut ilmoittautua demoon. Yritän maanantaina aamupäivällä saada sen taas auki heldeskin avulla. -\> Edit 15.12.: ongelma ei ollutkaan minun tunnuksessani vaan yliopistolla oli ilmeiseesti laajempi katko. Nyt ilmoittauduttu pe 20.12. demoon.
 -   Mitä ohjelmassa ja dokumenteissa vielä tarvitsee tehdä hyväksyttävään suoritukseen?
 
 # Jatkosuunnitelma
