@@ -101,14 +101,14 @@ Ajaminen komentoriviltä tapahtuu seuraavasti:
 
 ## Ajaminen JUnit-testinä
 
-Ajaminen tapahtuu seuraavasti
+JUnit-testinä ajaminen edellyttää projektin asentamista kehitysympäristöön eikä se toimi jar-tiedostosta. Ajaminen tapahtuu seuraavasti
 
-1.  Editoi käytettävät skenaariot tiedostoon performance-evaluation.scen. Tiedostojen tulee olla Moving AI Labin skneaariotiedostojen formaatissa (\*.map.scen) ja hakemistossa, johon vakio MapUtils.SCENARIO_DIRECTORY osoittaa.
+1.  Editoi käytettävät skenaariot tiedostoon *performance-evaluation.scen*. Tiedostojen tulee olla Moving AI Labin skneaariotiedostojen formaatissa (\*.map.scen) ja hakemistossa, johon vakio MapUtils.SCENARIO_DIRECTORY osoittaa.
 2.  Suorita ajo Maven-komennolla mvn test -Dtest=PerformanceEvaluatorTest.
 3.  Testien tulokset tallentuvat automaattisesti tiedostoihin evaluation_summary.csv ja evaluation_details.csv, jotka tehdään maven-projektin juurihakemistoon.
 
 # JUnit-testien ajaminen
 
-Kaikki JUnit-testit suoritetaan Maven-komennolla *mvn validate*.
+JUnit-testinä ajaminen edellyttää projektin asentamista kehitysympäristöön eivätkä ne toimi jar-tiedostosta. Kaikki JUnit-testit suoritetaan Maven-komennolla *mvn validate*.
 
 Yksittäisen testin saa suoritettua komennolla *mvn test -Dtest=[luokan nimi]*, esim. *mvn -Dtest=JPSPathfinderTest*
