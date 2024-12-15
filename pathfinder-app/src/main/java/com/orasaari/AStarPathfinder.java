@@ -59,11 +59,12 @@ public class AStarPathfinder extends Pathfinder {
                 if(distances[nextX][nextY] == 0.0 || distance < distances[nextX][nextY]) {                    
                     distances[nextX][nextY] = distance;
                     // priority = distance to the node + octile distance to the goal, written open here to optimize performance
-                    double dx = Math.abs(nextX - goalX);
-                    double dy = Math.abs(nextY - goalY);
-                    double od = Math.max(dx, dy) + MapUtils.SQRT2_1 * Math.min(dx, dy);
-                    // double priority = distance + Math.min(Math.abs(nextX - goalX), Math.abs(nextY - goalY)) * MapUtils.SQRT2 + Math.abs(Math.abs(nextX - goalX) - Math.abs(nextY - goalY));
-                    double priority = distance + od;
+                    //double dx = Math.abs(nextX - goalX);
+                    //double dy = Math.abs(nextY - goalY);
+                    //double od = Math.max(dx, dy) + MapUtils.SQRT2_1 * Math.min(dx, dy);
+                    //double priority = distance + od;
+                    double priority = distance + Math.min(Math.abs(nextX - goalX), Math.abs(nextY - goalY)) * MapUtils.SQRT2 + Math.abs(Math.abs(nextX - goalX) - Math.abs(nextY - goalY));
+
                     Node nextNode = new Node(nextX, nextY, priority, node);                   
                     heap.add(nextNode);
                 }                

@@ -137,8 +137,10 @@ public class JPSPathfinder extends Pathfinder {
             if(jumpNode != null && !handled[jumpNode.x][jumpNode.y]) {
                 jumpNode.movingDirection = direction; // keep the track of the moving direction for neighbour pruning
                 jumpNode.previousNode = currentNode;       
-                jumpNode.distanceFromStart = currentNode.distanceFromStart + octileDistance(currentNode.x, currentNode.y, jumpNode.x, jumpNode.y);
-                jumpNode.priority = jumpNode.distanceFromStart + octileDistance(jumpNode.x, jumpNode.y, goalX, goalY);
+                jumpNode.distanceFromStart = currentNode.distanceFromStart + //octileDistance(currentNode.x, currentNode.y, jumpNode.x, jumpNode.y);
+                    Math.min(Math.abs(currentNode.x - jumpNode.x), Math.abs(currentNode.y - jumpNode.y)) * MapUtils.SQRT2 + Math.abs(Math.abs(currentNode.x - jumpNode.x) - Math.abs(currentNode.y - jumpNode.y));
+                jumpNode.priority = jumpNode.distanceFromStart + // octileDistance(jumpNode.x, jumpNode.y, goalX, goalY);
+                    Math.min(Math.abs(jumpNode.x - goalX), Math.abs(jumpNode.y - goalY)) * MapUtils.SQRT2 + Math.abs(Math.abs(jumpNode.x - goalX) - Math.abs(jumpNode.y - goalY));
                 openList.add(jumpNode);    
             }
         }
