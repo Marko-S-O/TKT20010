@@ -22,8 +22,8 @@ Käytetyt kaupunkikartat ja niihin liittyvät skenaariotiedostot saa ladattua Mo
 
 Käytetyt hakemistot voi konfiguroida projektin ajohakemistossa olevaan tiedostoon config.properties. Tämä sisältää kaksi hakemistonimeä:
 
--   MAP_DIRECTORY: hakemisto, jonka käyttöliittymän kartanlatausdialogia avaa karttojen lataamiseksi
--   SCENARIO_DIRECTORY: kuormitustestauksen skenaariotiedoston hakemisto, käytetään sekä kuormitustestaajassa että käyttöliittymässä
+-   MAP_DIRECTORY: karttojen hakemisto, jota käyttävät sekä käyttöliittymä että suorituskykytestaus
+-   SCENARIO_DIRECTORY: kuormitustestauksen skenaariotiedoston hakemisto, käytetään sekä suorituskykytestauksessa että käyttöliittymässä
 
 Esimerkkitiedosto [config.properties](https://github.com/Marko-S-O/TKT20010/blob/main/pathfinder-app/config.properties) löytyy GitHubista.
 
