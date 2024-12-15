@@ -5,7 +5,7 @@ import java.util.PriorityQueue;
 /**
  * Implementation of the basic Dijkstra algorith.
  */
-class DijkstraPathfinder extends Pathfinder {
+public class DijkstraPathfinder extends Pathfinder {
 
     /**
      * Implement the Dijkstra pathfinding.

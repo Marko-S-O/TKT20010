@@ -10,7 +10,7 @@ import java.util.PriorityQueue;
  * For the decription of the algorigthm, see the original paper:
  * @see https://users.cecs.anu.edu.au/~dharabor/data/papers/harabor-grastien-aaai11.pdf
  */
-class JPSPathfinder extends Pathfinder {
+public class JPSPathfinder extends Pathfinder {
 
     // some data structures kept in instance level for convienience
     private GridMap map;

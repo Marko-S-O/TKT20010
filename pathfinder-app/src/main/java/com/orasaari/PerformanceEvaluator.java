@@ -64,7 +64,7 @@ public class PerformanceEvaluator {
 
                 // Maps are taking a lot of heap. Load each map only once and store it in the map map.
                 if(map == null) {
-                    String mapFilename = MapUtils.STREET_MAP_DIRECTORY + fields[1];
+                    String mapFilename = MapUtils.MAP_DIRECTORY + fields[1];
                     map = new GridMap(mapFilename);
                     mapMap.put(fields[1], map);
                 }                 

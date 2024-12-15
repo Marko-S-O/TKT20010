@@ -5,7 +5,7 @@ import java.util.PriorityQueue;
 /**
  * Implementation of the A* pathfinding algorithm.
  */
-class AStarPathfinder extends Pathfinder {
+public class AStarPathfinder extends Pathfinder {
 
     /**
      * Implement the A* pathfinding.

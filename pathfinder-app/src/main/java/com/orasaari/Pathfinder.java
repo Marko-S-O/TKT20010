@@ -6,7 +6,7 @@ import java.util.List;
 /** 
  * A common abstract parent class for pathfinder. Common code is collected to this class.
 */
-abstract class Pathfinder {
+public abstract class Pathfinder {
 
     static final int ALGORITHM_DIJKSTRA = 0;
     static final int ALGORITHM_ASTAR = 1;
