@@ -93,10 +93,10 @@ Testien toteutuskoodi löytyy [GitHubin hakemistosta](https://github.com/Marko-S
 
 ## Testitulokset
 
-Tarkat testitulokset ovat hakemistossa [TestResults](https://github.com/Marko-S-O/TKT20010/tree/main/TestResults) tiedostoissa evaluation_details.csv ja evaluation_summary.csv. Alla yhteenveto. Tuloksista on helppo havaita, että kaupunkikartoilla JPS on täysin ylivoimainen.
+Tarkat testitulokset ovat hakemistossa [TestResults](https://github.com/Marko-S-O/TKT20010/tree/main/TestResults) tiedostoissa evaluation_details.csv ja evaluation_summary.csv. Alla yhteenveto. Tuloksista on helppo havaita, että kaupunkikartoilla JPS on täysin ylivoimainen: se käytti reitin löytämiseen n. 17% A\*:n käyttämästä ajasta.
 
 | **Algoritmi** | **Evalu-aatiot** | **Maali löytyi** | **Oikea reitin pituus** | **Keskim. aika / reitinhaku** | **Keskim. solmuja reitillä** | **Keskim. avattuja solmuja** |
 |---------------|------------------|------------------|-------------------------|-------------------------------|------------------------------|------------------------------|
-| Dijkstra      | 2700             | 2700             | 2700                    | 93                            | 1192                         | 784872                       |
-| A-Star        | 2700             | 2700             | 2700                    | 44                            | 1192                         | 242140                       |
-| JPS           | 2700             | 2700             | 2700                    | 14                            | 150                          | 1331                         |
+| Dijkstra      | 2700             | 2700             | 2700                    | 99                            | 1192                         | 784872                       |
+| A-Star        | 2700             | 2700             | 2700                    | 48                            | 1192                         | 242140                       |
+| JPS           | 2700             | 2700             | 2700                    | 8                             | 148                          | 1327                         |
