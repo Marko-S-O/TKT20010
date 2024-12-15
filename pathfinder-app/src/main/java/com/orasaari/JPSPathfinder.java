@@ -154,58 +154,62 @@ class JPSPathfinder extends Pathfinder {
 
         Move move = MapUtils.MOVE_DIRECTIONS[arrivalDirection];
 
-        // "n ← step(x, ~d)
-        // if n is an obstacle or is outside the grid then return null"
-        if(currentX<0 || currentY<0 || map.isBlocked(currentX, currentY) || !map.isTraversable(currentX, currentY, move.directionX, move.directionY)) {
-            return null;
-        } 
+        while(true) {
+            // "n ← step(x, ~d)
+            // if n is an obstacle or is outside the grid then return null"
+            if(currentX<0 || currentY<0 || map.isBlocked(currentX, currentY) || !map.isTraversable(currentX, currentY, move.directionX, move.directionY)) {
+                return null;
+            } 
 
-        int jumpX = currentX + move.directionX;
-        int jumpY = currentY + move.directionY;
-        int directionX = move.directionX;
-        int directionY = move.directionY;
+            int jumpX = currentX + move.directionX;
+            int jumpY = currentY + move.directionY;
+            int directionX = move.directionX;
+            int directionY = move.directionY;
 
-        //JPSNode newNode = new JPSNode(jumpX, jumpY);
-        //newNode.movingDirection = arrivalDirection;
+            //JPSNode newNode = new JPSNode(jumpX, jumpY);
+            //newNode.movingDirection = arrivalDirection;
 
-        // "if n = g then return n"
-        if(jumpX == goalX && jumpY == goalY) {
-            return new JPSNode(jumpX, jumpY);
-        }
-
-        // if ∃ n′ ∈ neighbours(n) s.t. n′ is forced then return n
-        // Check for forced neighbours to see if we have found a jump point and neet to stop the search for now.
-        if (directionX != 0 && directionY != 0) { // Diagonal move
-            // Like in neigbour pruning, diagonal jump gets simpler with strict cornering rules: 
-            // we only need to check a vertical or horizontal adjacent node towards the moving direction
-            if ((map.isBlocked(jumpX + directionX, jumpY) && map.isTraversable(jumpX, jumpY, 0, directionY))  || 
-                (map.isBlocked(jumpX, jumpY + directionY) && map.isTraversable(jumpX, jumpY, directionX, 0)))
-                return new JPSNode(jumpX, jumpY);
-        } else if (directionX != 0) { // Horizontal move
-            // We are applying strict cornering rules here: both adjacent nodes must be free to allow diagonal move.            
-            // This implies that we need to allow 90 degree turns after a blocking node as well when moving horizontally or vertically.
-            if((map.isBlocked(currentX, jumpY + 1) && map.isTraversable(jumpX, jumpY, 0, 1 )) ||                 
-               (map.isBlocked(currentX, jumpY - 1) && map.isTraversable(jumpX, jumpY, 0, -1)))            
-                return new JPSNode(jumpX, jumpY);                
-        } else { // Vertical move
-            if((map.isBlocked(currentX + 1, currentY) && map.isTraversable(jumpX, jumpY, 1, 0 )) ||                 
-               (map.isBlocked(currentX - 1, currentY) && map.isTraversable(jumpX, jumpY, -1, 0)))             
-                return new JPSNode(jumpX, jumpY);                
-        }   
-
-        // "if ~d is diagonal then for all i ∈ {1, 2} do if jump(n, ~di, s, g) is not null then return n"
-        // When moving diagonally, we need to check if we have horizontal or vertical paths available. If yes, we need to stop jumping and evaluate them as well.
-        if(directionX != 0 && directionY != 0) {
-            int verticalOnlyDirection = MapUtils.VERTICAL_ONLY_COMPONENT[arrivalDirection]; // map diagonal path to its vertical component only direction
-            int horizontalOnlyDirection = MapUtils.HORIZONTAL_ONLY_COMPONENT[arrivalDirection]; // map diagonal path to its horizontal component only direction
-            if(jump(jumpX, jumpY, verticalOnlyDirection, goalX, goalY) != null || jump(jumpX, jumpY, horizontalOnlyDirection, goalX, goalY) != null) {
+            // "if n = g then return n"
+            if(jumpX == goalX && jumpY == goalY) {
                 return new JPSNode(jumpX, jumpY);
             }
-        }
 
-        // "return jump(n, ~d, s, g)""
-        // If there was no blocker or forced neighbour, continue the jump recursively.
-        return jump(jumpX, jumpY, arrivalDirection, goalX, goalY);
+            // if ∃ n′ ∈ neighbours(n) s.t. n′ is forced then return n
+            // Check for forced neighbours to see if we have found a jump point and neet to stop the search for now.
+            if (directionX != 0 && directionY != 0) { // Diagonal move
+                // Like in neigbour pruning, diagonal jump gets simpler with strict cornering rules: 
+                // we only need to check a vertical or horizontal adjacent node towards the moving direction
+                if ((map.isBlocked(jumpX + directionX, jumpY) && map.isTraversable(jumpX, jumpY, 0, directionY))  || 
+                    (map.isBlocked(jumpX, jumpY + directionY) && map.isTraversable(jumpX, jumpY, directionX, 0)))
+                    return new JPSNode(jumpX, jumpY);
+            } else if (directionX != 0) { // Horizontal move
+                // We are applying strict cornering rules here: both adjacent nodes must be free to allow diagonal move.            
+                // This implies that we need to allow 90 degree turns after a blocking node as well when moving horizontally or vertically.
+                if((map.isBlocked(currentX, jumpY + 1) && map.isTraversable(jumpX, jumpY, 0, 1 )) ||                 
+                (map.isBlocked(currentX, jumpY - 1) && map.isTraversable(jumpX, jumpY, 0, -1)))            
+                    return new JPSNode(jumpX, jumpY);                
+            } else { // Vertical move
+                if((map.isBlocked(currentX + 1, currentY) && map.isTraversable(jumpX, jumpY, 1, 0 )) ||                 
+                (map.isBlocked(currentX - 1, currentY) && map.isTraversable(jumpX, jumpY, -1, 0)))             
+                    return new JPSNode(jumpX, jumpY);                
+            }   
+
+            // "if ~d is diagonal then for all i ∈ {1, 2} do if jump(n, ~di, s, g) is not null then return n"
+            // When moving diagonally, we need to check if we have horizontal or vertical paths available. If yes, we need to stop jumping and evaluate them as well.
+            if(directionX != 0 && directionY != 0) {
+                int verticalOnlyDirection = MapUtils.VERTICAL_ONLY_COMPONENT[arrivalDirection]; // map diagonal path to its vertical component only direction
+                int horizontalOnlyDirection = MapUtils.HORIZONTAL_ONLY_COMPONENT[arrivalDirection]; // map diagonal path to its horizontal component only direction
+                if(jump(jumpX, jumpY, verticalOnlyDirection, goalX, goalY) != null || jump(jumpX, jumpY, horizontalOnlyDirection, goalX, goalY) != null) {
+                    return new JPSNode(jumpX, jumpY);
+                }
+            }
+
+            // "return jump(n, ~d, s, g)""
+            // If there was no blocker or forced neighbour, continue the jump recursively.
+            //return jump(jumpX, jumpY, arrivalDirection, goalX, goalY);
+            currentX = jumpX;
+            currentY = jumpY;
+        }
     }
 
     /**
