@@ -18,9 +18,9 @@ public class PerformanceEvaluatorTest {
     @Test
     public void shouldRunPerformanceEvaluationScenariosCorrectly() {
         List<Integer> algorithms = new ArrayList<Integer>(3);
-        algorithms.add(MapUtils.ALGORITHM_DIJKSTRA);
-        algorithms.add(MapUtils.ALGORITHM_ASTAR);
-        algorithms.add(MapUtils.ALGORITHM_JPS);
+        algorithms.add(Pathfinder.ALGORITHM_DIJKSTRA);
+        algorithms.add(Pathfinder.ALGORITHM_ASTAR);
+        algorithms.add(Pathfinder.ALGORITHM_JPS);
         PerformanceEvaluator p = new PerformanceEvaluator();
         PerformanceEvaluationResults results = p.runEvaluation(9, MapUtils.SCENARIO_DIRECTORY + "performance-evaluation.scen", algorithms);
         System.out.println(results);

@@ -8,8 +8,6 @@ import java.util.List;
 */
 public class TestUtils {
     
-    static final String TEST_DATA_DIRECTORY = "c:/users/ext/TKT20010/pathfinder-app/src/test/resources/";
-
     /**
      * Create a testing path from (5,5) to (1000,500).
      * 
@@ -50,7 +48,7 @@ public class TestUtils {
      * Test a single scenario in a Moving AI Lab city map.
      */
     static boolean testInCityMap(Pathfinder pathfinder, String mapFilename, int startX, int startY, int goalX, int goalY, double distance) {
-        GridMap map = new GridMap(MapUtils.MAP_DIRECTORY + "street-map\\" + mapFilename);
+        GridMap map = new GridMap(MapUtils.MAP_DIRECTORY + mapFilename);
         PathfindingResult result = pathfinder.findPath(map, startX, startY, goalX, goalY);
         boolean foundPath = result.goalFound;
         boolean correctDistance = Math.abs(result.distance - distance) < 0.01;
