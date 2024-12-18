@@ -34,9 +34,9 @@ Käytännön testauksessa saavutettiin kuitenkin selkeä ero Dijkstraan: suoritu
 
 ## Jump Point Search (JPS)
 
-JPS:n teoreettinen pahimman tapauksen aikavaativuus sille sopimattomalla kartalla (esim. monimutkainen sokkelo) on sama kuin Dijkstran ja A\*:n.
+JPS:n teoreettinen aikavaativuus pätevällä heuristiikalla on O (E + V). Käytännössä A vaatii kartan, jossa on suuria tyhjiä tiloja ollakseen tehokas.
 
-Käytännössä kaupunkikartoilla kuitenkin saavutettiin merkittävästi nopeampia suoritusaikoja: keskimäärinen ratkaisuaika suorituskykytestauksessa oli 15% Dijkstrasta ja 32% A\*:sta.
+Käytännössä kaupunkikartoilla kuitenkin saavutettiin merkittävästi nopeampia suoritusaikoja: keskimäärinen ratkaisuaika suorituskykytestauksessa oli 8% Dijkstrasta ja 17% A\*:sta.
 
 # Suorituskykyvertailu: luokka PerformanceEvaluator
 
