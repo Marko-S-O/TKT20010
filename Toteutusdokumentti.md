@@ -38,6 +38,11 @@ JPS:n teoreettinen aikavaativuus pätevällä heuristiikalla on O (E + V). Käyt
 
 Käytännössä kaupunkikartoilla kuitenkin saavutettiin merkittävästi nopeampia suoritusaikoja: keskimäärinen ratkaisuaika suorituskykytestauksessa oli 8% Dijkstrasta ja 17% A\*:sta.
 
+JPS:ään tehtiin seuraavat optimoinnit suorituskykytestauksen ja profiloinnin perusteella, mikä n. puolitti suoritusajan:
+
+-   Solmun luonti hypyn yhteydessä tehdään vasta, kun hyppypiste on löydetty, mihin asti toimitaan pelkkien koordinaattien ja suuntavektoreiden avulla.
+-   Rekursion poisto ja korvaaminen while-silmukalla.
+
 # Suorituskykyvertailu: luokka PerformanceEvaluator
 
 Algoritmien suorituskykyvertailu on toteutettu sitä varten itse kirjoitetulla räätäliluokalla ja sen apuluokilla. Suorituskykyvertailu on kuvattu tarkemmin erillisessä [Testiraportissa](https://github.com/Marko-S-O/TKT20010/blob/main/Testiraportti.md).
