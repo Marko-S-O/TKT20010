@@ -36,7 +36,7 @@ Profilointi ei täysin selvittänyt, miksi käsiteltyjen solmujen määrällä j
 
 ## Jump Point Search (JPS)
 
-JPS:n teoreettinen aikavaativuus pätevällä heuristiikalla on O (E + V). Käytännössä A vaatii kartan, jossa on suuria tyhjiä tiloja ollakseen tehokas.
+Alkuperäisessä tieteellisessä artikkelissa ei ollut matemaattista analyysiä JPS:n teoreettisesta pahimman tapauksen aikavaatimuksesta, eikä sellaista löytynyt muualtakaan. Näinollen voidaan olettaa, että kartalla, joka on sopimaton JPS:lle, aikavaativuus on sama kuin A\*:llä, koska hyppyjä ei ole mahdollista hyödyntää vaan (lähes) jokainen solmu joudutaan evaluoimaan. Käytännössä A vaatii kartan, jossa on suuria tyhjiä tiloja ollakseen tehokas.
 
 Käytännössä kaupunkikartoilla kuitenkin saavutettiin merkittävästi nopeampia suoritusaikoja: keskimäärinen ratkaisuaika suorituskykytestauksessa oli 8% Dijkstrasta ja 17% A\*:sta.
 
