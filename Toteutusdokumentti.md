@@ -32,6 +32,8 @@ Pahimman tapauksen teoreettinen aikavaativuus A\*:lla on sama kuin Dijkstralla e
 
 Käytännön testauksessa saavutettiin kuitenkin selkeä ero Dijkstraan: suorituskykytestauksessa käsiteltyjen (prioriteettijonosta käsittelyyn otettujen käsittelemättömien) solmujen määrä oli keskimäärin n. 31% Dijkstran solmujen määrästä ja suoritusaika n. 47% Dijkstrasta.
 
+Profilointi ei täysin selvittänyt, miksi käsiteltyjen solmujen määrällä ja suoritusajalla on epäsuhta, jota pelkkä heuristiikkafunktion laskeminen ei todennäköisesti selitä. Todennäköinen vaihtoehto on, että heuristiikan käyttö prioriteettifunktiossa lisää prioriteettikeon järjestämisen tarvetta. Tätä tukee se, että luokan PriorityQueue operaatioihin kuluu lähes 50% kokonaissuoritusajasta Java Flight Recorderin datan perusteella.
+
 ## Jump Point Search (JPS)
 
 JPS:n teoreettinen aikavaativuus pätevällä heuristiikalla on O (E + V). Käytännössä A vaatii kartan, jossa on suuria tyhjiä tiloja ollakseen tehokas.
